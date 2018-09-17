@@ -1,0 +1,14 @@
+[ignore]
+.*/node_modules/react-native-safe-module/.*
+.*/node_modules/xdl/.*
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
+
+[untyped]
+.*/node_modules/react-native/.*
