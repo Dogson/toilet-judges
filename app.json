@@ -1,5 +1,19 @@
 {
   "expo": {
-    "sdkVersion": "27.0.0"
+    "sdkVersion": "27.0.0",
+    "name": "Toilet Advisor",
+    "icon": "./toilet.png",
+    "version": "0.0.1",
+    "ios": {
+      "bundleIdentifier": "com.dogson.toiletadvisor"
+    },
+    "android": {
+      "package": "com.dogson.toiletadvisor",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDPHrBugCwYBcqgfouwo299QToqJN-xEYg"
+        }
+      }
+    }
   }
 }
