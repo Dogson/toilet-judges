@@ -3,20 +3,22 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
+
+// Components
 import Map from "./map/Map";
 
-// const reducer = combineReducers(reducers);
-function reducer(state = {}, action) {
-    return state;
-}
+//Reducers
+import mapReducer from "./map/MapReducer"
+
+let reducer = combineReducers({mapReducer: mapReducer});
 
 const store = createStore(reducer);
 
-export default class AppRoot extends React.Component<{}> {
+class AppRoot extends React.Component<{}> {
     render() {
         return (
             <Provider store={store}>
-                <Map/>
+                <Map />
             </Provider>
         );
     }
@@ -30,3 +32,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 });
+
+export default AppRoot;
