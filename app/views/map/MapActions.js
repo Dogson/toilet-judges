@@ -1,0 +1,3 @@
+export const ACTIONS_MAPS = {
+  SET_POSITION: "SET_POSITION"
+};
