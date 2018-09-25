@@ -1,14 +1,14 @@
 //@flow
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View, StatusBar} from 'react-native';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
 // Components
-import Map from "./map/Map";
+import Map from "./views/map/Map";
 
 //Reducers
-import mapReducer from "./map/MapReducer"
+import mapReducer from "./views/map/MapReducer"
 
 let reducer = combineReducers({mapReducer: mapReducer});
 
@@ -18,7 +18,9 @@ class AppRoot extends React.Component<{}> {
     render() {
         return (
             <Provider store={store}>
-                <Map />
+                <View style={styles.container}>
+                    <Map/>
+                </View>
             </Provider>
         );
     }
@@ -27,10 +29,9 @@ class AppRoot extends React.Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
-    },
+        marginTop: StatusBar.currentHeight
+    }
 });
 
 export default AppRoot;
