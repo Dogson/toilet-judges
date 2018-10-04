@@ -2,30 +2,38 @@
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator} from "react-native";
+import {View, Text, StyleSheet, ActivityIndicator, BackHandler} from "react-native";
 import {SearchBar} from 'react-native-elements';
-import SearchResults from './SearchResults';
-const fetch = require('node-fetch');
 
-// INTERNAL
+let _ = require('lodash');
+
+// CONST
 import {APP_CONFIG} from "../../config/appConfig";
 import {ACTIONS_MAPS} from "./MapActions";
+
+// API ENDPOINTS
+import {ToiletsEndpoints} from '../../endpoints/toiletsEndpoints'
+
+//COMPONENTS
+import SearchResults from './SearchResults';
+import YesNoDialog from '../../components/dialogs/YesNoDialog'
 
 class Map extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {showMap: true}
+        this.state = {showMap: true, showExitDialog: false};
+
+        this.handleChangeText = this.handleChangeText.bind(this);
+        this.handleChangeText = _.debounce(this.handleChangeText, 500);
+
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+
+        this.handleExitApp = this.handleExitApp.bind(this);
     }
 
-    // DISPATCH ACTIONS
-    setMapPosition = (position) => {
-        this.props.dispatch({type: ACTIONS_MAPS.SET_POSITION, value: position});
-    };
-
-    getNearbyToilets = () => {
-        // this.props.dispatch({type: ACTIONS_MAPS.GET_NEARBY_TOILETS, value: nearbyToilets})
-        //TODO FETCH
-    };
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
 
     componentDidMount() {
         navigator.geolocation.getCurrentPosition(
@@ -41,6 +49,53 @@ class Map extends React.Component {
         this.setState({marginBottom: 1, showMap: true});
 
         this.getNearbyToilets();
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    //HANDLING EVENTS
+    handleBackButtonClick() {
+        if (!this.state.showMap) {
+            this.setState({showMap: true});
+            this.searchBar.clear();
+        }
+        else {
+            //TODO stack navigation
+            this.setState({showExitDialog: true});
+        }
+        return true;
+    }
+
+    handleChangeText(searchQuery) {
+        this.setState({...this.state, searchQuery});
+        this.getToiletsBySearch();
+    }
+
+    handleExitApp() {
+        this.setState({showExitDialog: false});
+        this.setState({searchQuery: ''});
+        BackHandler.exitApp();
+    }
+
+    // DISPATCH ACTIONS
+    setMapPosition = (position) => {
+        this.props.dispatch({type: ACTIONS_MAPS.SET_POSITION, value: position});
+    };
+
+    getNearbyToilets = () => {
+        ToiletsEndpoints.getAllToilets()
+            .then((toilets) => {
+                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+            })
+    };
+
+    getToiletsBySearch(){
+        ToiletsEndpoints.getToiletsFromSearch(this.state.searchQuery)
+            .then((toilets) => {
+                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+            });
     }
 
     // Workaround for MyLocationButton not showing
@@ -61,6 +116,14 @@ class Map extends React.Component {
             </View>)
     };
 
+    renderExitDialog() {
+        return <YesNoDialog showAlert={this.state.showExitDialog}
+                            title="Souhaitez-vous quitter l'application ?"
+                            cancel={() => this.setState({showExitDialog: false})}
+                            confirm={this.handleExitApp}
+        />
+    }
+
     renderMap() {
         return <MapView
             style={{flex: 1, marginBottom: this.state.marginBottom}}
@@ -80,7 +143,7 @@ class Map extends React.Component {
     }
 
     renderSearchResults() {
-        return <SearchResults searchQuery={this.state.searchQuery}/>
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}/>
     };
 
     render() {
@@ -88,6 +151,7 @@ class Map extends React.Component {
         let map;
         let searchResults;
         let loading;
+        let exitDialog = this.renderExitDialog();
         if (this.state.showMap) {
             if (this.props.position) {
                 map = this.renderMap();
@@ -105,14 +169,16 @@ class Map extends React.Component {
                 {map}
                 <View style={this.state.showMap && styles.searchBarMap}>
                     <SearchBar
+                        ref={input => { this.searchBar = input }}
                         platform={APP_CONFIG.platform}
                         onTouchStart={() => this.setState({showMap: false})}
                         onCancel={() => this.setState({showMap: true})}
                         placeholder='Rechercher un restaurant, bar...'
-                        onChangeText={(searchQuery) => this.setState({searchQuery})}/>
+                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}/>
                 </View>
                 {loading}
                 {searchResults}
+                {exitDialog}
             </View>;
         return result;
     }
@@ -122,7 +188,7 @@ class Map extends React.Component {
 function mapStateToProps(state) {
     return {
         position: state.mapReducer.position,
-        nearbyToilets: state.mapReducer.nearbyToilets
+        toiletsList: state.mapReducer.toiletsList
     };
 }
 
