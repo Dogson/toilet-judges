@@ -7,6 +7,11 @@ export default mapReducer = (state = {}, action) => {
                 ...state,
                 position: action.value
             };
+        case ACTIONS_MAPS.SET_TOILETS_LIST :
+            return {
+                ...state,
+                toiletsList: action.value
+            };
         default:
             return state;
     }

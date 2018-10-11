@@ -2,17 +2,38 @@
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, ActivityIndicator, BackHandler} from "react-native";
 import {SearchBar} from 'react-native-elements';
 
-// INTERNAL
-import {APP_CONFIG} from "../../appConfig";
+let _ = require('lodash');
+
+// CONST
+import {APP_CONFIG} from "../../config/appConfig";
+import {ACTIONS_MAPS} from "./MapActions";
+
+// API ENDPOINTS
+import {ToiletsEndpoints} from '../../endpoints/toiletsEndpoints'
+
+//COMPONENTS
+import SearchResults from './SearchResults';
+import YesNoDialog from '../../components/dialogs/YesNoDialog'
 
 class Map extends React.Component {
-    // DISPATCH ACTIONS
-    setMapPosition = (position) => {
-        this.props.dispatch({type: "SET_POSITION", value: position});
-    };
+    constructor(props) {
+        super(props);
+        this.state = {showMap: true, showExitDialog: false};
+
+        this.handleChangeText = this.handleChangeText.bind(this);
+        this.handleChangeText = _.debounce(this.handleChangeText, 500);
+
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+
+        this.handleExitApp = this.handleExitApp.bind(this);
+    }
+
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
 
     componentDidMount() {
         navigator.geolocation.getCurrentPosition(
@@ -24,47 +45,141 @@ class Map extends React.Component {
             }, (error) => {
                 console.log(error);
             });
-        this.setState({marginBottom: 1});
 
+        this.setState({marginBottom: 1, showMap: true});
+
+        this.getNearbyToilets();
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    //HANDLING EVENTS
+    handleBackButtonClick() {
+        if (!this.state.showMap) {
+            this.setState({showMap: true});
+            this.searchBar.clear();
+        }
+        else {
+            //TODO stack navigation
+            this.setState({showExitDialog: true});
+        }
+        return true;
+    }
+
+    handleChangeText(searchQuery) {
+        this.setState({...this.state, searchQuery});
+        this.getToiletsBySearch();
+    }
+
+    handleExitApp() {
+        this.setState({showExitDialog: false});
+        this.setState({searchQuery: ''});
+        BackHandler.exitApp();
+    }
+
+    // DISPATCH ACTIONS
+    setMapPosition = (position) => {
+        this.props.dispatch({type: ACTIONS_MAPS.SET_POSITION, value: position});
+    };
+
+    getNearbyToilets = () => {
+        ToiletsEndpoints.getAllToilets()
+            .then((toilets) => {
+                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+            })
+    };
+
+    getToiletsBySearch(){
+        ToiletsEndpoints.getToiletsFromSearch(this.state.searchQuery)
+            .then((toilets) => {
+                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+            });
     }
 
     // Workaround for MyLocationButton not showing
     _onMapReady = () => this.setState({marginBottom: 0});
 
+    //Rendering components
+    renderLoading() {
+        return (
+            <View style={{alignSelf: 'center', flexDirection: 'column'}}>
+                <View>
+                    <ActivityIndicator size="large"/>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                    <Text>Chargement de la Carte des Toilettes</Text>
+                    <Text style={{fontSize: 6}}>TM</Text>
+                    <Text>...</Text>
+                </View>
+            </View>)
+    };
+
+    renderExitDialog() {
+        return <YesNoDialog showAlert={this.state.showExitDialog}
+                            title="Souhaitez-vous quitter l'application ?"
+                            cancel={() => this.setState({showExitDialog: false})}
+                            confirm={this.handleExitApp}
+        />
+    }
+
+    renderMap() {
+        return <MapView
+            style={{flex: 1, marginBottom: this.state.marginBottom}}
+            onMapReady={this._onMapReady}
+            initialRegion={{
+                latitude: this.props.position.latitude,
+                longitude: this.props.position.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
+            }}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            mapPadding={{
+                top: 55
+            }}
+        />
+    }
+
+    renderSearchResults() {
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}/>
+    };
 
     render() {
         let result;
-        if (this.props.position) {
-            result =
-                <View style={{flex: 1}}>
-                    <MapView
-                        style={{flex: 1, marginBottom: this.state.marginBottom}}
-                        onMapReady={this._onMapReady}
-                        initialRegion={{
-                            latitude: this.props.position.latitude,
-                            longitude: this.props.position.longitude,
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01
-                        }}
-                        showsUserLocation={true}
-                        showsMyLocationButton={true}
-                    />
-                    <View style={styles.searchBar}>
-                        <SearchBar
-                            showLoading
-                            platform={APP_CONFIG.platform}
-                            placeholder='Rechercher un restaurant, bar...'/>
-                    </View>
-                </View>
+        let map;
+        let searchResults;
+        let loading;
+        let exitDialog = this.renderExitDialog();
+        if (this.state.showMap) {
+            if (this.props.position) {
+                map = this.renderMap();
+            }
+            else {
+                loading = this.renderLoading();
+            }
         }
         else {
-            result =
-                <View style={{alignSelf: 'center', flexDirection: 'row'}}>
-                    <Text>Chargement de la Carte des Toilettes</Text>
-                    <Text style={{ fontSize: 6 }}>TM</Text>
-                    <Text>...</Text>
-            </View>
+            searchResults = this.renderSearchResults()
         }
+
+        result =
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                {map}
+                <View style={this.state.showMap && styles.searchBarMap}>
+                    <SearchBar
+                        ref={input => { this.searchBar = input }}
+                        platform={APP_CONFIG.platform}
+                        onTouchStart={() => this.setState({showMap: false})}
+                        onCancel={() => this.setState({showMap: true})}
+                        placeholder='Rechercher un restaurant, bar...'
+                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}/>
+                </View>
+                {loading}
+                {searchResults}
+                {exitDialog}
+            </View>;
         return result;
     }
 }
@@ -72,16 +187,15 @@ class Map extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        position: state.mapReducer.position
+        position: state.mapReducer.position,
+        toiletsList: state.mapReducer.toiletsList
     };
 }
 
 const styles = StyleSheet.create({
-    searchBar: {
-        position: "absolute",
-        top: 10,
-        left: 10,
-        right: 10
+    searchBarMap: {
+        top: 0,
+        position: "absolute"
     }
 });
 

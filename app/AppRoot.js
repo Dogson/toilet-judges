@@ -4,22 +4,23 @@ import {StyleSheet, View, StatusBar} from 'react-native';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
-// Components
-import Map from "./views/map/Map";
-
 //Reducers
 import mapReducer from "./views/map/MapReducer"
+import {createStackNavigator} from "react-navigation";
+import {InitialRoute, Routes} from "./config/routes";
 
 let reducer = combineReducers({mapReducer: mapReducer});
 
 const store = createStore(reducer);
+
+const Navigator = createStackNavigator(Routes, {headerMode: 'none', navigationOptions: {headerVisible: false}});
 
 class AppRoot extends React.Component<{}> {
     render() {
         return (
             <Provider store={store}>
                 <View style={styles.container}>
-                    <Map/>
+                    <Navigator/>
                 </View>
             </Provider>
         );

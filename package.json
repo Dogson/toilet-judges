@@ -20,12 +20,21 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "awesome-debounce-promise": "^1.0.0",
     "expo": "^27.0.1",
+    "lodash": "^4.17.11",
+    "node-fetch": "^2.2.0",
     "react": "16.3.1",
     "react-native": "~0.55.2",
-    "react-native-elements": "^0.19.1",
+    "react-native-awesome-alerts": "^1.1.1",
+    "react-native-elements": "^1.0.0-beta5",
+    "react-native-emoji": "^1.3.1",
     "react-native-maps": "^0.21.0",
+    "react-navigation": "^2.16.0",
+    "react-navigation-redux-helpers": "^2.0.6",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "whatwg-fetch": "^2.0.4"
   }
 }
