@@ -12,7 +12,7 @@ import {APP_CONFIG} from "../../config/appConfig";
 import {ACTIONS_MAPS} from "./MapActions";
 
 // API ENDPOINTS
-import {ToiletsEndpoints} from '../../endpoints/toiletsEndpoints'
+import {MapEndpoints} from '../../endpoints/mapEndpoints'
 
 //COMPONENTS
 import SearchResults from './SearchResults';
@@ -85,14 +85,14 @@ class Map extends React.Component {
     };
 
     getNearbyToilets = () => {
-        ToiletsEndpoints.getAllToilets()
+        MapEndpoints.getAllToilets()
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
             })
     };
 
     getToiletsBySearch(){
-        ToiletsEndpoints.getToiletsFromSearch(this.state.searchQuery)
+        MapEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
             });
@@ -101,7 +101,7 @@ class Map extends React.Component {
     // Workaround for MyLocationButton not showing
     _onMapReady = () => this.setState({marginBottom: 0});
 
-    //Rendering components
+    // RENDERING COMPONENTS
     renderLoading() {
         return (
             <View style={{alignSelf: 'center', flexDirection: 'column'}}>

@@ -1,13 +1,14 @@
 import {APP_CONFIG} from "../config/appConfig";
 
-export class ToiletsEndpoints {
+import {FetchHelper} from "../helpers/fetchHelper"
+
+export class MapEndpoints {
     static getAllToilets() {
-        return fetch(APP_CONFIG.apiUrl + '/toilets/', {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
+        const url = APP_CONFIG.apiUrl;
+        const apiKey = "toilets";
+        return FetchHelper.get({
+            url: url,
+            apiKey: apiKey
         })
             .then((response) => {
                 return response.json()
@@ -21,12 +22,13 @@ export class ToiletsEndpoints {
         if (!searchText) {
             return this.getAllToilets();
         }
-        const fetchUrl = APP_CONFIG.apiUrl+'/toilets?q='+encodeURIComponent(searchText);
-        return fetch(fetchUrl, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
+        const url = APP_CONFIG.apiUrl;
+        const apiKey = "toilets";
+        return FetchHelper.get({
+            url: url,
+            apiKey: apiKey,
+            data: {
+                q: searchText
             }
         })
             .then((response) => {
