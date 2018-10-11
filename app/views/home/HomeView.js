@@ -9,17 +9,17 @@ let _ = require('lodash');
 
 // CONST
 import {APP_CONFIG} from "../../config/appConfig";
-import {ACTIONS_MAPS} from "./MapActions";
+import {ACTIONS_HOME} from "./HomeActions";
 import {ROUTE_NAMES} from "../../config/routes";
 
 // API ENDPOINTS
-import {MapEndpoints} from '../../endpoints/mapEndpoints'
+import {ToiletListEndpoints} from '../../endpoints/toiletListEndpoints'
 
 //COMPONENTS
-import SearchResults from './SearchResults';
+import SearchResults from '../../components/search/SearchResults';
 import YesNoDialog from '../../components/dialogs/YesNoDialog'
 
-class Map extends React.Component {
+class HomeView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {showMap: true, showExitDialog: false};
@@ -90,20 +90,20 @@ class Map extends React.Component {
 
     // DISPATCH ACTIONS
     setMapPosition = (position) => {
-        this.props.dispatch({type: ACTIONS_MAPS.SET_POSITION, value: position});
+        this.props.dispatch({type: ACTIONS_HOME.SET_POSITION, value: position});
     };
 
     getNearbyToilets = () => {
-        MapEndpoints.getAllToilets()
+        ToiletListEndpoints.getAllToilets()
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             })
     };
 
     getToiletsBySearch(){
-        MapEndpoints.getToiletsFromSearch(this.state.searchQuery)
+        ToiletListEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             });
     }
 
@@ -196,8 +196,8 @@ class Map extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        position: state.mapReducer.position,
-        toiletsList: state.mapReducer.toiletsList
+        position: state.homeReducer.position,
+        toiletsList: state.homeReducer.toiletsList
     };
 }
 
@@ -208,4 +208,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(Map);
+export default connect(mapStateToProps)(HomeView);

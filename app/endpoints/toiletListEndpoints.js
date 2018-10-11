@@ -2,7 +2,7 @@ import {APP_CONFIG} from "../config/appConfig";
 
 import {FetchHelper} from "../helpers/fetchHelper"
 
-export class MapEndpoints {
+export class ToiletListEndpoints {
     static getAllToilets() {
         const url = APP_CONFIG.apiUrl;
         const apiKey = "toilets";

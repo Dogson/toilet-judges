@@ -1,15 +1,15 @@
 //@flow
 import React from 'react';
-import {StyleSheet, View, StatusBar} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
 //Reducers
-import mapReducer from "./views/map/MapReducer"
+import homeReducer from "./views/home/HomeReducer"
 import {createStackNavigator} from "react-navigation";
 import {Routes} from "./config/routes";
 
-let reducer = combineReducers({mapReducer: mapReducer});
+let reducer = combineReducers({homeReducer: homeReducer});
 
 const store = createStore(reducer);
 

@@ -1,15 +1,15 @@
-import Map from "../views/map/Map";
-import Toilet from "../views/toilet/Toilet"
+import HomeView from "../views/home/HomeView"
+import ToiletView from "../views/toilet/ToiletView"
 
 const Routes = {
     Map: {
-        screen: Map,
+        screen: HomeView,
         navigationOptions: {
             header: null,
         }
     },
     Toilet: {
-        screen: Toilet,
+        screen: ToiletView,
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('toilet').placeName,

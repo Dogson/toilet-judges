@@ -14,7 +14,7 @@ import {Header} from "react-native-elements";
 //COMPONENTS
 
 
-class Toilet extends React.Component {
+class ToiletView extends React.Component {
 
     // COMPONENT LIFE CYCLE
     constructor(props) {
@@ -49,14 +49,15 @@ class Toilet extends React.Component {
     // RENDERING COMPONENTS
     render() {
         return <View>
+
         </View>
     }
 }
 
 function mapStateToProps(state) {
     return {
-        userRating: state.mapReducer.userRating
+
     };
 }
 
-export default connect(mapStateToProps)(Toilet);
+export default connect(mapStateToProps)(ToiletView);
