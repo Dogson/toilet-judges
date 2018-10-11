@@ -10,6 +10,10 @@ class SearchResults extends React.Component {
         })
     }
 
+    renderEmptyList() {
+    return <Text style={{fontStyle:"italic", textAlign: 'center'}}>Aucune toilette ne correspond à la recherche.</Text>
+    }
+
     render() {
         return <View style={styles.container}>
             <FlatList
@@ -24,6 +28,7 @@ class SearchResults extends React.Component {
                             </Text>
                         </View>
                     </TouchableNativeFeedback>}
+                ListEmptyComponent={this.renderEmptyList()}
             />
         </View>
     }
