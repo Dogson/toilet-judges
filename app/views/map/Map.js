@@ -10,6 +10,7 @@ let _ = require('lodash');
 // CONST
 import {APP_CONFIG} from "../../config/appConfig";
 import {ACTIONS_MAPS} from "./MapActions";
+import {ROUTE_NAMES} from "../../config/routes";
 
 // API ENDPOINTS
 import {MapEndpoints} from '../../endpoints/mapEndpoints'
@@ -25,6 +26,8 @@ class Map extends React.Component {
 
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handleChangeText = _.debounce(this.handleChangeText, 500);
+
+        this.handlePressToilet = this.handlePressToilet.bind(this);
 
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
 
@@ -71,6 +74,12 @@ class Map extends React.Component {
     handleChangeText(searchQuery) {
         this.setState({...this.state, searchQuery});
         this.getToiletsBySearch();
+    }
+
+    handlePressToilet(toilet) {
+        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
+            toilet: toilet
+        });
     }
 
     handleExitApp() {
@@ -143,7 +152,7 @@ class Map extends React.Component {
     }
 
     renderSearchResults() {
-        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}/>
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList} handlePressToilet={this.handlePressToilet}/>
     };
 
     render() {

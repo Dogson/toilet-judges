@@ -7,7 +7,7 @@ import {createStore, combineReducers} from 'redux';
 //Reducers
 import mapReducer from "./views/map/MapReducer"
 import {createStackNavigator} from "react-navigation";
-import {InitialRoute, Routes} from "./config/routes";
+import {Routes} from "./config/routes";
 
 let reducer = combineReducers({mapReducer: mapReducer});
 

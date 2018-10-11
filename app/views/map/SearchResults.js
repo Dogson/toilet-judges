@@ -4,11 +4,6 @@ import {View, Text, ScrollView, StyleSheet, FlatList, TouchableNativeFeedback, A
 
 
 class SearchResults extends React.Component {
-
-    _onPressToilet() {
-        Alert.alert('Entering toilet...')
-    }
-
     mapToiletListWithKey() {
         return this.props.toiletsList.map((toilet) => {
             return {...toilet, key: toilet._id}
@@ -21,7 +16,7 @@ class SearchResults extends React.Component {
                 data={this.mapToiletListWithKey()}
                 keyboardShouldPersistTaps='always'
                 renderItem={({item}) =>
-                    <TouchableNativeFeedback onPress={this._onPressToilet}
+                    <TouchableNativeFeedback onPress={() => this.props.handlePressToilet(item)}
                                              background={TouchableNativeFeedback.SelectableBackground()}>
                         <View>
                             <Text style={styles.item}>

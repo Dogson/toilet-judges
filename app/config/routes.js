@@ -1,12 +1,14 @@
 import Map from "../views/map/Map";
+import Toilet from "../views/toilet/Toilet"
 
 const Routes = {
-    Map: { screen: Map }
-    // ToiletDetail: { screen: ToiletDetail }
+    Map: { screen: Map },
+    Toilet: { screen: Toilet }
 };
 
-const InitialRoute = {
-    initialRouteName: 'Map',
+const ROUTE_NAMES = {
+    MAP: 'Map',
+    TOILET: 'Toilet'
 };
 
-export {Routes, InitialRoute};
+export {Routes, ROUTE_NAMES};
