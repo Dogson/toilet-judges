@@ -100,7 +100,7 @@ class HomeView extends React.Component {
             })
     };
 
-    getToiletsBySearch(){
+    getToiletsBySearch() {
         ToiletListEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
@@ -152,7 +152,8 @@ class HomeView extends React.Component {
     }
 
     renderSearchResults() {
-        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList} handlePressToilet={this.handlePressToilet}/>
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}
+                              handlePressToilet={this.handlePressToilet}/>
     };
 
     render() {
@@ -161,6 +162,7 @@ class HomeView extends React.Component {
         let searchResults;
         let loading;
         let exitDialog = this.renderExitDialog();
+        let searchBarStyle = [styles.searchBar];
         if (this.state.showMap) {
             if (this.props.position) {
                 map = this.renderMap();
@@ -168,6 +170,8 @@ class HomeView extends React.Component {
             else {
                 loading = this.renderLoading();
             }
+
+            searchBarStyle.push(styles.searchBarMap);
         }
         else {
             searchResults = this.renderSearchResults()
@@ -176,14 +180,18 @@ class HomeView extends React.Component {
         result =
             <View style={{flex: 1, justifyContent: 'center', marginTop: StatusBar.currentHeight}}>
                 {map}
-                <View style={this.state.showMap && styles.searchBarMap}>
+                <View style={searchBarStyle}>
                     <SearchBar
-                        ref={input => { this.searchBar = input }}
+                        ref={input => {
+                            this.searchBar = input
+                        }}
                         platform={APP_CONFIG.platform}
                         onTouchStart={() => this.setState({showMap: false})}
                         onCancel={() => this.setState({showMap: true})}
                         placeholder='Rechercher un restaurant, bar...'
-                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}/>
+                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
+                        containerStyle={styles.searchBar}
+                        rightIconContainerStyle={styles.clearButton}/>
                 </View>
                 {loading}
                 {searchResults}
@@ -203,8 +211,16 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
     searchBarMap: {
-        top: 0,
-        position: "absolute"
+        position: 'absolute',
+    },
+    searchBar: {
+        top: '1%',
+        left: '1%',
+        borderRadius: 30,
+        width: '98%',
+    },
+    clearButton: {
+        paddingRight: '4%'
     }
 });
 

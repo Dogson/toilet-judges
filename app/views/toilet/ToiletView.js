@@ -12,7 +12,7 @@ import {ToiletEndpoints} from '../../endpoints/toiletEndpoints';
 import {Header} from "react-native-elements";
 
 //COMPONENTS
-
+import {GlobalRating} from "../../components/rating/GlobalRating";
 
 class ToiletView extends React.Component {
 
@@ -49,7 +49,7 @@ class ToiletView extends React.Component {
     // RENDERING COMPONENTS
     render() {
         return <View>
-
+            <GlobalRating rating={this.state.toiletInfos.globalScore}></GlobalRating>
         </View>
     }
 }
