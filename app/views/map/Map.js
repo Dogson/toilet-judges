@@ -2,7 +2,7 @@
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator, BackHandler} from "react-native";
+import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar} from "react-native";
 import {SearchBar} from 'react-native-elements';
 
 let _ = require('lodash');
@@ -174,7 +174,7 @@ class Map extends React.Component {
         }
 
         result =
-            <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', marginTop: StatusBar.currentHeight}}>
                 {map}
                 <View style={this.state.showMap && styles.searchBarMap}>
                     <SearchBar

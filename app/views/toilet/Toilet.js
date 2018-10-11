@@ -1,6 +1,6 @@
 // LIBRAIRIES
 import React from 'react';
-import {BackHandler, Text, View} from 'react-native';
+import {BackHandler, Text, View, StatusBar} from 'react-native';
 import {connect} from "react-redux";
 
 
@@ -9,16 +9,20 @@ import {connect} from "react-redux";
 
 // API ENDPOINTS
 import {ToiletEndpoints} from '../../endpoints/toiletEndpoints';
+import {Header} from "react-native-elements";
 
 //COMPONENTS
 
 
 class Toilet extends React.Component {
+
     // COMPONENT LIFE CYCLE
     constructor(props) {
         super(props);
-        this.state = this.props.navigation.getParam('toilet');
-
+        this.state =
+            {
+                toiletInfos : this.props.navigation.getParam('toilet')
+            };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
@@ -28,7 +32,6 @@ class Toilet extends React.Component {
     }
 
     componentDidMount() {
-        this.getToiletInfos();
     }
 
     componentWillUnmount() {
@@ -42,16 +45,10 @@ class Toilet extends React.Component {
     }
 
     // DISPATCH ACTIONS
-    getToiletInfos() {
-
-    }
 
     // RENDERING COMPONENTS
     render() {
         return <View>
-            <Text>
-                {this.state.placeName}
-            </Text>
         </View>
     }
 }

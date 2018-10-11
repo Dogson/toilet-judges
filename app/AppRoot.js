@@ -13,7 +13,7 @@ let reducer = combineReducers({mapReducer: mapReducer});
 
 const store = createStore(reducer);
 
-const Navigator = createStackNavigator(Routes, {headerMode: 'none', navigationOptions: {headerVisible: false}});
+const Navigator = createStackNavigator(Routes);
 
 class AppRoot extends React.Component<{}> {
     render() {
@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        marginTop: StatusBar.currentHeight
     }
 });
 
