@@ -4,7 +4,7 @@ import {MapView} from 'expo';
 import {connect} from "react-redux";
 import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar} from "react-native";
 import {SearchBar} from 'react-native-elements';
-
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 let _ = require('lodash');
 
 // CONST
@@ -196,6 +196,7 @@ class HomeView extends React.Component {
                 {loading}
                 {searchResults}
                 {exitDialog}
+                <KeyboardSpacer/>
             </View>;
         return result;
     }
