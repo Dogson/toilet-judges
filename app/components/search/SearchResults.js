@@ -1,7 +1,9 @@
 // LIBRAIRIES
 import React from 'react';
-import {View, Text, ScrollView, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "react-native";
+import {View, Text, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "react-native";
 
+// STYLES
+import globalStyles from '../../styles/styles'
 
 class SearchResults extends React.Component {
     mapToiletListWithKey() {
@@ -15,7 +17,7 @@ class SearchResults extends React.Component {
     }
 
     render() {
-        return <View style={styles.container}>
+        return <View style={[globalStyles.container, styles.container]}>
             <FlatList
                 data={this.mapToiletListWithKey()}
                 keyboardShouldPersistTaps='always'
@@ -29,6 +31,7 @@ class SearchResults extends React.Component {
                         </View>
                     </TouchableNativeFeedback>}
                 ListEmptyComponent={this.renderEmptyList()}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     }
@@ -37,7 +40,7 @@ class SearchResults extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 22
+        marginTop: 28,
     },
     item: {
         padding: 10,

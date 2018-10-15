@@ -5,7 +5,7 @@ import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
 //Reducers
-import homeReducer from "./views/home/HomeReducer"
+import homeReducer from "./components/views/home/HomeReducer"
 import {createStackNavigator} from "react-navigation";
 import {Routes} from "./config/routes";
 

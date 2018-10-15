@@ -8,11 +8,11 @@ import {connect} from "react-redux";
 
 
 // API ENDPOINTS
-import {ToiletEndpoints} from '../../endpoints/toiletEndpoints';
+import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints';
 import {Header} from "react-native-elements";
 
 //COMPONENTS
-import {GlobalRating} from "../../components/rating/GlobalRating";
+import {GlobalRating} from "../../rating/GlobalRating";
 
 class ToiletView extends React.Component {
 

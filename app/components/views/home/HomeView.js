@@ -8,16 +8,16 @@ import {SearchBar} from 'react-native-elements';
 let _ = require('lodash');
 
 // CONST
-import {APP_CONFIG} from "../../config/appConfig";
+import {APP_CONFIG} from "../../../config/appConfig";
 import {ACTIONS_HOME} from "./HomeActions";
-import {ROUTE_NAMES} from "../../config/routes";
+import {ROUTE_NAMES} from "../../../config/routes";
 
 // API ENDPOINTS
-import {ToiletListEndpoints} from '../../endpoints/toiletListEndpoints'
+import {ToiletListEndpoints} from '../../../endpoints/toiletListEndpoints'
 
 //COMPONENTS
-import SearchResults from '../../components/search/SearchResults';
-import YesNoDialog from '../../components/dialogs/YesNoDialog'
+import SearchResults from '../../search/SearchResults';
+import YesNoDialog from '../../dialogs/YesNoDialog'
 
 class HomeView extends React.Component {
     constructor(props) {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     searchBar: {
         top: '1%',
         left: '1%',
-        borderRadius: 30,
+        borderRadius: 5,
         width: '98%',
     },
     clearButton: {

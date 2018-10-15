@@ -1,5 +1,5 @@
-import HomeView from "../views/home/HomeView"
-import ToiletView from "../views/toilet/ToiletView"
+import HomeView from "../components/views/home/HomeView"
+import ToiletView from "../components/views/toilet/ToiletView"
 
 const Routes = {
     Map: {
