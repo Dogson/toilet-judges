@@ -1,23 +1,23 @@
 // LIBRAIRIES
 import React from 'react';
-import {BackHandler, Text, View, Alert, StyleSheet, TouchableNativeFeedback} from 'react-native';
+import {BackHandler, Text, View, Alert, StyleSheet, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
 import {connect} from "react-redux";
 import {Icon} from 'react-native-elements';
 
 // CONST
+import {APP_CONFIG} from "../../../config/appConfig"
 import {GENDERS, PLACE_TYPES} from "../../../config/const";
+import {ACTIONS_TOILET} from "./ToiletActions";
+import {STYLE_VAR} from "../../../config/stylingVar";
 
 // API ENDPOINTS
 import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints';
-import {Header} from "react-native-elements";
 
 //COMPONENTS
 import {GlobalRating} from "../../rating/GlobalRating";
 
 //STYLES
 import {GlobalStyles} from '../../../styles/styles'
-import {APP_CONFIG} from "../../../config/appConfig";
-import {STYLE_VAR} from "../../../config/stylingVar";
 
 class ToiletView extends React.Component {
 
@@ -26,7 +26,8 @@ class ToiletView extends React.Component {
         super(props);
         this.state =
             {
-                toiletInfos: this.props.navigation.getParam('toilet')
+                toiletPlace: this.props.navigation.getParam('toiletPlace'),
+                userGender: APP_CONFIG.defaultGender
             };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.handleGenderChangeButtonPress = this.handleGenderChangeButtonPress.bind(this);
@@ -38,6 +39,8 @@ class ToiletView extends React.Component {
     }
 
     componentDidMount() {
+        this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
+        this.getToilets();
     }
 
     componentWillUnmount() {
@@ -55,11 +58,30 @@ class ToiletView extends React.Component {
     }
 
     // DISPATCH ACTIONS
+    getToilets() {
+        ToiletEndpoints.getToilets(this.state.toiletPlace._id)
+            .then((toilets) => {
+                this.props.dispatch({type: ACTIONS_TOILET.SET_TOILETS, value: toilets});
+                this.setToiletGender(this.state.userGender);
+            });
+    }
+
+    setToiletGender(toiletGender) {
+        let index = this.props.toilets.findIndex((toilet) => {
+            return toilet.gender === toiletGender;
+        });
+        if (index === -1) {
+            index = this.props.toilets.findIndex((toilet) => {
+                return toilet.gender === GENDERS.MIXT;
+            });
+        }
+        this.props.dispatch({type: ACTIONS_TOILET.SET_CURRENT_TOILET, value: index})
+    }
 
     // RENDERING COMPONENTS
     renderPlaceType() {
         let iconName;
-        switch (this.state.toiletInfos.placeType) {
+        switch (this.state.toiletPlace.placeType) {
             case PLACE_TYPES.RESTAURANT:
                 iconName = 'restaurant';
                 break;
@@ -80,9 +102,9 @@ class ToiletView extends React.Component {
                 <Icon reverse name={iconName}
                       color={STYLE_VAR.backgroundDefault}
                       containerStyle={styles.descriptionLineItem}
-                      size={20} />
+                      size={20}/>
                 <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
-                    {this.state.toiletInfos.placeType}
+                    {this.state.toiletPlace.placeType}
                 </Text>
             </View>
         );
@@ -91,7 +113,7 @@ class ToiletView extends React.Component {
     renderGender() {
         let genderName;
         let iconName;
-        switch (this.state.toiletInfos.gender) {
+        switch (this.props.toilets[this.props.currentToiletIndex].gender) {
             case GENDERS.MAN:
                 genderName = "Hommes";
                 iconName = "human-male";
@@ -115,7 +137,7 @@ class ToiletView extends React.Component {
                           type="material-community"
                           color={STYLE_VAR.backgroundDefault}
                           containerStyle={styles.descriptionLineItem}
-                          size={20} />
+                          size={20}/>
                     <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
                         {genderName}
                     </Text>
@@ -127,12 +149,13 @@ class ToiletView extends React.Component {
         );
     }
 
-    render() {
+    renderToiletDetails() {
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
         return (
             <View style={GlobalStyles.stackContainer}>
                 <View style={GlobalStyles.sectionContainer}>
-                    <GlobalRating rating={this.state.toiletInfos.globalRating}
-                                  ratingCount={this.state.toiletInfos.ratingCount}></GlobalRating>
+                    <GlobalRating rating={toilet.globalRating}
+                                  ratingCount={toilet.ratingCount}></GlobalRating>
                 </View>
                 <View style={GlobalStyles.sectionContainer}>
                     <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
@@ -141,12 +164,57 @@ class ToiletView extends React.Component {
                     </View>
                 </View>
             </View>
+        );
+    }
+
+    renderLoading() {
+        return (
+            <View style={GlobalStyles.loading}>
+                <ActivityIndicator size="large"/>
+            </View>
         )
+    }
+
+    renderNoToilets() {
+        return (
+            <View style={{alignSelf: 'center', flexDirection: 'column', flex: 1}}>
+                <Text>Pas de toilettes</Text>
+            </View>
+        )
+    }
+
+    renderNoGender() {
+        return (
+            <View style={{alignSelf: 'center', flexDirection: 'column', flex: 1}}>
+                <Text>Aucune toilette pour votre genre</Text>
+            </View>
+        )
+    }
+
+    render() {
+        let body;
+        if (!this.props.isReady) {
+            body = this.renderLoading();
+        }
+        else if (this.props.toilets.length === 0) {
+            body = this.renderNoToilets();
+        }
+        else if (this.props.currentToiletIndex === -1) {
+            body = this.renderNoGender();
+        }
+        else {
+            body = this.renderToiletDetails()
+        }
+        return body;
     }
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        toilets: state.toiletReducer.toilets,
+        currentToiletIndex: state.toiletReducer.currentToiletIndex,
+        isReady: state.toiletReducer.isReady
+    };
 }
 
 

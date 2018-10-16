@@ -2,10 +2,10 @@ import {APP_CONFIG} from "../config/appConfig";
 
 import {FetchHelper} from "../helpers/fetchHelper"
 
-export class ToiletListEndpoints {
-    static getAllToilets() {
+export class ToiletPlacesListEndpoints {
+    static getAllPlaces() {
         const url = APP_CONFIG.apiUrl;
-        const apiKey = "toilets";
+        const apiKey = "places";
         return FetchHelper.get({
             url: url,
             apiKey: apiKey
@@ -20,10 +20,10 @@ export class ToiletListEndpoints {
 
     static getToiletsFromSearch(searchText) {
         if (!searchText) {
-            return this.getAllToilets();
+            return this.getAllPlaces();
         }
         const url = APP_CONFIG.apiUrl;
-        const apiKey = "toilets";
+        const apiKey = "places";
         return FetchHelper.get({
             url: url,
             apiKey: apiKey,

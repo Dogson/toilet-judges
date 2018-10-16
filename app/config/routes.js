@@ -12,7 +12,7 @@ const Routes = {
         screen: ToiletView,
         navigationOptions: ({navigation}) => {
             return {
-                title: navigation.getParam('toilet').placeName,
+                title: navigation.getParam('toiletPlace').placeName,
             };
         }
     }

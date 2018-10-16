@@ -13,7 +13,7 @@ import {ACTIONS_HOME} from "./HomeActions";
 import {ROUTE_NAMES} from "../../../config/routes";
 
 // API ENDPOINTS
-import {ToiletListEndpoints} from '../../../endpoints/toiletListEndpoints'
+import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
 
 //COMPONENTS
 import SearchResults from '../../search/SearchResults';
@@ -79,9 +79,9 @@ class HomeView extends React.Component {
         this.getToiletsBySearch();
     }
 
-    handlePressToilet(toilet) {
+    handlePressToilet(toiletPlace) {
         this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
-            toilet: toilet
+            toiletPlace: toiletPlace
         });
     }
 
@@ -97,14 +97,14 @@ class HomeView extends React.Component {
     };
 
     getNearbyToilets = () => {
-        ToiletListEndpoints.getAllToilets()
+        ToiletPlacesListEndpoints.getAllPlaces()
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             })
     };
 
     getToiletsBySearch() {
-        ToiletListEndpoints.getToiletsFromSearch(this.state.searchQuery)
+        ToiletPlacesListEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             });

@@ -6,10 +6,11 @@ import {createStore, combineReducers} from 'redux';
 
 //Reducers
 import homeReducer from "./components/views/home/HomeReducer"
+import toiletReducer from "./components/views/toilet/ToiletReducer"
 import {createStackNavigator} from "react-navigation";
 import {Routes} from "./config/routes";
 
-let reducer = combineReducers({homeReducer: homeReducer});
+let reducer = combineReducers({homeReducer: homeReducer, toiletReducer: toiletReducer});
 
 const store = createStore(reducer);
 
