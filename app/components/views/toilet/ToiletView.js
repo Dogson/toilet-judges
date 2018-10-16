@@ -2,7 +2,7 @@
 import React from 'react';
 import {BackHandler, Text, View, StatusBar} from 'react-native';
 import {connect} from "react-redux";
-
+import Divider from 'react-native-divider';
 
 // CONST
 
@@ -14,6 +14,10 @@ import {Header} from "react-native-elements";
 //COMPONENTS
 import {GlobalRating} from "../../rating/GlobalRating";
 
+//STYLES
+import {GlobalStyles} from '../../../styles/styles'
+import {APP_CONFIG} from "../../../config/appConfig";
+
 class ToiletView extends React.Component {
 
     // COMPONENT LIFE CYCLE
@@ -21,7 +25,7 @@ class ToiletView extends React.Component {
         super(props);
         this.state =
             {
-                toiletInfos : this.props.navigation.getParam('toilet')
+                toiletInfos: this.props.navigation.getParam('toilet')
             };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
@@ -48,16 +52,18 @@ class ToiletView extends React.Component {
 
     // RENDERING COMPONENTS
     render() {
-        return <View>
-            <GlobalRating rating={this.state.toiletInfos.globalScore}></GlobalRating>
-        </View>
+        return (
+            <View style={GlobalStyles.stackContainer}>
+                <View style={GlobalStyles.sectionContainer}>
+                    <GlobalRating rating={this.state.toiletInfos.globalRating} ratingCount={this.state.toiletInfos.ratingCount}></GlobalRating>
+                </View>
+            </View>
+        )
     }
 }
 
 function mapStateToProps(state) {
-    return {
-
-    };
+    return {};
 }
 
 export default connect(mapStateToProps)(ToiletView);

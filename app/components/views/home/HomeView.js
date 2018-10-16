@@ -5,8 +5,8 @@ import {connect} from "react-redux";
 import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar} from "react-native";
 import {SearchBar} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-let _ = require('lodash');
 
+let _ = require('lodash');
 // CONST
 import {APP_CONFIG} from "../../../config/appConfig";
 import {ACTIONS_HOME} from "./HomeActions";
@@ -18,6 +18,9 @@ import {ToiletListEndpoints} from '../../../endpoints/toiletListEndpoints'
 //COMPONENTS
 import SearchResults from '../../search/SearchResults';
 import YesNoDialog from '../../dialogs/YesNoDialog'
+
+//STYLE
+import {GlobalStyles} from "../../../styles/styles";
 
 class HomeView extends React.Component {
     constructor(props) {
@@ -118,7 +121,7 @@ class HomeView extends React.Component {
                     <ActivityIndicator size="large"/>
                 </View>
                 <View style={{flexDirection: 'row'}}>
-                    <Text>Chargement de la Carte des Toilettes</Text>
+                    <Text style={GlobalStyles.secondaryText}>Chargement de la Carte des Toilettes</Text>
                     <Text style={{fontSize: 6}}>TM</Text>
                     <Text>...</Text>
                 </View>
@@ -190,8 +193,9 @@ class HomeView extends React.Component {
                         onCancel={() => this.setState({showMap: true})}
                         placeholder='Rechercher un restaurant, bar...'
                         onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
-                        containerStyle={styles.searchBar}
-                        rightIconContainerStyle={styles.clearButton}/>
+                        containerStyle={[styles.searchBar]}
+                        rightIconContainerStyle={styles.clearButton}
+                        inputStyle={GlobalStyles.primaryText}/>
                 </View>
                 {loading}
                 {searchResults}

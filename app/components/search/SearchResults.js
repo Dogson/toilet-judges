@@ -3,7 +3,8 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "react-native";
 
 // STYLES
-import globalStyles from '../../styles/styles'
+import {GlobalStyles} from '../../styles/styles'
+import {APP_CONFIG} from "../../config/appConfig";
 
 class SearchResults extends React.Component {
     mapToiletListWithKey() {
@@ -13,25 +14,31 @@ class SearchResults extends React.Component {
     }
 
     renderEmptyList() {
-    return <Text style={{fontStyle:"italic", textAlign: 'center'}}>Aucune toilette ne correspond à la recherche.</Text>
+        return (
+            <Text style={GlobalStyles.secondaryText}>
+                Aucune toilette ne correspond à la recherche.
+            </Text>
+        )
     }
 
     render() {
-        return <View style={[globalStyles.container, styles.container]}>
+        const containerStyle = this.props.toiletsList.length === 0 ? styles.emptyList : null;
+        return <View style={[GlobalStyles.container, styles.container]}>
             <FlatList
                 data={this.mapToiletListWithKey()}
                 keyboardShouldPersistTaps='always'
                 renderItem={({item}) =>
                     <TouchableNativeFeedback onPress={() => this.props.handlePressToilet(item)}
                                              background={TouchableNativeFeedback.SelectableBackground()}>
-                        <View>
-                            <Text style={styles.item}>
+                        <View styles={GlobalStyles.sectionContainer}>
+                            <Text style={[styles.item, GlobalStyles.primaryText]}>
                                 {item.placeName || "empty"}
                             </Text>
                         </View>
                     </TouchableNativeFeedback>}
                 ListEmptyComponent={this.renderEmptyList()}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={containerStyle}
             />
         </View>
     }
@@ -44,9 +51,15 @@ const styles = StyleSheet.create({
     },
     item: {
         padding: 10,
-        fontSize: 18,
-        height: 44,
+        height: 44
     },
+    emptyList: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });
+
 
 export default SearchResults;
