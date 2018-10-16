@@ -1,7 +1,7 @@
 'use strict';
 
 import {StyleSheet} from 'react-native';
-import {APP_CONFIG} from "../config/appConfig";
+import {STYLE_VAR} from "../config/stylingVar";
 
 export const GlobalStyles = StyleSheet.create({
     container: {
@@ -27,15 +27,19 @@ export const GlobalStyles = StyleSheet.create({
         justifyContent: 'center'
     },
     titleText: {
-        fontSize: APP_CONFIG.styling.text.size.big,
-        color: APP_CONFIG.styling.text.color.primary
+        fontSize: STYLE_VAR.text.size.big,
+        color: STYLE_VAR.text.color.primary
     },
     primaryText: {
-        fontSize: APP_CONFIG.styling.text.size.normal,
-        color: APP_CONFIG.styling.text.color.primary,
+        fontSize: STYLE_VAR.text.size.normal,
+        color: STYLE_VAR.text.color.primary,
     },
     secondaryText: {
-        fontSize: APP_CONFIG.styling.text.size.small,
-        color: APP_CONFIG.styling.text.color.secondary
+        fontSize: STYLE_VAR.text.size.small,
+        color: STYLE_VAR.text.color.secondary
+    },
+    pressableText: {
+        color: STYLE_VAR.backgroundDefault,
+        textDecorationLine: 'underline'
     }
 });

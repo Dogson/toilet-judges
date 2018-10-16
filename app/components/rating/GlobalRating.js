@@ -5,6 +5,7 @@ import {ToiletRating} from "./ToiletRating"
 import {GlobalStyles} from "../../styles/styles"
 
 import {APP_CONFIG} from "../../config/appConfig";
+import {STYLE_VAR} from "../../config/stylingVar";
 
 export class GlobalRating extends React.Component {
     render() {
@@ -33,7 +34,7 @@ export class GlobalRating extends React.Component {
 
 const styles = StyleSheet.create({
     ratingText: {
-        color: APP_CONFIG.styling.ratingColor,
-        fontSize: APP_CONFIG.styling.text.size.bigger
+        color: STYLE_VAR.ratingColor,
+        fontSize: STYLE_VAR.text.size.bigger
     }
 });

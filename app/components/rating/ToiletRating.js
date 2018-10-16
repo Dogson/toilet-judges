@@ -2,7 +2,7 @@ import React from 'react';
 import {Rating} from 'react-native-ratings';
 import {View, Image} from 'react-native';
 
-import {APP_CONFIG} from "../../config/appConfig";
+import {STYLE_VAR} from "../../config/stylingVar";
 
 const TOILET_IMAGE = require('../../../assets/img/toiletRating.png');
 
@@ -14,7 +14,7 @@ export class ToiletRating extends React.Component {
                 <Rating
                     type='custom'
                     ratingImage={TOILET_IMAGE}
-                    ratingColor={APP_CONFIG.styling.ratingColor}
+                    ratingColor={STYLE_VAR.ratingColor}
                     ratingBackgroundColor={ratingBackgroundColor}
                     ratingCount={5}
                     imageSize={20}
