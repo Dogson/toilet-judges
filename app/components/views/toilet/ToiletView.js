@@ -185,17 +185,13 @@ class ToiletView extends React.Component {
 
     renderNoToilets() {
         return (
-            <View style={{alignSelf: 'center', flexDirection: 'column', flex: 1}}>
-                <Text>Pas de toilettes</Text>
-            </View>
+            <Text>Pas de toilettes</Text>
         )
     }
 
     renderNoGender() {
         return (
-            <View style={{alignSelf: 'center', flexDirection: 'column', flex: 1}}>
-                <Text>Aucune toilette pour votre genre</Text>
-            </View>
+            <Text>Aucune toilette pour votre genre</Text>
         )
     }
 
@@ -230,19 +226,23 @@ class ToiletView extends React.Component {
 
     render() {
         let body;
+        let containerStyle = {};
         if (!this.props.isReady) {
             body = this.renderLoading();
+            containerStyle = GlobalStyles.loading;
         }
         else if (this.props.toilets.length === 0) {
             body = this.renderNoToilets();
+            containerStyle = styles.backgroundStyle
         }
         else if (this.props.currentToiletIndex === -1) {
             body = this.renderNoGender();
+            containerStyle = styles.backgroundStyle;
         }
         else {
             body = this.renderToiletDetails();
         }
-        return <View style={!this.props.isReady && GlobalStyles.loading} key={this.state.toiletPlace._id}>{body}</View>;
+        return <View style={containerStyle} key={this.state.toiletPlace._id}>{body}</View>;
     }
 }
 
@@ -257,7 +257,14 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
     descriptionBlock: {flexDirection: "column", paddingBottom: 7, alignItems: 'center'},
-    descriptionLineItem: {}
+    backgroundStyle: {
+        backgroundColor: 'white',
+        alignSelf: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        flex: 1,
+        width: '100%'
+    }
 });
 
 export default connect(mapStateToProps)(ToiletView);

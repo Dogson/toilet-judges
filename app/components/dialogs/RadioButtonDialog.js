@@ -14,7 +14,6 @@ export class RadioButtonDialog extends React.Component {
         this.props.onPressRadioButton(value);
     }
 
-
     render() {
         return (
             <View>
