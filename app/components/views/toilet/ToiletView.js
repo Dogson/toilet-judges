@@ -86,6 +86,13 @@ class ToiletView extends React.Component {
     }
 
     // RENDERING COMPONENTS
+    renderRating(toilet) {
+        const rating = toilet.rating || {};
+        return <GlobalRating rating={rating}
+                             ratingCount={toilet.ratingCount}></GlobalRating>
+
+    }
+
     renderPlaceType() {
         let iconName;
         switch (this.state.toiletPlace.placeType) {
@@ -161,25 +168,22 @@ class ToiletView extends React.Component {
         return (
             <View style={GlobalStyles.stackContainer}>
                 <View style={GlobalStyles.sectionContainer}>
-                    <GlobalRating rating={toilet.globalRating}
-                                  ratingCount={toilet.ratingCount}></GlobalRating>
-                </View>
-                <View style={GlobalStyles.sectionContainer}>
                     <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
                         {this.renderPlaceType()}
                         {this.renderGender()}
                     </View>
                 </View>
                 {this.renderGenderPopup()}
+                <View style={GlobalStyles.sectionContainer}>
+                    {this.renderRating(toilet)}
+                </View>
             </View>
         );
     }
 
     renderLoading() {
         return (
-
             <ActivityIndicator size="large"/>
-
         )
     }
 

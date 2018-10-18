@@ -17,7 +17,7 @@ export class ToiletRating extends React.Component {
                     ratingColor={STYLE_VAR.ratingColor}
                     ratingBackgroundColor={ratingBackgroundColor}
                     ratingCount={5}
-                    imageSize={20}
+                    imageSize={this.props.size || 20}
                     onFinishRating={this.props.ratingCompleted}
                     style={{paddingVertical: 10}}
                     startingValue={this.props.rating || 0}
