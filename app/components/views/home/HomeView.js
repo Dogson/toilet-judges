@@ -16,8 +16,8 @@ import {ROUTE_NAMES} from "../../../config/routes";
 import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
 
 //COMPONENTS
-import SearchResults from '../../search/SearchResults';
-import YesNoDialog from '../../dialogs/YesNoDialog'
+import {SearchResults} from '../../search/SearchResults';
+import {YesNoDialog} from '../../dialogs/YesNoDialog'
 
 //STYLE
 import {GlobalStyles} from "../../../styles/styles";

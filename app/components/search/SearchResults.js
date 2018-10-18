@@ -6,7 +6,7 @@ import {View, Text, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "
 import {GlobalStyles} from '../../styles/styles'
 import {APP_CONFIG} from "../../config/appConfig";
 
-class SearchResults extends React.Component {
+export class SearchResults extends React.Component {
     mapToiletListWithKey() {
         return this.props.toiletsList.map((toilet) => {
             return {...toilet, key: toilet._id}
@@ -60,6 +60,3 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 });
-
-
-export default SearchResults;

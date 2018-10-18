@@ -18,6 +18,8 @@ import {GlobalRating} from "../../rating/GlobalRating";
 
 //STYLES
 import {GlobalStyles} from '../../../styles/styles'
+import {YesNoDialog} from "../../dialogs/YesNoDialog";
+import {RadioButtonDialog} from "../../dialogs/RadioButtonDialog";
 
 class ToiletView extends React.Component {
 
@@ -54,7 +56,12 @@ class ToiletView extends React.Component {
     }
 
     handleGenderChangeButtonPress() {
-        Alert.alert("Changing gender...");
+        this.setState({showGenderPopup: true});
+    }
+
+    handleChangeGender(gender) {
+        this.setToiletGender(gender);
+        this.setState({showGenderPopup: false});
     }
 
     // DISPATCH ACTIONS
@@ -119,7 +126,7 @@ class ToiletView extends React.Component {
                 iconName = "human-male";
                 break;
             case GENDERS.WOMAN:
-                genderName = "Hommes";
+                genderName = "Femmes";
                 iconName = "human-female";
                 break;
             case GENDERS.MIXT:
@@ -163,15 +170,16 @@ class ToiletView extends React.Component {
                         {this.renderGender()}
                     </View>
                 </View>
+                {this.renderGenderPopup()}
             </View>
         );
     }
 
     renderLoading() {
         return (
-            <View style={GlobalStyles.loading}>
-                <ActivityIndicator size="large"/>
-            </View>
+
+            <ActivityIndicator size="large"/>
+
         )
     }
 
@@ -191,6 +199,35 @@ class ToiletView extends React.Component {
         )
     }
 
+    renderGenderPopup() {
+        const genders = this.props.toilets.map((toilet) => {
+            let genderText;
+            switch (toilet.gender) {
+                case GENDERS.MAN :
+                    genderText = "Hommes";
+                    break;
+                case GENDERS.WOMAN :
+                    genderText = "Femmes";
+                    break;
+                default:
+                    genderText = "Mixtes"
+            }
+            return {
+                value: toilet.gender,
+                text: genderText
+            }
+        });
+        const genderChecked = this.props.toilets[this.props.currentToiletIndex].gender;
+        return <RadioButtonDialog visible={this.state.showGenderPopup}
+                                  title="Afficher les toilettes : "
+                                  options={genders}
+                                  defaultChecked={genderChecked}
+                                  cancel={() => this.setState({showGenderPopup: false})}
+                                  onPressRadioButton={(option) => {
+                                      this.handleChangeGender(option)
+                                  }}/>
+    }
+
     render() {
         let body;
         if (!this.props.isReady) {
@@ -203,9 +240,9 @@ class ToiletView extends React.Component {
             body = this.renderNoGender();
         }
         else {
-            body = this.renderToiletDetails()
+            body = this.renderToiletDetails();
         }
-        return body;
+        return <View style={!this.props.isReady && GlobalStyles.loading} key={this.state.toiletPlace._id}>{body}</View>;
     }
 }
 
