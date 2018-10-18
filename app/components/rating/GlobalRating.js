@@ -19,7 +19,7 @@ export class GlobalRating extends React.Component {
         return (
             <View>
                 <View style={GlobalStyles.flexRow}>
-                    <Text style={styles.ratingText}>{this.props.rating}</Text>
+                    <Text style={styles.ratingText}>{this.props.rating.toFixed(1)}</Text>
                 </View>
                 <View style={GlobalStyles.flexRow}>
                     <ToiletRating rating={this.props.rating} readonly={true}></ToiletRating>
