@@ -1,13 +1,13 @@
-import {ACTIONS_MAPS} from "./MapActions"
+import {ACTIONS_HOME} from "./HomeActions";
 
-export default mapReducer = (state = {}, action) => {
+export default homeReducer = (state = {}, action) => {
     switch (action.type) {
-        case ACTIONS_MAPS.SET_POSITION :
+        case ACTIONS_HOME.SET_POSITION :
             return {
                 ...state,
                 position: action.value
             };
-        case ACTIONS_MAPS.SET_TOILETS_LIST :
+        case ACTIONS_HOME.SET_TOILETS_LIST :
             return {
                 ...state,
                 toiletsList: action.value

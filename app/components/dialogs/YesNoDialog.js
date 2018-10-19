@@ -1,7 +1,8 @@
 import React from 'react';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import {GlobalStyles} from "../../styles/styles";
 
-export default class YesNoDialog extends React.Component {
+export class YesNoDialog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,6 +28,8 @@ export default class YesNoDialog extends React.Component {
                 onConfirmPressed={() => {
                     this.props.confirm();
                 }}
+                titleStyle={GlobalStyles.primaryText}
+                messageStyle={GlobalStyles.secondaryText}
             />
         );
     };
