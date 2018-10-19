@@ -68,7 +68,6 @@ class HomeView extends React.Component {
             this.searchBar.clear();
         }
         else {
-            //TODO stack navigation
             this.setState({showExitDialog: true});
         }
         return true;
