@@ -2,29 +2,35 @@
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator, BackHandler} from "react-native";
+import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar} from "react-native";
 import {SearchBar} from 'react-native-elements';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 let _ = require('lodash');
-
 // CONST
-import {APP_CONFIG} from "../../config/appConfig";
-import {ACTIONS_MAPS} from "./MapActions";
+import {APP_CONFIG} from "../../../config/appConfig";
+import {ACTIONS_HOME} from "./HomeActions";
+import {ROUTE_NAMES} from "../../../config/routes";
 
 // API ENDPOINTS
-import {ToiletsEndpoints} from '../../endpoints/toiletsEndpoints'
+import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
 
 //COMPONENTS
-import SearchResults from './SearchResults';
-import YesNoDialog from '../../components/dialogs/YesNoDialog'
+import {SearchResults} from '../../search/SearchResults';
+import {YesNoDialog} from '../../dialogs/YesNoDialog'
 
-class Map extends React.Component {
+//STYLE
+import {GlobalStyles} from "../../../styles/styles";
+
+class HomeView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {showMap: true, showExitDialog: false};
 
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handleChangeText = _.debounce(this.handleChangeText, 500);
+
+        this.handlePressToilet = this.handlePressToilet.bind(this);
 
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
 
@@ -73,6 +79,12 @@ class Map extends React.Component {
         this.getToiletsBySearch();
     }
 
+    handlePressToilet(toiletPlace) {
+        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
+            toiletPlace: toiletPlace
+        });
+    }
+
     handleExitApp() {
         this.setState({showExitDialog: false});
         this.setState({searchQuery: ''});
@@ -81,27 +93,27 @@ class Map extends React.Component {
 
     // DISPATCH ACTIONS
     setMapPosition = (position) => {
-        this.props.dispatch({type: ACTIONS_MAPS.SET_POSITION, value: position});
+        this.props.dispatch({type: ACTIONS_HOME.SET_POSITION, value: position});
     };
 
     getNearbyToilets = () => {
-        ToiletsEndpoints.getAllToilets()
+        ToiletPlacesListEndpoints.getAllPlaces()
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             })
     };
 
-    getToiletsBySearch(){
-        ToiletsEndpoints.getToiletsFromSearch(this.state.searchQuery)
+    getToiletsBySearch() {
+        ToiletPlacesListEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_MAPS.SET_TOILETS_LIST, value: toilets});
+                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
             });
     }
 
     // Workaround for MyLocationButton not showing
     _onMapReady = () => this.setState({marginBottom: 0});
 
-    //Rendering components
+    // RENDERING COMPONENTS
     renderLoading() {
         return (
             <View style={{alignSelf: 'center', flexDirection: 'column'}}>
@@ -109,7 +121,7 @@ class Map extends React.Component {
                     <ActivityIndicator size="large"/>
                 </View>
                 <View style={{flexDirection: 'row'}}>
-                    <Text>Chargement de la Carte des Toilettes</Text>
+                    <Text style={GlobalStyles.secondaryText}>Chargement de la Carte des Toilettes</Text>
                     <Text style={{fontSize: 6}}>TM</Text>
                     <Text>...</Text>
                 </View>
@@ -143,7 +155,8 @@ class Map extends React.Component {
     }
 
     renderSearchResults() {
-        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}/>
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}
+                              handlePressToilet={this.handlePressToilet}/>
     };
 
     render() {
@@ -152,6 +165,7 @@ class Map extends React.Component {
         let searchResults;
         let loading;
         let exitDialog = this.renderExitDialog();
+        let searchBarStyle = [styles.searchBar];
         if (this.state.showMap) {
             if (this.props.position) {
                 map = this.renderMap();
@@ -159,26 +173,34 @@ class Map extends React.Component {
             else {
                 loading = this.renderLoading();
             }
+
+            searchBarStyle.push(styles.searchBarMap);
         }
         else {
             searchResults = this.renderSearchResults()
         }
 
         result =
-            <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', marginTop: StatusBar.currentHeight}}>
                 {map}
-                <View style={this.state.showMap && styles.searchBarMap}>
+                <View style={searchBarStyle}>
                     <SearchBar
-                        ref={input => { this.searchBar = input }}
+                        ref={input => {
+                            this.searchBar = input
+                        }}
                         platform={APP_CONFIG.platform}
                         onTouchStart={() => this.setState({showMap: false})}
                         onCancel={() => this.setState({showMap: true})}
                         placeholder='Rechercher un restaurant, bar...'
-                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}/>
+                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
+                        containerStyle={[styles.searchBar]}
+                        rightIconContainerStyle={styles.clearButton}
+                        inputStyle={GlobalStyles.primaryText}/>
                 </View>
                 {loading}
                 {searchResults}
                 {exitDialog}
+                <KeyboardSpacer/>
             </View>;
         return result;
     }
@@ -187,16 +209,24 @@ class Map extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        position: state.mapReducer.position,
-        toiletsList: state.mapReducer.toiletsList
+        position: state.homeReducer.position,
+        toiletsList: state.homeReducer.toiletsList
     };
 }
 
 const styles = StyleSheet.create({
     searchBarMap: {
-        top: 0,
-        position: "absolute"
+        position: 'absolute',
+    },
+    searchBar: {
+        top: '1%',
+        left: '1%',
+        borderRadius: 5,
+        width: '98%',
+    },
+    clearButton: {
+        paddingRight: '4%'
     }
 });
 
-export default connect(mapStateToProps)(Map);
+export default connect(mapStateToProps)(HomeView);
