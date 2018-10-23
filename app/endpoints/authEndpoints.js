@@ -1,5 +1,4 @@
 import {APP_CONFIG} from "../config/appConfig";
-import {DeviceStorage} from "../helpers/deviceStorage";
 import {FetchHelper} from "../helpers/fetchHelper";
 
 export class AuthEndpoints {
@@ -15,11 +14,7 @@ export class AuthEndpoints {
             }
         })
             .then((response) => {
-                return response.json()
-                    .then((data) => {
-                        DeviceStorage.saveItem("id_token", data.token);
-                        return data;
-                    });
+                return response.json();
             })
             .catch((err) => {
                 console.log(err);

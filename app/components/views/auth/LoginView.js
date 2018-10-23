@@ -1,21 +1,19 @@
 // LIBRAIRIES
 import React from 'react';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar, TextInput} from "react-native";
+import {View, TextInput} from "react-native";
 import {Button} from 'react-native-elements';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import {DeviceStorage} from "../../../helpers/deviceStorage";
 
 
 // CONST
 import {ACTIONS_AUTH} from "./AuthActions";
+import {ACTIONS_ROOT} from "../root/RootActions";
 
 // API ENDPOINTS
 import {AuthEndpoints} from "../../../endpoints/authEndpoints";
 
 //COMPONENTS
-
-//STYLE
-import {GlobalStyles} from "../../../styles/styles";
 
 class LoginView extends React.Component {
     constructor(props) {
@@ -40,7 +38,9 @@ class LoginView extends React.Component {
     //EVENTS
     handlePressButton() {
         AuthEndpoints.login(this.props.email, this.props.password).then((data) => {
-            this.props.dispatch({type: ACTIONS_AUTH.LOG_IN, value: data.token});
+            DeviceStorage.saveJWT(data.token).then(() => {
+                this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
+            });
         })
     }
 
@@ -67,7 +67,6 @@ class LoginView extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        newJWT: state.authReducer.newJWT,
         password: state.authReducer.password,
         email: state.authReducer.email
     };

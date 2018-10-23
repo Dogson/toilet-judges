@@ -13,10 +13,19 @@ export class ToiletEndpoints {
             }
         })
             .then((response) => {
+                status = response.status;
                 return response.json()
-                    .then((json) => {
-                        return json;
-                    });
             })
+            .then((data) => {
+                if (status === 200) {
+                    return data;
+                }
+                else {
+                    return Promise.reject(data);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 }

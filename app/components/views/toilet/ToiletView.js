@@ -20,6 +20,7 @@ import {GlobalRating} from "../../rating/GlobalRating";
 import {GlobalStyles} from '../../../styles/styles'
 import {YesNoDialog} from "../../dialogs/YesNoDialog";
 import {RadioButtonDialog} from "../../dialogs/RadioButtonDialog";
+import {ERROR_TYPES} from "../../../config/errorTypes";
 
 class ToiletView extends React.Component {
 
@@ -70,6 +71,11 @@ class ToiletView extends React.Component {
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILETS, value: toilets});
                 this.setToiletGender(this.state.userGender);
+            })
+            .catch((err) => {
+                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
+                    this.backToLoginView();
+                }
             });
     }
 
