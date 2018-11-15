@@ -1,41 +1,35 @@
 //@flow
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
 import {Provider as StoreProvider} from 'react-redux';
 import {Provider as PaperProvider} from 'react-native-paper';
-import {createStore, combineReducers} from 'redux';
+import {createStore, combineReducers, connect} from 'redux';
 
 //Reducers
 import homeReducer from "./components/views/home/HomeReducer"
 import toiletReducer from "./components/views/toilet/ToiletReducer"
-import {createStackNavigator} from "react-navigation";
-import {Routes} from "./config/routes";
+import authReducer from "./components/views/auth/AuthReducer";
+import rootReducer from "./components/views/root/RootReducer";
 
-let reducer = combineReducers({homeReducer: homeReducer, toiletReducer: toiletReducer});
+//Components
+import AppRedux from "./components/views/root/AppRedux"
+
+let reducer = combineReducers({
+    rootReducer: rootReducer,
+    homeReducer: homeReducer,
+    toiletReducer: toiletReducer,
+    authReducer: authReducer
+});
 
 const store = createStore(reducer);
 
-const Navigator = createStackNavigator(Routes);
+export class AppRoot extends React.Component<{}> {
 
-class AppRoot extends React.Component<{}> {
     render() {
-        return (
-            <StoreProvider store={store}>
-                <PaperProvider>
-                    <View style={styles.container}>
-                        <Navigator/>
-                    </View>
-                </PaperProvider>
-            </StoreProvider>
-        );
+        return <StoreProvider store={store}>
+            <PaperProvider>
+                <AppRedux/>
+            </PaperProvider>
+        </StoreProvider>
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    }
-});
-
-export default AppRoot;

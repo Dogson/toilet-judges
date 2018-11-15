@@ -10,7 +10,7 @@ export default homeReducer = (state = {}, action) => {
         case ACTIONS_HOME.SET_TOILETS_LIST :
             return {
                 ...state,
-                toiletsList: action.value
+                toiletsList: action.value || []
             };
         default:
             return state;

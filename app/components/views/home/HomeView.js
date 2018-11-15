@@ -10,7 +10,9 @@ let _ = require('lodash');
 // CONST
 import {APP_CONFIG} from "../../../config/appConfig";
 import {ACTIONS_HOME} from "./HomeActions";
+import {ACTIONS_ROOT} from "../root/RootActions";
 import {ROUTE_NAMES} from "../../../config/routes";
+import {ERROR_TYPES} from "../../../config/errorTypes";
 
 // API ENDPOINTS
 import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
@@ -21,6 +23,7 @@ import {YesNoDialog} from '../../dialogs/YesNoDialog'
 
 //STYLE
 import {GlobalStyles} from "../../../styles/styles";
+import {DeviceStorage} from "../../../helpers/deviceStorage";
 
 class HomeView extends React.Component {
     constructor(props) {
@@ -62,13 +65,18 @@ class HomeView extends React.Component {
     }
 
     //HANDLING EVENTS
+    backToLoginView() {
+        DeviceStorage.deleteJWT().then(() => {
+            this.props.dispatch({type: ACTIONS_ROOT.DELETE_JWT});
+        });
+    }
+
     handleBackButtonClick() {
         if (!this.state.showMap) {
             this.setState({showMap: true});
             this.searchBar.clear();
         }
         else {
-            //TODO stack navigation
             this.setState({showExitDialog: true});
         }
         return true;
@@ -99,14 +107,28 @@ class HomeView extends React.Component {
     getNearbyToilets = () => {
         ToiletPlacesListEndpoints.getAllPlaces()
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
+                if (toilets) {
+                    this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
+                }
             })
+            .catch((err) => {
+                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
+                    this.backToLoginView();
+                }
+            });
     };
 
     getToiletsBySearch() {
         ToiletPlacesListEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
-                this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
+                if (toilets) {
+                    this.props.dispatch({type: ACTIONS_HOME.SET_TOILETS_LIST, value: toilets});
+                }
+            })
+            .catch((err) => {
+                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
+                    this.backToLoginView();
+                }
             });
     }
 
@@ -155,7 +177,7 @@ class HomeView extends React.Component {
     }
 
     renderSearchResults() {
-        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList}
+        return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList || []}
                               handlePressToilet={this.handlePressToilet}/>
     };
 
