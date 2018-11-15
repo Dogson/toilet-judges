@@ -24,9 +24,6 @@ export class ToiletPlacesListEndpoints {
                     return Promise.reject(data);
                 }
             })
-            .catch((error) => {
-                console.log(error);
-            });
     }
 
     static getToiletsFromSearch(searchText) {
@@ -54,8 +51,5 @@ export class ToiletPlacesListEndpoints {
                     return Promise.reject(data);
                 }
             })
-            .catch((error) => {
-                console.log(error);
-            });
     }
 }

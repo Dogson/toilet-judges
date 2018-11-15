@@ -16,8 +16,5 @@ export class AuthEndpoints {
             .then((response) => {
                 return response.json();
             })
-            .catch((err) => {
-                console.log(err);
-        })
     }
 }
