@@ -24,8 +24,5 @@ export class ToiletEndpoints {
                     return Promise.reject(data);
                 }
             })
-            .catch((error) => {
-                console.log(error);
-            });
     }
 }
