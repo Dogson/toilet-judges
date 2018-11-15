@@ -5,7 +5,7 @@ import {ToiletRating} from "./ToiletRating"
 import {GlobalStyles} from "../../styles/styles"
 
 import {APP_CONFIG} from "../../config/appConfig";
-import {STYLE_VAR} from "../../config/stylingVar";
+import {STYLE_VAR} from "../../styles/stylingVar";
 
 export class GlobalRating extends React.Component {
 

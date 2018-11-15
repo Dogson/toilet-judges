@@ -2,7 +2,7 @@ import React from 'react';
 import {Rating} from 'react-native-ratings';
 import {View, Image} from 'react-native';
 
-import {STYLE_VAR} from "../../config/stylingVar";
+import {STYLE_VAR} from "../../styles/stylingVar";
 
 const TOILET_IMAGE = require('../../../assets/img/toiletRating.png');
 
