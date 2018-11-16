@@ -34,7 +34,7 @@ class LoginView extends React.Component {
         this.state = {
             emailErrorMessage: null,
             passwordErrorMessage: null,
-            registerScreen: true
+            registerScreen: false
         }
     }
 
