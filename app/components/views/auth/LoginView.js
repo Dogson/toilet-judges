@@ -26,14 +26,15 @@ class LoginView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handlePressButton = this.handlePressButton.bind(this);
+        this.handlePressLoginButton = this.handlePressLoginButton.bind(this);
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
 
         this.state = {
             emailErrorMessage: null,
-            passwordErrorMessage: null
+            passwordErrorMessage: null,
+            registerScreen: true
         }
     }
 
@@ -43,13 +44,26 @@ class LoginView extends React.Component {
         }
     }
 
+
     //EVENTS
-    handlePressButton() {
+    handleChangeEmail(text) {
+        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: text});
+    }
+
+    handleChangePassword(text) {
+        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: text});
+    }
+
+    handleChangeUsername(text) {
+        this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: text});
+    }
+
+    handlePressLoginButton() {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             AuthEndpoints.login(this.props.email, this.props.password).then((data) => {
                 if (data.errorType === ERROR_TYPES.WRONG_CRED) {
-                    this.setState({passwordErrorMessage: "Votre email/mot de passe est incorrect"});
+                    this.setState({passwordErrorMessage: "Votre e-mail/mot de passe est incorrect"});
                     return false;
                 }
                 DeviceStorage.saveJWT(data.token).then(() => {
@@ -64,12 +78,8 @@ class LoginView extends React.Component {
 
     }
 
-    handleChangeEmail(text) {
-        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: text});
-    }
-
-    handleChangePassword(text) {
-        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: text});
+    handlePressSwitch() {
+        this.setState({registerScreen: !this.state.registerScreen});
     }
 
     handleKeyboardSpacerToggle(toggle) {
@@ -80,26 +90,33 @@ class LoginView extends React.Component {
     validateForm() {
         let emailErrorMessage = null;
         let passwordErrorMessage = null;
+        let usernameErrorMessage = null;
         let isValid = true;
         let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!regEmail.test(this.props.email)) {
-            emailErrorMessage = "Veuillez entrer une adresse email valide";
+            emailErrorMessage = "Veuillez entrer une adresse e-mail valide";
             isValid = false;
         }
         if (!this.props.password || this.props.password.length < 1) {
             passwordErrorMessage = "Veuillez entrer un mot de passe";
             isValid = false;
         }
+        if (this.state.registerScreen && (!this.props.username || this.props.username.length < 1)) {
+            usernameErrorMessage = "Veuillez entrer un nom d'utilisateur";
+            isValid = false;
+        }
         this.setState({
             emailErrorMessage: emailErrorMessage,
-            passwordErrorMessage: passwordErrorMessage
+            passwordErrorMessage: passwordErrorMessage,
+            usernameErrorMessage: usernameErrorMessage
         });
         return isValid;
     }
 
+    // RENDER COMPONENTS
     renderLogo() {
         if (this.state.keyboardToggle) {
-            return <View style={[GlobalStyles.flexRow, {marginBottom: 20, alignItems: 'center'}]}>
+            return <View style={[GlobalStyles.flexRow, {alignItems: 'center'}]}>
                 <Image
                     style={{width: 80, height: 80, margin: 10}}
                     source={TOILET_LOGO}
@@ -110,9 +127,13 @@ class LoginView extends React.Component {
             </View>
         }
         else {
-            return <View style={[GlobalStyles.flexColumnCenter, {marginBottom: 50}]}>
+            let size = 120;
+            if (this.state.registerScreen) {
+                size = 100;
+            }
+            return <View style={[GlobalStyles.flexColumnCenter, {marginBottom: 20}]}>
                 <Image
-                    style={{marginLeft: 30}}
+                    style={{marginLeft: 30, width: size, height: size}}
                     source={TOILET_LOGO}
                 />
                 <Text style={GlobalStyles.logoText}>
@@ -122,8 +143,59 @@ class LoginView extends React.Component {
         }
     }
 
-    render() {
-        return <View style={GlobalStyles.withMarginContainer}>
+    renderSwitchButton() {
+        if (!this.state.keyboardToggle) {
+            let questionLabel = 'Pas de compte ?';
+            let buttonTitle = "S'INSCRIRE";
+            if (this.state.registerScreen) {
+                questionLabel = "Vous possédez déja un compte ?";
+                buttonTitle = "SE CONNECTER";
+            }
+            return <View style={{marginTop: 50}}>
+                <Text style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>{questionLabel}</Text>
+                <Button title={buttonTitle}
+                        onPress={() => this.handlePressSwitch()}
+                        buttonStyle={GlobalStyles.secondaryButton}
+                        titleStyle={GlobalStyles.secondaryButtonTitle}
+                ></Button>
+            </View>
+        }
+    }
+
+    renderRegisterSection() {
+        return <View style={[GlobalStyles.withMarginContainer, {marginBottom: 20}]}>
+            {this.renderLogo()}
+            <FormInput label="E-mail"
+                value={this.props.email}
+                       onChangeText={(text) => this.handleChangeEmail(text)}
+                       placeholder="toilette@alaturc.com"
+                       errorMessage={this.state.emailErrorMessage}
+                       keyboardType="email-address"
+                       autoCapitalize="none"></FormInput>
+            <FormInput label="Nom d'utilisateur"
+                value={this.props.username}
+                       onChangeText={(text) => this.handleChangeUsername(text)}
+                       placeholder="Mr. Hankey"
+                       errorMessage={this.state.usernameErrorMessage}
+            ></FormInput>
+            <FormInput label="Mot de passe"
+                       value={this.props.password}
+                       onChangeText={(text) => this.handleChangePassword(text)}
+                       placeholder="**********"
+                       errorMessage={this.state.passwordErrorMessage}
+                       secureTextEntry={true}></FormInput>
+            <Button title="S'INSCRIRE"
+                    onPress={() => this.handlePressLoginButton()}
+                    buttonStyle={GlobalStyles.primaryButton}
+            ></Button>
+            {this.renderSwitchButton()}
+
+            <KeyboardSpacer onToggle={(toggle) => this.handleKeyboardSpacerToggle(toggle)}/>
+        </View>
+    }
+
+    renderLoginSection() {
+        return <View style={[GlobalStyles.withMarginContainer, {marginBottom: 20}]}>
             {this.renderLogo()}
             <FormInput value={this.props.email}
                        onChangeText={(text) => this.handleChangeEmail(text)}
@@ -137,11 +209,23 @@ class LoginView extends React.Component {
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="SE CONNECTER"
-                    onPress={() => this.handlePressButton()}
+                    onPress={() => this.handlePressLoginButton()}
                     buttonStyle={GlobalStyles.primaryButton}
             ></Button>
+            {this.renderSwitchButton()}
+
             <KeyboardSpacer onToggle={(toggle) => this.handleKeyboardSpacerToggle(toggle)}/>
         </View>
+    }
+
+    render() {
+        if (this.state.registerScreen) {
+            return this.renderRegisterSection()
+        }
+        else {
+            return this.renderLoginSection()
+        }
+
     }
 
 

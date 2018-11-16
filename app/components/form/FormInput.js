@@ -10,19 +10,29 @@ export class FormInput extends React.Component {
 
         this.state = {
             inputStyle: defaultStyle,
+            inputContainerStyle: GlobalStyles.inputContainerStyle,
             focus: false
         }
     }
 
     componentWillReceiveProps(props) {
         if (props.errorMessage) {
-            this.setState({inputStyle: GlobalStyles.inputStyleError});
+            this.setState({
+                inputStyle: GlobalStyles.inputStyleError,
+                inputContainerStyle: GlobalStyles.inputContainerStyleError
+            });
         }
         else {
             if (this.state.focus)
-                this.setState({inputStyle: GlobalStyles.inputStyleFocus});
+                this.setState({
+                    inputStyle: GlobalStyles.inputStyleFocus,
+                    inputContainerStyle: GlobalStyles.inputContainerStyle
+                });
             else
-                this.setState({inputStyle: defaultStyle});
+                this.setState({
+                    inputStyle: defaultStyle,
+                    inputContainerStyle: GlobalStyles.inputContainerStyle
+                });
         }
     }
 
@@ -45,7 +55,7 @@ export class FormInput extends React.Component {
         return (
             <Input value={this.props.value}
                    placeholder={this.props.placeholder}
-                   containerStyle={GlobalStyles.inputContainerStyle}
+                   containerStyle={this.state.inputContainerStyle}
                    inputContainerStyle={this.state.inputStyle}
                    onChangeText={this.props.onChangeText}
                    onFocus={() => this.handleOnFocus()}
