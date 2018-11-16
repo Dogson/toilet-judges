@@ -26,7 +26,7 @@ class LoginView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handlePressButton = this.handlePressButton.bind(this);
+        this.handlePressLoginButton = this.handlePressLoginButton.bind(this);
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
@@ -43,8 +43,17 @@ class LoginView extends React.Component {
         }
     }
 
+
     //EVENTS
-    handlePressButton() {
+    handleChangeEmail(text) {
+        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: text});
+    }
+
+    handleChangePassword(text) {
+        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: text});
+    }
+
+    handlePressLoginButton() {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             AuthEndpoints.login(this.props.email, this.props.password).then((data) => {
@@ -64,12 +73,8 @@ class LoginView extends React.Component {
 
     }
 
-    handleChangeEmail(text) {
-        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: text});
-    }
+    handlePressRegisterButton() {
 
-    handleChangePassword(text) {
-        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: text});
     }
 
     handleKeyboardSpacerToggle(toggle) {
@@ -99,7 +104,7 @@ class LoginView extends React.Component {
 
     renderLogo() {
         if (this.state.keyboardToggle) {
-            return <View style={[GlobalStyles.flexRow, {marginBottom: 20, alignItems: 'center'}]}>
+            return <View style={[GlobalStyles.flexRow, {alignItems: 'center'}]}>
                 <Image
                     style={{width: 80, height: 80, margin: 10}}
                     source={TOILET_LOGO}
@@ -110,7 +115,7 @@ class LoginView extends React.Component {
             </View>
         }
         else {
-            return <View style={[GlobalStyles.flexColumnCenter, {marginBottom: 50}]}>
+            return <View style={[GlobalStyles.flexColumnCenter, {marginBottom: 20}]}>
                 <Image
                     style={{marginLeft: 30}}
                     source={TOILET_LOGO}
@@ -122,8 +127,21 @@ class LoginView extends React.Component {
         }
     }
 
+    renderRegisterSection() {
+        if (!this.state.keyboardToggle) {
+            return <View style={{marginTop: 50}}>
+                <Text style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>Pas de compte ?</Text>
+                <Button title="S'INSCRIRE"
+                        onPress={() => this.handlePressRegisterButton()}
+                        buttonStyle={GlobalStyles.secondaryButton}
+                        titleStyle={GlobalStyles.secondaryButtonTitle}
+                ></Button>
+            </View>
+        }
+    }
+
     render() {
-        return <View style={GlobalStyles.withMarginContainer}>
+        return <View style={[GlobalStyles.withMarginContainer, {marginBottom: 20}]}>
             {this.renderLogo()}
             <FormInput value={this.props.email}
                        onChangeText={(text) => this.handleChangeEmail(text)}
@@ -137,9 +155,11 @@ class LoginView extends React.Component {
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="SE CONNECTER"
-                    onPress={() => this.handlePressButton()}
+                    onPress={() => this.handlePressLoginButton()}
                     buttonStyle={GlobalStyles.primaryButton}
             ></Button>
+            {this.renderRegisterSection()}
+
             <KeyboardSpacer onToggle={(toggle) => this.handleKeyboardSpacerToggle(toggle)}/>
         </View>
     }
