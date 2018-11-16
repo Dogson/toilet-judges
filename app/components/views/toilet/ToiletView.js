@@ -8,7 +8,7 @@ import {Icon} from 'react-native-elements';
 import {APP_CONFIG} from "../../../config/appConfig"
 import {GENDERS, PLACE_TYPES} from "../../../config/const";
 import {ACTIONS_TOILET} from "./ToiletActions";
-import {STYLE_VAR} from "../../../config/stylingVar";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 
 // API ENDPOINTS
 import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints';

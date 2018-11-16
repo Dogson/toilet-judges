@@ -13,5 +13,6 @@ export const STYLE_VAR = {
             bigger: 30
         }
     },
-    backgroundDefault: "#1da1f2"
+    backgroundDefault: "#1da1f2",
+    backgroundSecondary: 'white'
 };

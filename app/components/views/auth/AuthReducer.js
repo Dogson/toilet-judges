@@ -12,6 +12,11 @@ export default authReducer = (state = {}, action) => {
                 ...state,
                 email: action.value
             };
+        case ACTIONS_AUTH.USERNAME_FIELD_CHANGE :
+            return {
+                ...state,
+                username: action.value
+            };
         default:
             return state;
     }
