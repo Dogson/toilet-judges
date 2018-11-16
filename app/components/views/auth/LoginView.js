@@ -26,20 +26,21 @@ class LoginView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handlePressLoginButton = this.handlePressLoginButton.bind(this);
+        this.handlePressSubmitButton = this.handlePressSubmitButton.bind(this);
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
+        this.handleChangeUsername = this.handleChangeUsername.bind(this);
         this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
 
         this.state = {
             emailErrorMessage: null,
             passwordErrorMessage: null,
-            registerScreen: true
+            registerScreen: false
         }
     }
 
     componentDidUpdate(prevProps) {
-        if (this.state.hasSubmitted && (prevProps.email !== this.props.email || prevProps.password !== this.props.password)) {
+        if (this.state.hasSubmitted && (prevProps.email !== this.props.email || prevProps.password !== this.props.password || prevProps.username !== this.props.username)) {
             this.validateForm();
         }
     }
@@ -58,17 +59,49 @@ class LoginView extends React.Component {
         this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: text});
     }
 
-    handlePressLoginButton() {
+    handlePressSubmitButton() {
+        let _this = this;
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
-            AuthEndpoints.login(this.props.email, this.props.password).then((data) => {
+            if (this.state.registerScreen) {
+                register();
+            }
+            else {
+                login()
+            }
+        }
+
+        function login() {
+            AuthEndpoints.login(_this.props.email, _this.props.password).then((data) => {
                 if (data.errorType === ERROR_TYPES.WRONG_CRED) {
-                    this.setState({passwordErrorMessage: "Votre e-mail/mot de passe est incorrect"});
+                    _this.setState({passwordErrorMessage: "Votre e-mail/mot de passe est incorrect"});
                     return false;
                 }
+                else if (!data.token) {
+                    console.log(data);
+                    Alert.alert("Une erreur est survenue.");
+                    return;
+                }
                 DeviceStorage.saveJWT(data.token).then(() => {
-                    this.setState({hasSubmitted: false});
-                    this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
+                    _this.setState({hasSubmitted: false});
+                    _this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
+                });
+            }).catch((error) => {
+                console.log(error);
+                Alert.alert("Une erreur est survenue.")
+            })
+        }
+
+        function register() {
+            AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then((data) => {
+                if (!data.token) {
+                    console.log(data);
+                    Alert.alert("Une erreur est survenue.");
+                    return;
+                }
+                DeviceStorage.saveJWT(data.token).then(() => {
+                    _this.setState({hasSubmitted: false});
+                    _this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
                 });
             }).catch((error) => {
                 console.log(error);
@@ -185,7 +218,7 @@ class LoginView extends React.Component {
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="S'INSCRIRE"
-                    onPress={() => this.handlePressLoginButton()}
+                    onPress={() => this.handlePressSubmitButton()}
                     buttonStyle={GlobalStyles.primaryButton}
             ></Button>
             {this.renderSwitchButton()}
@@ -209,7 +242,7 @@ class LoginView extends React.Component {
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="SE CONNECTER"
-                    onPress={() => this.handlePressLoginButton()}
+                    onPress={() => this.handlePressSubmitButton()}
                     buttonStyle={GlobalStyles.primaryButton}
             ></Button>
             {this.renderSwitchButton()}
@@ -234,7 +267,8 @@ class LoginView extends React.Component {
 function mapStateToProps(state) {
     return {
         password: state.authReducer.password,
-        email: state.authReducer.email
+        email: state.authReducer.email,
+        username: state.authReducer.username
     };
 }
 
