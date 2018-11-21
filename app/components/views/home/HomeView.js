@@ -2,8 +2,8 @@
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar} from "react-native";
-import {SearchBar} from 'react-native-elements';
+import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar, Image} from "react-native";
+import {SearchBar, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 let _ = require('lodash');
@@ -24,19 +24,33 @@ import {YesNoDialog} from '../../dialogs/YesNoDialog'
 //STYLE
 import {GlobalStyles} from "../../../styles/styles";
 import {DeviceStorage} from "../../../helpers/deviceStorage";
+import {STYLE_VAR} from "../../../styles/stylingVar";
+
+const TOILET_WELCOME = require('../../../../assets/img/toiletWelcome.png');
 
 class HomeView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {showMap: true, showExitDialog: false};
+        this.state = {
+            showMap: false,
+            showExitDialog: false,
+            showList: false,
+            styles: StyleSheet.create({
+                mapButton: {
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20
+                }
+            })
+        };
 
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handleChangeText = _.debounce(this.handleChangeText, 500);
 
         this.handlePressToilet = this.handlePressToilet.bind(this);
-
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-
+        this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
+        this.handlePressMap = this.handlePressMap.bind(this);
         this.handleExitApp = this.handleExitApp.bind(this);
     }
 
@@ -55,7 +69,7 @@ class HomeView extends React.Component {
                 console.log(error);
             });
 
-        this.setState({marginBottom: 1, showMap: true});
+        this.setState({marginBottom: 1});
 
         this.getNearbyToilets();
     }
@@ -72,15 +86,36 @@ class HomeView extends React.Component {
     }
 
     handleBackButtonClick() {
-        if (!this.state.showMap) {
-            this.setState({showMap: true});
-            this.searchBar.clear();
+        if (this.state.showMap) {
+            this.setState({showMap: false});
+        }
+        else if (this.state.showList) {
+            this.setState({showList: false});
+            this.search.clear();
+            this.search.blur();
         }
         else {
             this.setState({showExitDialog: true});
         }
         return true;
     }
+
+    handleKeyboardSpacerToggle(toggle, height) {
+        let bottom = 20;
+        if (toggle) {
+            bottom += height;
+        }
+        this.setState({
+            styles: StyleSheet.create({
+                mapButton: {
+                    position: 'absolute',
+                    bottom: bottom,
+                    right: 20
+                }
+            })
+        });
+    }
+
 
     handleChangeText(searchQuery) {
         this.setState({...this.state, searchQuery});
@@ -91,6 +126,12 @@ class HomeView extends React.Component {
         this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
             toiletPlace: toiletPlace
         });
+    }
+
+    handlePressMap() {
+        if (!this.state.showMap)
+            this.search.blur();
+        this.setState({showMap: !this.state.showMap});
     }
 
     handleExitApp() {
@@ -181,12 +222,46 @@ class HomeView extends React.Component {
                               handlePressToilet={this.handlePressToilet}/>
     };
 
+    renderWelcome() {
+        let size = 80;
+
+        return <View style={[GlobalStyles.flexColumnCenter, {marginBottom: 20}]}>
+            <Image
+                style={{width: size, height: size}}
+                source={TOILET_WELCOME}
+            />
+            <Text style={GlobalStyles.secondaryText}>
+                Votre prochain havre de paix
+            </Text>
+        </View>
+    }
+
+    renderMapOrListIcon() {
+        let iconName = 'map';
+        if (this.state.showMap) {
+            iconName = 'format-list-bulleted';
+        }
+        return <View style={this.state.styles.mapButton}>
+            <Icon name={iconName}
+                  color={STYLE_VAR.backgroundDefault}
+                  raised={true}
+                  reverse
+                  onPress={() => {
+                      this.handlePressMap()
+                  }}
+            />
+        </View>
+    }
+
     render() {
         let result;
         let map;
         let searchResults;
         let loading;
+        let welcome;
+        let welcomeContainerStyle;
         let exitDialog = this.renderExitDialog();
+        let mapIcon = this.renderMapOrListIcon();
         let searchBarStyle = [styles.searchBar];
         if (this.state.showMap) {
             if (this.props.position) {
@@ -199,22 +274,33 @@ class HomeView extends React.Component {
             searchBarStyle.push(styles.searchBarMap);
         }
         else {
-            searchResults = this.renderSearchResults()
+            if (this.state.showList) {
+                searchResults = this.renderSearchResults()
+            }
+            else {
+                welcome = this.renderWelcome();
+                welcomeContainerStyle = styles.welcomeContainerStyle;
+            }
         }
 
         result =
-            <View style={{flex: 1, justifyContent: 'center', marginTop: StatusBar.currentHeight}}>
+            <View style={[{
+                flex: 1,
+                justifyContent: 'center',
+                marginTop: StatusBar.currentHeight
+            }, welcomeContainerStyle]}>
                 {map}
+                {welcome}
                 <View style={searchBarStyle}>
                     <SearchBar
-                        ref={input => {
-                            this.searchBar = input
-                        }}
+                        ref={search => this.search = search}
                         platform={APP_CONFIG.platform}
-                        onTouchStart={() => this.setState({showMap: false})}
-                        onCancel={() => this.setState({showMap: true})}
+                        onTouchStart={() => this.setState({showMap: false, showList: true})}
                         placeholder='Rechercher un restaurant, bar...'
                         onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
+                        onCancel={() => {
+                            this.setState({showList: false})
+                        }}
                         containerStyle={[styles.searchBar]}
                         rightIconContainerStyle={styles.clearButton}
                         inputStyle={GlobalStyles.primaryText}/>
@@ -222,7 +308,8 @@ class HomeView extends React.Component {
                 {loading}
                 {searchResults}
                 {exitDialog}
-                <KeyboardSpacer/>
+                {mapIcon}
+                <KeyboardSpacer onToggle={(toggle, height) => this.handleKeyboardSpacerToggle(toggle, height)}/>
             </View>;
         return result;
     }
@@ -248,6 +335,9 @@ const styles = StyleSheet.create({
     },
     clearButton: {
         paddingRight: '4%'
+    },
+    welcomeContainerStyle: {
+        paddingBottom: 120
     }
 });
 
