@@ -2,10 +2,10 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import {ToiletRating} from "./ToiletRating"
-import {GlobalStyles} from "../../styles/styles"
+import {GlobalStyles} from "../../../styles/styles"
 
-import {APP_CONFIG} from "../../config/appConfig";
-import {STYLE_VAR} from "../../styles/stylingVar";
+import {APP_CONFIG} from "../../../config/appConfig";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 
 export class GlobalRating extends React.Component {
 

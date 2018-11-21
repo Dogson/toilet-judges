@@ -18,8 +18,8 @@ import {ERROR_TYPES} from "../../../config/errorTypes";
 import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
 
 //COMPONENTS
-import {SearchResults} from '../../search/SearchResults';
-import {YesNoDialog} from '../../dialogs/YesNoDialog'
+import {SearchResults} from '../../widgets/search/SearchResults';
+import {YesNoDialog} from '../../widgets/dialogs/YesNoDialog'
 
 //STYLE
 import {GlobalStyles} from "../../../styles/styles";

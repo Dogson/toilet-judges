@@ -19,7 +19,7 @@ import {AuthEndpoints} from "../../../endpoints/authEndpoints";
 import {GlobalStyles} from "../../../styles/styles";
 
 //COMPONENTS
-import {FormInput} from "../../form/FormInput";
+import {FormInput} from "../../widgets/form/FormInput";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 
 class LoginView extends React.Component {

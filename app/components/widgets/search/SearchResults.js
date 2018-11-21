@@ -3,8 +3,8 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "react-native";
 
 // STYLES
-import {GlobalStyles} from '../../styles/styles'
-import {APP_CONFIG} from "../../config/appConfig";
+import {GlobalStyles} from '../../../styles/styles'
+import {APP_CONFIG} from "../../../config/appConfig";
 
 export class SearchResults extends React.Component {
     mapToiletListWithKey() {

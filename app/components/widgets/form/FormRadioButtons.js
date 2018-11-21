@@ -1,6 +1,6 @@
 import {Text, TouchableNativeFeedback, View} from "react-native";
 import {RadioButton} from "react-native-paper";
-import {GlobalStyles} from "../../styles/styles";
+import {GlobalStyles} from "../../../styles/styles";
 import * as React from "react";
 
 export class FormRadioButtons extends React.Component {

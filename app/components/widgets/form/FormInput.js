@@ -1,6 +1,6 @@
 import {StyleSheet} from "react-native";
 import {Input} from "react-native-elements";
-import {GlobalStyles} from "../../styles/styles";
+import {GlobalStyles} from "../../../styles/styles";
 import * as React from "react";
 
 

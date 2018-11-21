@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {View, Text, TouchableNativeFeedback} from 'react-native';
 import {Button, Dialog, Portal, RadioButton} from 'react-native-paper';
-import {GlobalStyles} from "../../styles/styles";
+import {GlobalStyles} from "../../../styles/styles";
 import {FormRadioButtons} from "../form/FormRadioButtons";
 
 export class RadioButtonDialog extends React.Component {
