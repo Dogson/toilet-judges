@@ -7,8 +7,8 @@ export const STYLE_VAR = {
         },
         size: {
             smaller: 10,
-            small: 13,
-            normal: 16,
+            small: 15,
+            normal: 18,
             big: 22,
             bigger: 30
         }
