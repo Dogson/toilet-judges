@@ -263,6 +263,8 @@ class HomeView extends React.Component {
         let exitDialog = this.renderExitDialog();
         let mapIcon = this.renderMapOrListIcon();
         let searchBarStyle = [styles.searchBar];
+        let searchIconStyle;
+
         if (this.state.showMap) {
             if (this.props.position) {
                 map = this.renderMap();
@@ -273,14 +275,13 @@ class HomeView extends React.Component {
 
             searchBarStyle.push(styles.searchBarMap);
         }
+        else if (this.state.showList) {
+            searchResults = this.renderSearchResults()
+        }
         else {
-            if (this.state.showList) {
-                searchResults = this.renderSearchResults()
-            }
-            else {
-                welcome = this.renderWelcome();
-                welcomeContainerStyle = styles.welcomeContainerStyle;
-            }
+            welcome = this.renderWelcome();
+            welcomeContainerStyle = styles.welcomeContainerStyle;
+            searchIconStyle = styles.welcomeSearchIconStyle;
         }
 
         result =
@@ -297,12 +298,14 @@ class HomeView extends React.Component {
                         platform={APP_CONFIG.platform}
                         onTouchStart={() => this.setState({showMap: false, showList: true})}
                         placeholder='Rechercher un restaurant, bar...'
+                        placeholderStyle={GlobalStyles.secondaryText}
                         onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
                         onCancel={() => {
                             this.setState({showList: false})
                         }}
                         containerStyle={[styles.searchBar]}
                         rightIconContainerStyle={styles.clearButton}
+                        leftIconContainerStyle={{margin: 0, padding: 0}}
                         inputStyle={GlobalStyles.primaryText}/>
                 </View>
                 {loading}
@@ -337,7 +340,12 @@ const styles = StyleSheet.create({
         paddingRight: '4%'
     },
     welcomeContainerStyle: {
-        paddingBottom: 120
+        paddingBottom: 120,
+        paddingLeft: 20,
+        paddingRight: 20
+    },
+    welcomeSearchIconStyle: {
+        marginRight: 0
     }
 });
 

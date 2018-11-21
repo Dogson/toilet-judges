@@ -256,14 +256,14 @@ class ToiletView extends React.Component {
             }
             return {
                 value: toilet.gender,
-                text: genderText
+                label: genderText
             }
         });
         const genderChecked = this.props.toilets[this.props.currentToiletIndex].gender;
         return <RadioButtonDialog visible={this.state.showGenderPopup}
                                   title="Afficher les toilettes : "
                                   options={genders}
-                                  defaultChecked={genderChecked}
+                                  checked={genderChecked}
                                   cancel={() => this.setState({showGenderPopup: false})}
                                   onPressRadioButton={(option) => {
                                       this.handleChangeGenderConfirm(option)

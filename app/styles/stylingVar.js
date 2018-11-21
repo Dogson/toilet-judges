@@ -2,7 +2,7 @@ export const STYLE_VAR = {
     ratingColor: '#F3C22E',
     text: {
         color: {
-            primary: '#2c2c2c',
+            primary: '#4D4D4D',
             secondary: '#777',
         },
         size: {
