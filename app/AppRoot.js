@@ -32,6 +32,10 @@ export class AppRoot extends React.Component<{}> {
     componentDidMount(){
         Font.loadAsync({
             'garment-district': require('../assets/fonts/GarmentDistrict-Regular.otf'),
+            'roboto-regular': require('../assets/fonts/roboto/Roboto-Regular.ttf'),
+            'roboto-medium': require('../assets/fonts/roboto/Roboto-Medium.ttf'),
+            'roboto-bold': require('../assets/fonts/roboto/Roboto-Bold.ttf'),
+            'roboto-thin': require('../assets/fonts/roboto/Roboto-Thin.ttf'),
         })
             .then(() => {
                 this.setState({fontsLoaded: true});
