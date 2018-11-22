@@ -11,7 +11,7 @@ let _ = require('lodash');
 import {APP_CONFIG} from "../../../config/appConfig";
 import {ACTIONS_HOME} from "./HomeActions";
 import {ACTIONS_ROOT} from "../root/RootActions";
-import {ROUTE_NAMES} from "../../../config/routes";
+import {ROUTE_NAMES} from "../../../config/navigationConfig";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 
 // API ENDPOINTS

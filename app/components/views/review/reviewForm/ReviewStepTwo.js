@@ -31,7 +31,7 @@ import {FormRadioButtons} from "../../../widgets/form/FormRadioButtons";
 import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
 import {RadioButtonDialog} from "../../../widgets/dialogs/RadioButtonDialog";
 
-class ReviewFormView extends React.Component {
+class ReviewStepTwo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,9 +39,8 @@ class ReviewFormView extends React.Component {
             toilets: this.props.navigation.getParam('toilets'),
             toiletPlace: this.props.navigation.getParam('toiletPlace'),
             currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
-            hasMixtToilets: -1,
-            hasHandicappedToilets: -1,
-            currentStep: 1
+            hasMixtToilets: this.props.navigation.getParam(''),
+            hasHandicappedToilets: -1
         };
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handlePressRadioButtonMixtToilets = this._handlePressRadioButtonMixtToilets.bind(this);
@@ -76,9 +75,7 @@ class ReviewFormView extends React.Component {
     }
 
     _handlePressSubmit() {
-        if (this.state.currentStep === 1) {
-            this.setState({currentStep: 2});
-        }
+        //todo navigate
     }
 
     setToiletGender(toiletGender) {
@@ -118,17 +115,10 @@ class ReviewFormView extends React.Component {
     }
 
     renderFooter() {
-        let buttonLabel;
-        if (this.state.currentStep === 1) {
-            buttonLabel = 'Suivant';
-        }
-        else {
-            buttonLabel = 'Valider';
-        }
         return (
             <View style={GlobalStyles.footerContainer}>
                 <Button
-                    title={buttonLabel}
+                    title="Suivant"
                     onPress={() => this._handlePressSubmit()}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
                         marginRight: 15,
@@ -139,7 +129,7 @@ class ReviewFormView extends React.Component {
         )
     }
 
-    renderStepOne() {
+    renderBody() {
         let toilet = this.state.toilets[this.state.currentToiletIndex];
         let genderName;
         switch (toilet.gender) {
@@ -222,16 +212,12 @@ class ReviewFormView extends React.Component {
     }
 
     render() {
-        let step;
-        if (this.state.currentStep === 1) {
-            step = this.renderStepOne()
-        }
         return (
             <View style={{
                 flex: 1,
                 backgroundColor: 'white'
             }}>
-                {step}
+                {this.renderBody()}
                 {this.renderFooter()}
             </View>)
     }
@@ -248,4 +234,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ReviewFormView;
+export default ReviewStepOne;

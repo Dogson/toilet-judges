@@ -22,7 +22,7 @@ import {GlobalStyles} from '../../../styles/styles'
 import {YesNoDialog} from "../../widgets/dialogs/YesNoDialog";
 import {RadioButtonDialog} from "../../widgets/dialogs/RadioButtonDialog";
 import {ERROR_TYPES} from "../../../config/errorTypes";
-import {ROUTE_NAMES} from "../../../config/routes";
+import {ROUTE_NAMES} from "../../../config/navigationConfig";
 
 class ToiletView extends React.Component {
 
@@ -70,7 +70,7 @@ class ToiletView extends React.Component {
 
     _handleAddReviewButtonPress() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
-        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_FORM, {
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             currentToiletIndex: this.props.currentToiletIndex,
             rating: toilet.userRating,
             toilets: this.props.toilets,
