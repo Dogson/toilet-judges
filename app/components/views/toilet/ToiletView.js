@@ -1,6 +1,15 @@
 // LIBRAIRIES
 import React from 'react';
-import {BackHandler, Text, ScrollView, View, Alert, StyleSheet, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
+import {
+    BackHandler,
+    Text,
+    ScrollView,
+    View,
+    Alert,
+    StyleSheet,
+    TouchableNativeFeedback,
+    ActivityIndicator
+} from 'react-native';
 import {connect} from "react-redux";
 import {Icon, Button} from 'react-native-elements';
 
@@ -183,45 +192,27 @@ class ToiletView extends React.Component {
         );
     }
 
-    renderUserRating() {
-        const toilet = this.props.toilets[this.props.currentToiletIndex];
-        let buttonLabel = "Donner votre avis";
-        let userRating;
-        if (toilet.userRating) {
-            buttonLabel = "Modifier votre avis";
-            userRating = <ToiletRating rating={toilet.userRating.global} readonly={true} color={STYLE_VAR.backgroundSecondary}></ToiletRating>
-        }
-
-        return <View>
-            {userRating}
-            <Button title={buttonLabel}
-                    onPress={() => this._handleAddReviewButtonPress()}
-                    buttonStyle={GlobalStyles.primaryButton}
-                    titleStyle={GlobalStyles.defaultFont}
-            ></Button>
-        </View>
-
-
-    }
-
     renderToiletDetails() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         return (
-            <ScrollView style={GlobalStyles.stackContainer}>
-                <View style={GlobalStyles.sectionContainer}>
-                    <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
-                        {this.renderPlaceType()}
-                        {this.renderGender()}
+            <View style={{
+                flex: 1,
+                backgroundColor: 'white'
+            }}>
+                <ScrollView style={GlobalStyles.stackContainer}>
+                    <View style={GlobalStyles.sectionContainer}>
+                        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+                            {this.renderPlaceType()}
+                            {this.renderGender()}
+                        </View>
                     </View>
-                </View>
-                {this.renderGenderPopup()}
-                <View style={GlobalStyles.sectionContainer}>
-                    {this.renderRating(toilet)}
-                </View>
-                <View style={GlobalStyles.sectionContainer}>
-                    {this.renderUserRating()}
-                </View>
-            </ScrollView>
+                    {this.renderGenderPopup()}
+                    <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
+                        {this.renderRating(toilet)}
+                    </View>
+                </ScrollView>
+                {this.renderUserRating()}
+            </View>
         );
     }
 
@@ -272,6 +263,31 @@ class ToiletView extends React.Component {
                                   }}/>
     }
 
+    renderUserRating() {
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
+        let buttonLabel = "Donner votre avis";
+        let userRating;
+        if (toilet.userRating) {
+            buttonLabel = "Modifier votre avis";
+            userRating = <ToiletRating rating={toilet.userRating.global} readonly={true}
+                                       color={STYLE_VAR.backgroundSecondary}></ToiletRating>
+        }
+
+        return <View style={GlobalStyles.footerContainer}>
+            {userRating}
+            <Button title={buttonLabel}
+                    onPress={() => this._handleAddReviewButtonPress()}
+                    buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
+                        marginRight: 15,
+                        paddingHorizontal: 10
+                        // marginBottom: 15
+                    }]}
+                    titleStyle={GlobalStyles.defaultFont}
+            ></Button>
+        </View>
+    }
+
+
     render() {
         let body;
         let containerStyle = {flex: 1};
@@ -290,7 +306,9 @@ class ToiletView extends React.Component {
         else {
             body = this.renderToiletDetails();
         }
-        return <View style={containerStyle} key={this.state.toiletPlace._id}>{body}</View>;
+        return <View style={containerStyle} key={this.state.toiletPlace._id}>
+            {body}
+        </View>;
     }
 }
 

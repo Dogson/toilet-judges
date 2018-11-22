@@ -2,6 +2,8 @@ import {Easing, Animated} from 'react-native';
 import HomeView from "../components/views/home/HomeView"
 import ToiletView from "../components/views/toilet/ToiletView"
 import ReviewStepOne from "../components/views/review/reviewForm/ReviewStepOne"
+import ReviewStepTwo from "../components/views/review/reviewForm/ReviewStepTwo"
+import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThree"
 
 const MainRoutes = {
     HomeView: {
@@ -25,19 +27,31 @@ const MainRoutes = {
                 title: navigation.getParam('title')
             };
         }
+    },
+    ReviewStepTwo: {
+        screen: ReviewStepTwo,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title')
+            };
+        }
+    },
+    ReviewStepThree: {
+        screen: ReviewStepThree,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title')
+            };
+        }
     }
 };
-
-// const ReviewFormRoutes: {
-//     Step1: {
-//         screen: StepOneView
-//     }
-// }
 
 const ROUTE_NAMES = {
     HOME: 'Home',
     TOILET: 'Toilet',
-    REVIEW_STEP_ONE: 'ReviewStepOne'
+    REVIEW_STEP_ONE: 'ReviewStepOne',
+    REVIEW_STEP_TWO: 'ReviewStepTwo',
+    REVIEW_STEP_THREE: 'ReviewStepThree'
 };
 
 

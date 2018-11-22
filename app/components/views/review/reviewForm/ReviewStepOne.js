@@ -30,6 +30,7 @@ import {GlobalStyles} from '../../../../styles/styles'
 import {FormRadioButtons} from "../../../widgets/form/FormRadioButtons";
 import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
 import {RadioButtonDialog} from "../../../widgets/dialogs/RadioButtonDialog";
+import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 
 class ReviewStepOne extends React.Component {
     constructor(props) {
@@ -37,8 +38,8 @@ class ReviewStepOne extends React.Component {
         let rating = this.props.navigation.getParam('rating');
         if (!rating) {
             rating = {
-                hasMixtToilets: 1,
-                hasHandicappedToilets: 1
+                hasMixtToilets: -1,
+                hasHandicappedToilets: -1
             }
         }
         if (rating.hasMixtToilets == null) {
@@ -96,7 +97,13 @@ class ReviewStepOne extends React.Component {
     }
 
     _handlePressSubmit() {
-        //todo navigate
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_TWO, {
+            currentToiletIndex: this.state.currentToiletIndex,
+            rating: this.state.rating,
+            toilets: this.state.toilets,
+            toiletPlace: this.state.toiletPlace,
+            title: this.props.navigation.getParam('title'),
+        });
     }
 
     setToiletGender(toiletGender) {
@@ -145,7 +152,8 @@ class ReviewStepOne extends React.Component {
                         marginRight: 15,
                         paddingHorizontal: 10
                         // marginBottom: 15
-                    }]}/>
+                    }]}
+                    titleStyle={GlobalStyles.defaultFont}/>
             </View>
         )
     }
@@ -180,11 +188,10 @@ class ReviewStepOne extends React.Component {
         ];
         const booleanOptionsHandicapped = JSON.parse(JSON.stringify(booleanOptionsMixt));
 
-        return <ScrollView style={{flex: .8, marginBottom: 70}}
-                           overScrollMode="always">
+        return <ScrollView style={{flex: .8, marginBottom: 70}}>
             {this.renderGenderPopup()}
             <View style={{paddingLeft: 15}}>
-                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 1/2</Text>
+                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 1/3</Text>
                 <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
                     Partagez quelques infos sur ces toilettes
                 </Text>
@@ -202,7 +209,7 @@ class ReviewStepOne extends React.Component {
                     </View>
                 </TouchableNativeFeedback>
                 <View style={[GlobalStyles.sectionContainer, GlobalStyles.flexColumnCenter]}>
-                    <Text style={GlobalStyles.primaryText}>Les toilettes sont-elles exclusivement mixtes ?</Text>
+                    <Text style={GlobalStyles.primaryText}>Les toilettes sont-elles mixtes ?</Text>
                     <View style={{alignSelf: 'stretch', marginVertical: 5}}>
                         <FormRadioButtons
                             onPress={(value) => this._handlePressRadioButtonMixtToilets(value)}

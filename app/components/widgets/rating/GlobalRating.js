@@ -20,7 +20,7 @@ export class GlobalRating extends React.Component {
         return <View style={styles.block}>
             {this.renderGlobalRatingText()}
             <View style={GlobalStyles.flexRow}>
-                <ToiletRating rating={this.props.rating.global} readonly={true}></ToiletRating>
+                <ToiletRating size={30} rating={this.props.rating.global} readonly={true}></ToiletRating>
             </View>
             <View style={GlobalStyles.flexRow}>
                 <Text style={GlobalStyles.secondaryText}>{ratingCountText}</Text>
@@ -40,28 +40,20 @@ export class GlobalRating extends React.Component {
         if (this.props.rating.global) {
             return <View style={styles.block}>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Petites attentions</Text>
-                    <ToiletRating rating={this.props.rating.attention} size={15} readonly={true}></ToiletRating>
-                </View>
-                <View style={GlobalStyles.flexRowSpaceBetween}>
                     <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Propreté</Text>
-                    <ToiletRating rating={this.props.rating.cleanliness} size={15} readonly={true}></ToiletRating>
+                    <ToiletRating rating={this.props.rating.cleanliness} size={20} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Décoration</Text>
-                    <ToiletRating rating={this.props.rating.decoration} size={15} readonly={true}></ToiletRating>
+                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Équipements</Text>
+                    <ToiletRating rating={this.props.rating.functionality} size={20} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Etat de fonctionnement</Text>
-                    <ToiletRating rating={this.props.rating.functionality} size={15} readonly={true}></ToiletRating>
+                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Ambiance</Text>
+                    <ToiletRating rating={this.props.rating.decoration} size={20} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
                     <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Qualité/Prix</Text>
-                    <ToiletRating rating={this.props.rating.value} size={15} readonly={true}></ToiletRating>
-                </View>
-                <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Effet de surprise</Text>
-                    <ToiletRating rating={this.props.rating.wowFactor} size={15} readonly={true}></ToiletRating>
+                    <ToiletRating rating={this.props.rating.value} size={20} readonly={true}></ToiletRating>
                 </View>
             </View>;
         }

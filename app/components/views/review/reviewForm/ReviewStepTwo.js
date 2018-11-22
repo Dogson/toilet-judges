@@ -30,6 +30,7 @@ import {GlobalStyles} from '../../../../styles/styles'
 import {FormRadioButtons} from "../../../widgets/form/FormRadioButtons";
 import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
 import {RadioButtonDialog} from "../../../widgets/dialogs/RadioButtonDialog";
+import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 
 class ReviewStepTwo extends React.Component {
     constructor(props) {
@@ -39,15 +40,10 @@ class ReviewStepTwo extends React.Component {
             toilets: this.props.navigation.getParam('toilets'),
             toiletPlace: this.props.navigation.getParam('toiletPlace'),
             currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
-            hasMixtToilets: this.props.navigation.getParam(''),
-            hasHandicappedToilets: -1
         };
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
-        this._handlePressRadioButtonMixtToilets = this._handlePressRadioButtonMixtToilets.bind(this);
-        this._handlePressRadioButtonHandicappedToilets = this._handlePressRadioButtonHandicappedToilets.bind(this);
-        this._handleGenderChangeButtonPress = this._handleGenderChangeButtonPress.bind(this);
-        this._handleChangeGenderConfirm = this._handleChangeGenderConfirm.bind(this);
         this._handlePressSubmit = this._handlePressSubmit.bind(this);
+        this._handleFinishRating = this._handleFinishRating.bind(this);
     }
 
 
@@ -57,63 +53,26 @@ class ReviewStepTwo extends React.Component {
         return true;
     }
 
-    _handlePressRadioButtonMixtToilets(value) {
-        this.setState({hasMixtToilets: value});
-    }
-
-    _handlePressRadioButtonHandicappedToilets(value) {
-        this.setState({hasHandicappedToilets: value})
-    }
-
-    _handleGenderChangeButtonPress() {
-        this.setState({showGenderPopup: true});
-    }
-
-    _handleChangeGenderConfirm(gender) {
-        this.setToiletGender(gender);
-        this.setState({showGenderPopup: false});
-    }
-
     _handlePressSubmit() {
-        //todo navigate
-    }
-
-    setToiletGender(toiletGender) {
-        let index = this.state.toilets.findIndex((toilet) => {
-            return toilet.gender === toiletGender;
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_THREE, {
+            currentToiletIndex: this.state.currentToiletIndex,
+            rating: this.state.rating,
+            toilets: this.state.toilets,
+            toiletPlace: this.state.toiletPlace,
+            title: this.props.navigation.getParam('title'),
         });
-        this.setState({currentToiletIndex: index});
     }
 
-    renderGenderPopup() {
-        const genders = this.state.toilets.map((toilet) => {
-            let genderText;
-            switch (toilet.gender) {
-                case GENDERS.MAN :
-                    genderText = "Hommes";
-                    break;
-                case GENDERS.WOMAN :
-                    genderText = "Femmes";
-                    break;
-                default:
-                    genderText = "Mixtes"
+    _handleFinishRating(value) {
+        this.setState(prevState => ({
+            rating: {
+                ...prevState.rating,
+                global: value
             }
-            return {
-                value: toilet.gender,
-                label: genderText
-            }
-        });
-        const genderChecked = this.state.toilets[this.state.currentToiletIndex].gender;
-        return <RadioButtonDialog visible={this.state.showGenderPopup}
-                                  title="Afficher les toilettes : "
-                                  options={genders}
-                                  checked={genderChecked}
-                                  cancel={() => this.setState({showGenderPopup: false})}
-                                  onPressRadioButton={(option) => {
-                                      this._handleChangeGenderConfirm(option)
-                                  }}/>
+        }))
     }
 
+    //RENDER COMPONENTS
     renderFooter() {
         return (
             <View style={GlobalStyles.footerContainer}>
@@ -124,89 +83,27 @@ class ReviewStepTwo extends React.Component {
                         marginRight: 15,
                         paddingHorizontal: 10
                         // marginBottom: 15
-                    }]}/>
+                    }]}
+                    titleStyle={GlobalStyles.defaultFont}/>
             </View>
         )
     }
 
     renderBody() {
         let toilet = this.state.toilets[this.state.currentToiletIndex];
-        let genderName;
-        switch (toilet.gender) {
-            case GENDERS.MAN:
-                genderName = "Hommes";
-                break;
-            case GENDERS.WOMAN:
-                genderName = "Femmes";
-                break;
-            case GENDERS.MIXT:
-                genderName = "Mixtes";
-                break;
-        }
-        const booleanOptionsMixt = [
-            {
-                label: 'Oui',
-                value: true
-            },
-            {
-                label: 'Non',
-                value: false
-            },
-            {
-                label: 'Ne sait pas',
-                value: -1
-            }
-        ];
-        const booleanOptionsHandicapped = JSON.parse(JSON.stringify(booleanOptionsMixt));
 
-        return <ScrollView style={{flex: .8, marginBottom: 70}}
-                           overScrollMode="always">
-            {this.renderGenderPopup()}
-            <View style={{paddingLeft: 15}}>
-                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 1/2</Text>
+        return <ScrollView style={{flex: .8, marginBottom: 70}}>
+            <View style={{paddingHorizontal: 15}}>
+                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 2/3</Text>
                 <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
-                    Partagez quelques infos sur ces toilettes
+                    Comment s'est déroulée votre expérience ?
                 </Text>
-            </View>
-            <View style={GlobalStyles.flexColumn}>
-                <View style={[GlobalStyles.flexRowSpaceBetween, GlobalStyles.sectionContainer]}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Établissement</Text>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>{this.state.toiletPlace.placeName}</Text>
+                <View
+                    style={{paddingHorizontal: 15}}>
+                    <ToiletRating size={40}
+                                  onFinishRating={this._handleFinishRating}
+                                  rating={this.state.rating.global}/>
                 </View>
-                <TouchableNativeFeedback onPress={this._handleGenderChangeButtonPress}>
-                    <View style={[GlobalStyles.flexRowSpaceBetween, GlobalStyles.sectionContainer]}>
-                        <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Sexe</Text>
-                        <Text
-                            style={[GlobalStyles.primaryText, GlobalStyles.pressableText, {marginTop: 5}]}>{genderName}</Text>
-                    </View>
-                </TouchableNativeFeedback>
-                <View style={[GlobalStyles.sectionContainer, GlobalStyles.flexColumnCenter]}>
-                    <Text style={GlobalStyles.primaryText}>Les toilettes sont-elles exclusivement mixtes ?</Text>
-                    <View style={{alignSelf: 'stretch', marginVertical: 5}}>
-                        <FormRadioButtons
-                            onPress={(value) => this._handlePressRadioButtonMixtToilets(value)}
-                            options={booleanOptionsMixt}
-                            checked={this.state.hasMixtToilets}
-                            textStyle={GlobalStyles.secondaryText}
-                            flexDirection='row'
-                        />
-                    </View>
-                </View>
-                <View style={[GlobalStyles.sectionContainer, GlobalStyles.flexColumnCenter, {borderBottomWidth: 0}]}>
-                    <Text style={GlobalStyles.primaryText}>Existe-t-il des toilettes adaptées aux personnes handicappées
-                        ?</Text>
-                    <View style={{alignSelf: 'stretch', marginVertical: 5}}>
-                        <FormRadioButtons
-                            title="kek"
-                            onPress={(value) => this._handlePressRadioButtonHandicappedToilets(value)}
-                            options={booleanOptionsHandicapped}
-                            checked={this.state.hasHandicappedToilets}
-                            textStyle={GlobalStyles.secondaryText}
-                            flexDirection='row'
-                        />
-                    </View>
-                </View>
-
             </View>
         </ScrollView>
     }
@@ -234,4 +131,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ReviewStepOne;
+export default ReviewStepTwo;
