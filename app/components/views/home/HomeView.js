@@ -44,18 +44,18 @@ class HomeView extends React.Component {
             })
         };
 
-        this.handleChangeText = this.handleChangeText.bind(this);
-        this.handleChangeText = _.debounce(this.handleChangeText, 500);
+        this._handleChangeText = this._handleChangeText.bind(this);
+        this._handleChangeText = _.debounce(this._handleChangeText, 500);
 
-        this.handlePressToilet = this.handlePressToilet.bind(this);
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-        this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
-        this.handlePressMap = this.handlePressMap.bind(this);
-        this.handleExitApp = this.handleExitApp.bind(this);
+        this._handlePressToilet = this._handlePressToilet.bind(this);
+        this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
+        this._handleKeyboardSpacerToggle = this._handleKeyboardSpacerToggle.bind(this);
+        this._handlePressMap = this._handlePressMap.bind(this);
+        this._handleExitApp = this._handleExitApp.bind(this);
     }
 
     componentWillMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.addEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
     componentDidMount() {
@@ -75,7 +75,7 @@ class HomeView extends React.Component {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.removeEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
     //HANDLING EVENTS
@@ -85,7 +85,7 @@ class HomeView extends React.Component {
         });
     }
 
-    handleBackButtonClick() {
+    _handleBackButtonClick() {
         if (this.state.showMap) {
             this.setState({showMap: false});
         }
@@ -100,7 +100,7 @@ class HomeView extends React.Component {
         return true;
     }
 
-    handleKeyboardSpacerToggle(toggle, height) {
+    _handleKeyboardSpacerToggle(toggle, height) {
         let bottom = 20;
         if (toggle) {
             bottom += height;
@@ -117,24 +117,24 @@ class HomeView extends React.Component {
     }
 
 
-    handleChangeText(searchQuery) {
+    _handleChangeText(searchQuery) {
         this.setState({...this.state, searchQuery});
         this.getToiletsBySearch();
     }
 
-    handlePressToilet(toiletPlace) {
+    _handlePressToilet(toiletPlace) {
         this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
             toiletPlace: toiletPlace
         });
     }
 
-    handlePressMap() {
+    _handlePressMap() {
         if (!this.state.showMap)
             this.search.blur();
         this.setState({showMap: !this.state.showMap});
     }
 
-    handleExitApp() {
+    _handleExitApp() {
         this.setState({showExitDialog: false});
         this.setState({searchQuery: ''});
         BackHandler.exitApp();
@@ -195,7 +195,7 @@ class HomeView extends React.Component {
         return <YesNoDialog showAlert={this.state.showExitDialog}
                             title="Souhaitez-vous quitter l'application ?"
                             cancel={() => this.setState({showExitDialog: false})}
-                            confirm={this.handleExitApp}
+                            confirm={this._handleExitApp}
         />
     }
 
@@ -219,7 +219,7 @@ class HomeView extends React.Component {
 
     renderSearchResults() {
         return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList || []}
-                              handlePressToilet={this.handlePressToilet}/>
+                              _handlePressToilet={this._handlePressToilet}/>
     };
 
     renderWelcome() {
@@ -247,7 +247,7 @@ class HomeView extends React.Component {
                   raised={true}
                   reverse
                   onPress={() => {
-                      this.handlePressMap()
+                      this._handlePressMap()
                   }}
             />
         </View>
@@ -298,21 +298,19 @@ class HomeView extends React.Component {
                         platform={APP_CONFIG.platform}
                         onTouchStart={() => this.setState({showMap: false, showList: true})}
                         placeholder='Rechercher un restaurant, bar...'
-                        placeholderStyle={GlobalStyles.secondaryText}
-                        onChangeText={(searchQuery) => this.handleChangeText(searchQuery)}
+                        onChangeText={(searchQuery) => this._handleChangeText(searchQuery)}
                         onCancel={() => {
                             this.setState({showList: false})
                         }}
                         containerStyle={[styles.searchBar]}
                         rightIconContainerStyle={styles.clearButton}
-                        leftIconContainerStyle={{margin: 0, padding: 0}}
                         inputStyle={GlobalStyles.primaryText}/>
                 </View>
                 {loading}
                 {searchResults}
                 {exitDialog}
                 {mapIcon}
-                <KeyboardSpacer onToggle={(toggle, height) => this.handleKeyboardSpacerToggle(toggle, height)}/>
+                <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
             </View>;
         return result;
     }

@@ -28,7 +28,7 @@ export class SearchResults extends React.Component {
                 data={this.mapToiletListWithKey()}
                 keyboardShouldPersistTaps='always'
                 renderItem={({item}) =>
-                    <TouchableNativeFeedback onPress={() => this.props.handlePressToilet(item)}
+                    <TouchableNativeFeedback onPress={() => this.props._handlePressToilet(item)}
                                              background={TouchableNativeFeedback.SelectableBackground()}>
                         <View styles={GlobalStyles.sectionContainer}>
                             <Text style={[styles.item, GlobalStyles.primaryText]}>

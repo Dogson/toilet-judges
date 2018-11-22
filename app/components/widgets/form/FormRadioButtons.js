@@ -37,6 +37,7 @@ export class FormRadioButtons extends React.Component {
     render() {
         return (
             <RadioGroup
+                title={this.props.title}
                 onPress={this._handlePressRadioButton}
                 radioButtons={this.state.options}
                 flexDirection={this.props.flexDirection}

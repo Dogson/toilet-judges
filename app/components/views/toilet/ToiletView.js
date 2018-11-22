@@ -34,14 +34,14 @@ class ToiletView extends React.Component {
                 toiletPlace: this.props.navigation.getParam('toiletPlace'),
                 userGender: APP_CONFIG.defaultGender
             };
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-        this.handleGenderChangeButtonPress = this.handleGenderChangeButtonPress.bind(this);
-        this.handleAddReviewButtonPress = this.handleAddReviewButtonPress.bind(this);
+        this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
+        this._handleGenderChangeButtonPress = this._handleGenderChangeButtonPress.bind(this);
+        this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
     }
 
 
     componentWillMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.addEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
     componentDidMount() {
@@ -50,31 +50,32 @@ class ToiletView extends React.Component {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.removeEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
     // HANDLING EVENTS
-    handleBackButtonClick() {
+    _handleBackButtonClick() {
         this.props.navigation.goBack(null);
         return true;
     }
 
-    handleGenderChangeButtonPress() {
+    _handleGenderChangeButtonPress() {
         this.setState({showGenderPopup: true});
     }
 
-    handleChangeGenderConfirm(gender) {
+    _handleChangeGenderConfirm(gender) {
         this.setToiletGender(gender);
         this.setState({showGenderPopup: false});
     }
 
-    handleAddReviewButtonPress() {
+    _handleAddReviewButtonPress() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_FORM, {
+            currentToiletIndex: this.props.currentToiletIndex,
             rating: toilet.userRating,
-            toilet: toilet,
+            toilets: this.props.toilets,
             toiletPlace: this.state.toiletPlace,
-            title: toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis'
+            title: toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
         });
     }
 
@@ -164,7 +165,7 @@ class ToiletView extends React.Component {
         }
         return (
             <TouchableNativeFeedback
-                onPress={this.handleGenderChangeButtonPress}>
+                onPress={this._handleGenderChangeButtonPress}>
                 <View style={styles.descriptionBlock}>
                     <Icon reverse name={iconName}
                           type="material-community"
@@ -194,8 +195,9 @@ class ToiletView extends React.Component {
         return <View>
             {userRating}
             <Button title={buttonLabel}
-                    onPress={() => this.handleAddReviewButtonPress()}
+                    onPress={() => this._handleAddReviewButtonPress()}
                     buttonStyle={GlobalStyles.primaryButton}
+                    titleStyle={GlobalStyles.defaultFont}
             ></Button>
         </View>
 
@@ -266,7 +268,7 @@ class ToiletView extends React.Component {
                                   checked={genderChecked}
                                   cancel={() => this.setState({showGenderPopup: false})}
                                   onPressRadioButton={(option) => {
-                                      this.handleChangeGenderConfirm(option)
+                                      this._handleChangeGenderConfirm(option)
                                   }}/>
     }
 

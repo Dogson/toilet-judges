@@ -36,14 +36,14 @@ export class FormInput extends React.Component {
         }
     }
 
-    handleOnFocus() {
+    _handleOnFocus() {
         this.setState({
             focus: true,
             inputStyle: GlobalStyles.inputStyleFocus
         });
     }
 
-    handleOnBlur() {
+    _handleOnBlur() {
         this.setState({
             focus: false,
             inputStyle: defaultStyle
@@ -58,8 +58,8 @@ export class FormInput extends React.Component {
                    containerStyle={this.state.inputContainerStyle}
                    inputContainerStyle={this.state.inputStyle}
                    onChangeText={this.props.onChangeText}
-                   onFocus={() => this.handleOnFocus()}
-                   onBlur={() => this.handleOnBlur()}
+                   onFocus={() => this._handleOnFocus()}
+                   onBlur={() => this._handleOnBlur()}
                    errorStyle={{color: "red"}}
                    errorMessage={this.props.errorMessage}
                    keyboardType={this.props.keyboardType}
