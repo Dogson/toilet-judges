@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../../config/const";
+import {GENDERS, PLACE_TYPES, RATINGS} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 // API ENDPOINTS
@@ -90,7 +90,7 @@ class ReviewStepTwo extends React.Component {
     }
 
     renderBody() {
-        let toilet = this.state.toilets[this.state.currentToiletIndex];
+        let ratingString = this.state.rating && this.state.rating.global ? RATINGS[this.state.rating.global] : '';
 
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingHorizontal: 15}}>
@@ -104,6 +104,7 @@ class ReviewStepTwo extends React.Component {
                                   onFinishRating={this._handleFinishRating}
                                   rating={this.state.rating.global}/>
                 </View>
+                <Text style={[GlobalStyles.primaryText, {alignSelf: 'center', color: STYLE_VAR.text.color.secondary, fontSize: STYLE_VAR.text.size.big}]}>{ratingString}</Text>
             </View>
         </ScrollView>
     }
