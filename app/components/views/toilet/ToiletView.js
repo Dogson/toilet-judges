@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../config/const";
+import {GENDERS, GENDER_STRING, PLACE_TYPES} from "../../../config/const";
 import {ACTIONS_TOILET} from "./ToiletActions";
 import {STYLE_VAR} from "../../../styles/stylingVar";
 
@@ -31,7 +31,7 @@ import {GlobalStyles} from '../../../styles/styles'
 import {YesNoDialog} from "../../widgets/dialogs/YesNoDialog";
 import {RadioButtonDialog} from "../../widgets/dialogs/RadioButtonDialog";
 import {ERROR_TYPES} from "../../../config/errorTypes";
-import {ROUTE_NAMES} from "../../../config/navigationConfig";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 
 class ToiletView extends React.Component {
 
@@ -98,7 +98,14 @@ class ToiletView extends React.Component {
     }
 
     _handleYourReviewPress() {
-
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
+            {
+                placeName: this.state.toiletPlace.name,
+                gender: toilet.gender,
+                userRating: toilet.userRating,
+                transition: TRANSITIONS.FROM_BOTTOM,
+            });
     }
 
     // DISPATCH ACTIONS
@@ -174,19 +181,17 @@ class ToiletView extends React.Component {
     }
 
     renderGender() {
-        let genderName;
+        const gender = this.props.toilets[this.props.currentToiletIndex].gender;
+        const genderName = GENDER_STRING[gender];
         let iconName;
-        switch (this.props.toilets[this.props.currentToiletIndex].gender) {
+        switch (gender) {
             case GENDERS.MAN:
-                genderName = "Hommes";
                 iconName = "human-male";
                 break;
             case GENDERS.WOMAN:
-                genderName = "Femmes";
                 iconName = "human-female";
                 break;
             case GENDERS.MIXT:
-                genderName = "Mixtes";
                 iconName = "human-male-female";
                 break;
             default:
@@ -256,17 +261,7 @@ class ToiletView extends React.Component {
 
     renderGenderPopup() {
         const genders = this.props.toilets.map((toilet) => {
-            let genderText;
-            switch (toilet.gender) {
-                case GENDERS.MAN :
-                    genderText = "Hommes";
-                    break;
-                case GENDERS.WOMAN :
-                    genderText = "Femmes";
-                    break;
-                default:
-                    genderText = "Mixtes"
-            }
+            let genderText = GENDER_STRING[toilet.gender];
             return {
                 value: toilet.gender,
                 label: genderText

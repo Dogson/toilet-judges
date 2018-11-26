@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../../config/const";
+import {GENDER_STRING, GENDERS, PLACE_TYPES} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 // API ENDPOINTS
@@ -114,17 +114,7 @@ class ReviewStepOne extends React.Component {
 
     renderGenderPopup() {
         const genders = this.state.toilets.map((toilet) => {
-            let genderText;
-            switch (toilet.gender) {
-                case GENDERS.MAN :
-                    genderText = "Hommes";
-                    break;
-                case GENDERS.WOMAN :
-                    genderText = "Femmes";
-                    break;
-                default:
-                    genderText = "Mixtes"
-            }
+            let genderText = GENDER_STRING[toilet.gender];
             return {
                 value: toilet.gender,
                 label: genderText
@@ -157,18 +147,7 @@ class ReviewStepOne extends React.Component {
 
     renderBody() {
         let toilet = this.state.toilets[this.state.currentToiletIndex];
-        let genderName;
-        switch (toilet.gender) {
-            case GENDERS.MAN:
-                genderName = "Hommes";
-                break;
-            case GENDERS.WOMAN:
-                genderName = "Femmes";
-                break;
-            case GENDERS.MIXT:
-                genderName = "Mixtes";
-                break;
-        }
+        let genderName = GENDER_STRING[toilet.gender];
         const booleanOptionsMixt = [
             {
                 label: 'Oui',

@@ -11,6 +11,9 @@ export const GENDERS = {
     MIXT: 0
 };
 
+export const GENDER_STRING =
+    ['Mixtes', 'Hommes', 'Femmes'];
+
 export const RATINGS = [
     '',
     'Horrible',
