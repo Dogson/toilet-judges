@@ -148,9 +148,7 @@ class ReviewStepOne extends React.Component {
                     title="Suivant"
                     onPress={() => this._handlePressSubmit()}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
-                        marginRight: 15,
                         paddingHorizontal: 10
-                        // marginBottom: 15
                     }]}
                     titleStyle={GlobalStyles.defaultFont}/>
             </View>

@@ -46,6 +46,7 @@ class ToiletView extends React.Component {
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handleGenderChangeButtonPress = this._handleGenderChangeButtonPress.bind(this);
         this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+        this._handleYourReviewPress = this._handleYourReviewPress.bind(this);
         this._handleFinishReviewing = this._handleFinishReviewing.bind(this);
     }
 
@@ -94,6 +95,10 @@ class ToiletView extends React.Component {
             title: toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
             onFinishRating: this._handleFinishReviewing
         });
+    }
+
+    _handleYourReviewPress() {
+
     }
 
     // DISPATCH ACTIONS
@@ -284,21 +289,25 @@ class ToiletView extends React.Component {
         let userRating;
         if (toilet.userRating) {
             buttonLabel = "Modifier votre avis";
-            userRating = <ToiletRating rating={toilet.userRating.rating.global} readonly={true}></ToiletRating>
+            userRating =
+                <View styles={[GlobalStyles.flexColumnCenter]}>
+                    <Text style={GlobalStyles.secondaryText}>Votre avis</Text>
+                    <ToiletRating size={15} rating={toilet.userRating.rating.global} readonly={true}></ToiletRating>
+                </View>
         }
 
-        return <View style={GlobalStyles.footerContainer}>
-            {userRating}
-            <Button title={buttonLabel}
-                    onPress={() => this._handleAddReviewButtonPress()}
-                    buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
-                        marginRight: 15,
-                        paddingHorizontal: 10
-                        // marginBottom: 15
-                    }]}
-                    titleStyle={GlobalStyles.defaultFont}
-            ></Button>
-        </View>
+        return <TouchableNativeFeedback onPress={this._handleYourReviewPress}>
+            <View style={GlobalStyles.footerContainer}>
+                <Button title={buttonLabel}
+                        onPress={() => this._handleAddReviewButtonPress()}
+                        buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
+                            // marginBottom: 15
+                        }]}
+                        titleStyle={GlobalStyles.defaultFont}
+                ></Button>
+                {userRating}
+            </View>
+        </TouchableNativeFeedback>
     }
 
 

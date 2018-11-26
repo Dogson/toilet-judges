@@ -85,9 +85,7 @@ class ReviewStepTwo extends React.Component {
                     title="Suivant"
                     onPress={() => this._handlePressSubmit()}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
-                        marginRight: 15,
                         paddingHorizontal: 10
-                        // marginBottom: 15
                     }]}
                     disabled={!this.state.userRating.rating || this.state.userRating.rating.global == null}
                     titleStyle={GlobalStyles.defaultFont}/>
