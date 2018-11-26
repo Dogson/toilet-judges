@@ -38,16 +38,10 @@ class ReviewStepOne extends React.Component {
         let userRating = this.props.navigation.getParam('userRating');
         if (!userRating) {
             userRating = {
-                hasMixtToilets: -1,
-                hasHandicappedToilets: -1,
+                hasMixtToilets: null,
+                hasHandicappedToilets: null,
                 rating: null
             }
-        }
-        if (userRating.hasMixtToilets == null) {
-            userRating.hasMixtToilets = -1;
-        }
-        if (userRating.hasHandicappedToilets == null) {
-            userRating.hasHandicappedToilets = -1;
         }
         this.state = {
             userRating: userRating,
@@ -188,7 +182,7 @@ class ReviewStepOne extends React.Component {
             },
             {
                 label: 'Ne sait pas',
-                value: -1
+                value: null
             }
         ];
         const booleanOptionsHandicapped = JSON.parse(JSON.stringify(booleanOptionsMixt));

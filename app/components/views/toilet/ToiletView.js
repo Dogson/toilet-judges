@@ -282,11 +282,9 @@ class ToiletView extends React.Component {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         let buttonLabel = "Donner votre avis";
         let userRating;
-        console.log(toilet);
         if (toilet.userRating) {
             buttonLabel = "Modifier votre avis";
-            userRating = <ToiletRating rating={toilet.userRating.global} readonly={true}
-                                       color={STYLE_VAR.backgroundSecondary}></ToiletRating>
+            userRating = <ToiletRating rating={toilet.userRating.rating.global} readonly={true}></ToiletRating>
         }
 
         return <View style={GlobalStyles.footerContainer}>
