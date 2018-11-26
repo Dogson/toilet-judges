@@ -25,4 +25,34 @@ export class ToiletEndpoints {
                 }
             })
     }
+
+    static rateToilet(toiletId, userRating) {
+        const url = APP_CONFIG.apiUrl;
+        const apiKey = "rating";
+
+        return FetchHelper.post({
+            url: url,
+            apiKey: apiKey,
+            data: {
+                toiletId: toiletId,
+                userRating: userRating
+            }
+        })
+            .then((response) => {
+                console.log(response);
+                status = response.status;
+                return response.json()
+            })
+            .then((data) => {
+                console.log(data);
+                if (status === 200) {
+                    return data;
+                }
+                else {
+                    return Promise.reject(data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+    }
 }

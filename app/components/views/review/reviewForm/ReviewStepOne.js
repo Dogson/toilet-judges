@@ -35,21 +35,22 @@ import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 class ReviewStepOne extends React.Component {
     constructor(props) {
         super(props);
-        let rating = this.props.navigation.getParam('rating');
-        if (!rating) {
-            rating = {
+        let userRating = this.props.navigation.getParam('userRating');
+        if (!userRating) {
+            userRating = {
                 hasMixtToilets: -1,
-                hasHandicappedToilets: -1
+                hasHandicappedToilets: -1,
+                rating: null
             }
         }
-        if (rating.hasMixtToilets == null) {
-            rating.hasMixtToilets = -1;
+        if (userRating.hasMixtToilets == null) {
+            userRating.hasMixtToilets = -1;
         }
-        if (rating.hasHandicappedToilets == null) {
-            rating.hasHandicappedToilets = -1;
+        if (userRating.hasHandicappedToilets == null) {
+            userRating.hasHandicappedToilets = -1;
         }
         this.state = {
-            rating: rating,
+            userRating: userRating,
             toilets: this.props.navigation.getParam('toilets'),
             toiletPlace: this.props.navigation.getParam('toiletPlace'),
             currentToiletIndex: this.props.navigation.getParam('currentToiletIndex')
@@ -71,8 +72,8 @@ class ReviewStepOne extends React.Component {
 
     _handlePressRadioButtonMixtToilets(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
+            userRating: {
+                ...prevState.userRating,
                 hasMixtToilets: value
             }
         }))
@@ -80,8 +81,8 @@ class ReviewStepOne extends React.Component {
 
     _handlePressRadioButtonHandicappedToilets(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
+            userRating: {
+                ...prevState.userRating,
                 hasHandicappedToilets: value
             }
         }))
@@ -99,10 +100,14 @@ class ReviewStepOne extends React.Component {
     _handlePressSubmit() {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_TWO, {
             currentToiletIndex: this.state.currentToiletIndex,
-            rating: this.state.rating,
+            userRating: this.state.userRating,
             toilets: this.state.toilets,
             toiletPlace: this.state.toiletPlace,
             title: this.props.navigation.getParam('title'),
+
+            //have to dispatch this cause react-navigation doesn't have anything sexier if I want to go back several screens
+            screenKey: this.props.navigation.state.key,
+            onFinishRating: this.props.navigation.getParam('onFinishRating')
         });
     }
 
@@ -214,7 +219,7 @@ class ReviewStepOne extends React.Component {
                         <FormRadioButtons
                             onPress={(value) => this._handlePressRadioButtonMixtToilets(value)}
                             options={booleanOptionsMixt}
-                            checked={this.state.rating.hasMixtToilets}
+                            checked={this.state.userRating.hasMixtToilets}
                             textStyle={GlobalStyles.secondaryText}
                             flexDirection='row'
                         />
@@ -228,7 +233,7 @@ class ReviewStepOne extends React.Component {
                             title="kek"
                             onPress={(value) => this._handlePressRadioButtonHandicappedToilets(value)}
                             options={booleanOptionsHandicapped}
-                            checked={this.state.rating.hasHandicappedToilets}
+                            checked={this.state.userRating.hasHandicappedToilets}
                             textStyle={GlobalStyles.secondaryText}
                             flexDirection='row'
                         />

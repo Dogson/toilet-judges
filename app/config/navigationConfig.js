@@ -54,7 +54,6 @@ const ROUTE_NAMES = {
     REVIEW_STEP_THREE: 'ReviewStepThree'
 };
 
-
 const transitionConfig = () => {
     return {
         transitionSpec: {

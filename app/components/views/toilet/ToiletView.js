@@ -46,6 +46,7 @@ class ToiletView extends React.Component {
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handleGenderChangeButtonPress = this._handleGenderChangeButtonPress.bind(this);
         this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+        this._handleFinishReviewing = this._handleFinishReviewing.bind(this);
     }
 
 
@@ -60,6 +61,12 @@ class ToiletView extends React.Component {
 
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this._handleBackButtonClick);
+    }
+
+    // function called by child when getting back
+    _handleFinishReviewing(currentToiletIndex) {
+        this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
+        this.getToilets(currentToiletIndex);
     }
 
     // HANDLING EVENTS
@@ -81,19 +88,27 @@ class ToiletView extends React.Component {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             currentToiletIndex: this.props.currentToiletIndex,
-            rating: toilet.userRating,
+            userRating: toilet.userRating,
             toilets: this.props.toilets,
             toiletPlace: this.state.toiletPlace,
             title: toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
+            onFinishRating: this._handleFinishReviewing
         });
     }
 
     // DISPATCH ACTIONS
-    getToilets() {
+    getToilets(currentToiletIndex) {
         ToiletEndpoints.getToilets(this.state.toiletPlace._id)
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILETS, value: toilets});
-                this.setToiletGender(this.state.userGender);
+                if (currentToiletIndex) {
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_CURRENT_TOILET, value: currentToiletIndex});
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
+                else {
+                    this.setToiletGender(this.state.userGender);
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
             })
             .catch((err) => {
                 if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
@@ -267,6 +282,7 @@ class ToiletView extends React.Component {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         let buttonLabel = "Donner votre avis";
         let userRating;
+        console.log(toilet);
         if (toilet.userRating) {
             buttonLabel = "Modifier votre avis";
             userRating = <ToiletRating rating={toilet.userRating.global} readonly={true}

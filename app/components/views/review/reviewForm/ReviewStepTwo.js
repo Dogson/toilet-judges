@@ -36,7 +36,7 @@ class ReviewStepTwo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            rating: this.props.navigation.getParam('rating'),
+            userRating: this.props.navigation.getParam('userRating'),
             toilets: this.props.navigation.getParam('toilets'),
             toiletPlace: this.props.navigation.getParam('toiletPlace'),
             currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
@@ -56,18 +56,23 @@ class ReviewStepTwo extends React.Component {
     _handlePressSubmit() {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_THREE, {
             currentToiletIndex: this.state.currentToiletIndex,
-            rating: this.state.rating,
+            userRating: this.state.userRating,
             toilets: this.state.toilets,
             toiletPlace: this.state.toiletPlace,
             title: this.props.navigation.getParam('title'),
+            screenKey: this.props.navigation.getParam('screenKey'),
+            onFinishRating: this.props.navigation.getParam('onFinishRating')
         });
     }
 
     _handleFinishRating(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
-                global: value
+            userRating: {
+                ...prevState.userRating,
+                rating: {
+                    ...prevState.userRating.rating,
+                    global: value
+                }
             }
         }))
     }
@@ -84,13 +89,15 @@ class ReviewStepTwo extends React.Component {
                         paddingHorizontal: 10
                         // marginBottom: 15
                     }]}
+                    disabled={!this.state.userRating.rating || this.state.userRating.rating.global == null}
                     titleStyle={GlobalStyles.defaultFont}/>
             </View>
         )
     }
 
     renderBody() {
-        let ratingString = this.state.rating && this.state.rating.global ? RATINGS[this.state.rating.global] : '';
+        let ratingString = !!this.state.userRating.rating && this.state.userRating.rating.global ? RATINGS[this.state.userRating.rating.global] : '';
+        let rating = ratingString !== "" ? this.state.userRating.rating.global : 0;
 
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingHorizontal: 15}}>
@@ -102,7 +109,7 @@ class ReviewStepTwo extends React.Component {
                     style={{paddingHorizontal: 15}}>
                     <ToiletRating size={40}
                                   onFinishRating={this._handleFinishRating}
-                                  rating={this.state.rating.global}/>
+                                  rating={rating}/>
                 </View>
                 <Text style={[GlobalStyles.primaryText, {alignSelf: 'center', color: STYLE_VAR.text.color.secondary, fontSize: STYLE_VAR.text.size.big}]}>{ratingString}</Text>
             </View>

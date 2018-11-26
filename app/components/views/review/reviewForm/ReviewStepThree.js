@@ -30,12 +30,14 @@ import {GlobalStyles} from '../../../../styles/styles'
 import {FormRadioButtons} from "../../../widgets/form/FormRadioButtons";
 import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
 import {RadioButtonDialog} from "../../../widgets/dialogs/RadioButtonDialog";
+import {NavigationActions} from "react-navigation";
+import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 
 class ReviewStepThree extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            rating: this.props.navigation.getParam('rating'),
+            userRating: this.props.navigation.getParam('userRating'),
             toilets: this.props.navigation.getParam('toilets'),
             toiletPlace: this.props.navigation.getParam('toiletPlace'),
             currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
@@ -56,41 +58,58 @@ class ReviewStepThree extends React.Component {
     }
 
     _handlePressSubmit() {
+        ToiletEndpoints.rateToilet(this.state.toilets[this.state.currentToiletIndex]._id, this.state.userRating)
+            .then((toilet) => {
+                this.props.navigation.goBack(this.props.navigation.getParam('screenKey'));
+                this.props.navigation.getParam('onFinishRating')(this.state.currentToiletIndex);
+            });
     }
 
 
     _handleFinishRatingCleanliness(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
-                cleanliness: value
+            userRating: {
+                ...prevState.userRating,
+                rating: {
+                    ...prevState.userRating.rating,
+                    cleanliness: value
+                }
             }
         }))
     }
 
     _handleFinishRatingFunctionality(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
-                functionality: value
+            userRating: {
+                ...prevState.userRating,
+                rating: {
+                    ...prevState.userRating.rating,
+                    functionality: value
+                }
             }
         }))
     }
 
     _handleFinishRatingDecoration(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
-                decoration: value
+            userRating: {
+                ...prevState.userRating,
+                rating: {
+                    ...prevState.userRating.rating,
+                    decoration: value
+                }
             }
         }))
     }
 
     _handleFinishRatingValue(value) {
         this.setState(prevState => ({
-            rating: {
-                ...prevState.rating,
-                value: value
+            userRating: {
+                ...prevState.userRating,
+                rating: {
+                    ...prevState.userRating.rating,
+                    value: value
+                }
             }
         }))
     }
@@ -98,6 +117,12 @@ class ReviewStepThree extends React.Component {
 
     //RENDER COMPONENTS
     renderFooter() {
+        const isButtonDisabled =  (!this.state.userRating.rating ||
+                this.state.userRating.rating.cleanliness == null ||
+                this.state.userRating.rating.functionality == null ||
+                this.state.userRating.rating.decoration == null ||
+                this.state.userRating.rating.value == null);
+
         return (
             <View style={GlobalStyles.footerContainer}>
                 <Button
@@ -108,6 +133,7 @@ class ReviewStepThree extends React.Component {
                         paddingHorizontal: 10
                         // marginBottom: 15
                     }]}
+                    disabled={isButtonDisabled}
                     titleStyle={GlobalStyles.defaultFont}/>
             </View>
         )
@@ -127,7 +153,7 @@ class ReviewStepThree extends React.Component {
                     <Text style={GlobalStyles.secondaryText}>État des toilettes, propreté du sol, odeurs...</Text>
                     <View style={styles.rating}>
                         <ToiletRating onFinishRating={this._handleFinishRatingCleanliness}
-                                      rating={this.state.rating.cleanliness}
+                                      rating={this.state.userRating.rating.cleanliness}
                                       size={30}/>
                     </View>
                 </View>
@@ -136,7 +162,7 @@ class ReviewStepThree extends React.Component {
                     <Text style={GlobalStyles.secondaryText}>Présence de savon, sèche-main, chasse d'eau fonctionnelle...</Text>
                     <View style={styles.rating}>
                         <ToiletRating onFinishRating={this._handleFinishRatingFunctionality}
-                                      rating={this.state.rating.functionality}
+                                      rating={this.state.userRating.rating.functionality}
                                       size={30}/>
                     </View>
                 </View>
@@ -146,7 +172,7 @@ class ReviewStepThree extends React.Component {
                         <Text style={GlobalStyles.secondaryText}>Esthétique générale, décoration, musique...</Text>
                         <View style={styles.rating}>
                             <ToiletRating onFinishRating={this._handleFinishRatingDecoration}
-                                          rating={this.state.rating.decoration}
+                                          rating={this.state.userRating.rating.decoration}
                                           size={30}/>
                         </View>
                     </View>
@@ -156,7 +182,7 @@ class ReviewStepThree extends React.Component {
                     <Text style={GlobalStyles.secondaryText}>Si la pinte est à 13€, on peut s'attendre à des urinoirs en argent.</Text>
                     <View style={styles.rating}>
                         <ToiletRating onFinishRating={this._handleFinishRatingValue}
-                                      rating={this.state.rating.value}
+                                      rating={this.state.userRating.rating.value}
                                       size={30}/>
                     </View>
                 </View>
