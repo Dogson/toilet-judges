@@ -169,12 +169,11 @@ class ToiletView extends React.Component {
                 return;
         }
         return (
-            <View style={styles.descriptionBlock}>
+            <View style={GlobalStyles.iconWithTextBlock}>
                 <Icon reverse name={iconName}
                       color={STYLE_VAR.backgroundDefault}
-                      containerStyle={styles.descriptionLineItem}
                       size={20}/>
-                <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
+                <Text style={[GlobalStyles.secondaryText]}>
                     {this.state.toiletPlace.placeType}
                 </Text>
             </View>
@@ -201,16 +200,15 @@ class ToiletView extends React.Component {
         return (
             <TouchableNativeFeedback
                 onPress={this._handleGenderChangeButtonPress}>
-                <View style={styles.descriptionBlock}>
+                <View style={GlobalStyles.iconWithTextBlock}>
                     <Icon reverse name={iconName}
                           type="material-community"
                           color={STYLE_VAR.backgroundDefault}
-                          containerStyle={styles.descriptionLineItem}
                           size={20}/>
-                    <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
+                    <Text style={GlobalStyles.secondaryText}>
                         {genderName}
                     </Text>
-                    <Text style={[GlobalStyles.secondaryText, GlobalStyles.pressableText, styles.descriptionLineItem]}>
+                    <Text style={GlobalStyles.secondaryText, GlobalStyles.pressableText}>
                         Changer
                     </Text>
                 </View>
@@ -288,7 +286,8 @@ class ToiletView extends React.Component {
             userRating =
                 <View styles={[GlobalStyles.flexColumnCenter]}>
                     <Text style={GlobalStyles.secondaryText}>Votre avis</Text>
-                    <ToiletRating size={15} rating={toilet.userRating.rating.global} readonly={true}></ToiletRating>
+                    <ToiletRating size={15} rating={toilet.userRating.rating.global} readonly={true} containerStyle={{paddingTop: 0, paddingBottom: 2}}></ToiletRating>
+                    <Text style={[GlobalStyles.secondaryText, {fontFamily: STYLE_VAR.text.bold, fontSize: STYLE_VAR.text.size.smaller}]}>Détails</Text>
                 </View>
         }
 
@@ -341,7 +340,6 @@ function mapStateToProps(state) {
 
 
 const styles = StyleSheet.create({
-    descriptionBlock: {flexDirection: "column", paddingBottom: 7, alignItems: 'center'},
     backgroundStyle: {
         backgroundColor: 'white',
         alignSelf: 'center',

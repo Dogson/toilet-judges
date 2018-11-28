@@ -98,9 +98,6 @@ class ReviewStepOne extends React.Component {
             toilets: this.state.toilets,
             toiletPlace: this.state.toiletPlace,
             title: this.props.navigation.getParam('title'),
-
-            //have to dispatch this cause react-navigation doesn't have anything sexier if I want to go back several screens
-            screenKey: this.props.navigation.state.key,
             onFinishRating: this.props.navigation.getParam('onFinishRating')
         });
     }

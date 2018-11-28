@@ -9,6 +9,7 @@ import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThr
 import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetails"
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
+import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 const MainRoutes = {
     HomeView: {
@@ -66,10 +67,9 @@ const MainRoutes = {
                     backgroundColor: 'white',
                     elevation: 0
                 },
-                headerRight: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
                     <View style={{padding: 15}}><Icon name="close"></Icon></View>
                 </TouchableNativeFeedback>,
-                headerLeft: null,
                 headerTintColor: STYLE_VAR.text.color.primary
             };
         }
@@ -86,8 +86,7 @@ const ROUTE_NAMES = {
 };
 
 const TRANSITIONS = {
-    FROM_RIGHT: 'slideFromRight',
-    FROM_BOTTOM: 'slideFromBottom'
+    FROM_BOTTOM: 'slideFromBottom',
 };
 
 const transitionConfig = () => {
@@ -106,33 +105,11 @@ const transitionConfig = () => {
             const params = route.params || {}; // <- That's new
             const transition = params.transition || 'default'; // <- That's new
             return {
-                slideFromBottom: SlideFromBottom(index, position, height),
-                default: SlideFromRight(index, position, width),
+                slideFromBottom: StackViewStyleInterpolator.forVertical(sceneProps),
+                default: StackViewStyleInterpolator.forHorizontal(sceneProps)
             }[transition];
         },
     }
-};
-
-let SlideFromRight = (index, position, width) => {
-    const inputRange = [index - 1, index, index + 1];
-    const translateX = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [width, 0, 0]
-    });
-    const slideFromRight = {transform: [{translateX}]}
-    return slideFromRight
-};
-
-
-let SlideFromBottom = (index, position, height) => {
-    const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0]
-    });
-
-    const slideFromBottom = {transform: [{translateY}]}
-
-    return slideFromBottom;
 };
 
 const StackConfig = {

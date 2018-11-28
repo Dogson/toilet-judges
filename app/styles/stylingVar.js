@@ -6,13 +6,15 @@ export const STYLE_VAR = {
             secondary: '#777',
         },
         size: {
-            smaller: 10,
+            smaller: 12,
             small: 15,
             normal: 18,
             big: 22,
             bigger: 30
-        }
+        },
+        bold: 'roboto-bold'
     },
     backgroundDefault: "#1da1f2",
-    backgroundSecondary: 'white'
+    backgroundSecondary: 'white',
+    backgroundLightGray: '#bfbfbf'
 };

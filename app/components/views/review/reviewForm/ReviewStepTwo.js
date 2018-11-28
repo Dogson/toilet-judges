@@ -60,7 +60,6 @@ class ReviewStepTwo extends React.Component {
             toilets: this.state.toilets,
             toiletPlace: this.state.toiletPlace,
             title: this.props.navigation.getParam('title'),
-            screenKey: this.props.navigation.getParam('screenKey'),
             onFinishRating: this.props.navigation.getParam('onFinishRating')
         });
     }

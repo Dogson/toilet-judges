@@ -42,6 +42,12 @@ class ReviewDetails extends React.Component {
             gender: this.props.navigation.getParam('gender'),
             _handleAddReviewButtonPress: this.props.navigation.getParam('_handleAddReviewButtonPress')
         };
+
+        this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+    }
+
+    _handleAddReviewButtonPress() {
+        this.state._handleAddReviewButtonPress();
     }
 
     renderFooter() {
@@ -49,7 +55,7 @@ class ReviewDetails extends React.Component {
             <View style={GlobalStyles.footerContainer}>
                 <Button
                     title="Modifier votre avis"
-                    onPress={() => this.state._handleAddReviewButtonPress()}
+                    onPress={this._handleAddReviewButtonPress}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
                         paddingHorizontal: 10
                     }]}
@@ -58,15 +64,90 @@ class ReviewDetails extends React.Component {
         )
     }
 
+    renderAccessibleDetail() {
+        let accessible = this.state.userRating.hasHandicappedToilets;
+        if (accessible == null) {
+            return;
+        }
+        if (accessible) {
+            accessible = {
+                text: 'Accès handicappé',
+                color: STYLE_VAR.backgroundDefault
+            }
+        }
+        else {
+            accessible = {
+                text: 'Aucun accès \n handicappé',
+                color: STYLE_VAR.backgroundLightGray
+            }
+        }
+
+        return <View style={GlobalStyles.iconWithTextBlock}>
+            <Icon reverse
+                  name="accessible"
+                  color={accessible.color}
+                  size={20}/>
+            <Text style={[GlobalStyles.secondaryText]}>
+                {accessible.text}
+            </Text>
+        </View>
+    }
+
+    renderMixedDetail() {
+        let mixed = this.state.userRating.hasMixtToilets;
+        if (mixed == null) {
+            return;
+        }
+        if (mixed) {
+            mixed = {
+                text: 'Toilettes mixtes',
+                iconName: 'human-male-female'
+            }
+        }
+        else {
+            let iconName;
+            switch (this.state.gender) {
+                case GENDERS.MAN:
+                    iconName = "human-male";
+                    break;
+                case GENDERS.WOMAN:
+                    iconName = "human-female";
+                    break;
+                default:
+                    return;
+            }
+
+            mixed = {
+                text: 'Non mixtes',
+                iconName: iconName
+            }
+        }
+
+        return <View style={GlobalStyles.iconWithTextBlock}>
+            <Icon name={mixed.iconName}
+                  reverse
+                  type="material-community"
+                  color={STYLE_VAR.backgroundDefault}
+                  size={20}/>
+            <Text style={[GlobalStyles.secondaryText]}>
+                {mixed.text}
+            </Text>
+        </View>
+    }
+
     render() {
         return <View style={styles.backgroundStyle}>
-            <View style={{padding: 15}}>
+            <View style={{paddingHorizontal: 15}}>
                 <View>
-                    <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
+                    <Text style={GlobalStyles.titleText}>
                         Votre avis
                     </Text>
                 </View>
                 <GlobalRating rating={this.state.userRating.rating}/>
+                <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+                    {this.renderAccessibleDetail()}
+                    {this.renderMixedDetail()}
+                </View>
             </View>
             {this.renderFooter()}
         </View>

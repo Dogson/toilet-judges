@@ -8,6 +8,7 @@ const TOILET_IMAGE = require('../../../../assets/img/toiletRating.png');
 
 export class ToiletRating extends React.Component {
     render() {
+        let containerStyle = this.props.containerStyle || {paddingVertical: 10};
         return (
             <View>
                 <Rating
@@ -17,7 +18,7 @@ export class ToiletRating extends React.Component {
                     maxStars={5}
                     starSize={this.props.size || 20}
                     selectedStar={(value) => this.props.onFinishRating(value)}
-                    containerStyle={{paddingVertical: 10}}
+                    containerStyle={containerStyle}
                     rating={this.props.rating || 0}
                     disabled={this.props.readonly}
                 />

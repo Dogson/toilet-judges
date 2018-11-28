@@ -60,7 +60,7 @@ class ReviewStepThree extends React.Component {
     _handlePressSubmit() {
         ToiletEndpoints.rateToilet(this.state.toilets[this.state.currentToiletIndex]._id, this.state.userRating)
             .then((toilet) => {
-                this.props.navigation.goBack(this.props.navigation.getParam('screenKey'));
+                this.props.navigation.navigate(ROUTE_NAMES.TOILET);
                 this.props.navigation.getParam('onFinishRating')(this.state.currentToiletIndex);
             });
     }
@@ -126,7 +126,7 @@ class ReviewStepThree extends React.Component {
         return (
             <View style={GlobalStyles.footerContainer}>
                 <Button
-                    title="Suivant"
+                    title="Valider"
                     onPress={() => this._handlePressSubmit()}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
                         paddingHorizontal: 10
