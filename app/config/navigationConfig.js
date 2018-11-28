@@ -1,10 +1,14 @@
-import {Easing, Animated} from 'react-native';
+import * as React from "react";
+import {Easing, Animated, TouchableNativeFeedback, View} from 'react-native';
+import {Icon} from "react-native-elements";
 import HomeView from "../components/views/home/HomeView"
 import ToiletView from "../components/views/toilet/ToiletView"
 import ReviewStepOne from "../components/views/review/reviewForm/ReviewStepOne"
 import ReviewStepTwo from "../components/views/review/reviewForm/ReviewStepTwo"
 import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThree"
 import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetails"
+import {STYLE_VAR} from "../styles/stylingVar";
+import {GlobalStyles} from "../styles/styles";
 
 const MainRoutes = {
     HomeView: {
@@ -18,6 +22,8 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('toiletPlace').placeName,
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText
             };
         }
     },
@@ -25,7 +31,9 @@ const MainRoutes = {
         screen: ReviewStepOne,
         navigationOptions: ({navigation}) => {
             return {
-                title: navigation.getParam('title')
+                title: navigation.getParam('title'),
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText
             };
         }
     },
@@ -33,7 +41,9 @@ const MainRoutes = {
         screen: ReviewStepTwo,
         navigationOptions: ({navigation}) => {
             return {
-                title: navigation.getParam('title')
+                title: navigation.getParam('title'),
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText
             };
         }
     },
@@ -41,16 +51,28 @@ const MainRoutes = {
         screen: ReviewStepThree,
         navigationOptions: ({navigation}) => {
             return {
-                title: navigation.getParam('title')
+                title: navigation.getParam('title'),
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText
             };
         }
     },
     ReviewDetails: {
         screen: ReviewDetails,
-        navigationOptions: {
-            header: null
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerRight: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerLeft: null,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
         }
-
     }
 };
 

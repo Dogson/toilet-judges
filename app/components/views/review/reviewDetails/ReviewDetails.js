@@ -39,17 +39,47 @@ class ReviewDetails extends React.Component {
         this.state = {
             userRating: this.props.navigation.getParam('userRating'),
             placeName: this.props.navigation.getParam('placeName'),
-            gender: this.props.navigation.getParam('gender')
+            gender: this.props.navigation.getParam('gender'),
+            _handleAddReviewButtonPress: this.props.navigation.getParam('_handleAddReviewButtonPress')
         };
     }
 
+    renderFooter() {
+        return (
+            <View style={GlobalStyles.footerContainer}>
+                <Button
+                    title="Modifier votre avis"
+                    onPress={() => this.state._handleAddReviewButtonPress()}
+                    buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
+                        paddingHorizontal: 10
+                    }]}
+                    titleStyle={GlobalStyles.defaultFont}/>
+            </View>
+        )
+    }
 
     render() {
-        return <View styles={GlobalStyles.container}>
-
+        return <View style={styles.backgroundStyle}>
+            <View style={{padding: 15}}>
+                <View>
+                    <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
+                        Votre avis
+                    </Text>
+                </View>
+                <GlobalRating rating={this.state.userRating.rating}/>
+            </View>
+            {this.renderFooter()}
         </View>
     }
 }
+
+const styles = StyleSheet.create({
+    backgroundStyle: {
+        flex: 1,
+        backgroundColor: 'white'
+    }
+});
+
 
 export default ReviewDetails;
 

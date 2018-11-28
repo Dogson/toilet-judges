@@ -10,11 +10,11 @@ import {STYLE_VAR} from "../../../styles/stylingVar";
 export class GlobalRating extends React.Component {
 
     renderGlobalRating() {
-        let ratingCountText;
+        let ratingCountText = "";
         if (this.props.ratingCount) {
             ratingCountText = this.props.ratingCount + " avis";
         }
-        else {
+        else if (this.props.ratingCount === 0){
             ratingCountText = "Aucun avis n'a encore été donné";
         }
         return <View style={styles.block}>

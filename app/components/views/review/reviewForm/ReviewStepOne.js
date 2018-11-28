@@ -185,7 +185,7 @@ class ReviewStepOne extends React.Component {
                     </View>
                 </TouchableNativeFeedback>
                 <View style={[GlobalStyles.sectionContainer, GlobalStyles.flexColumnCenter]}>
-                    <Text style={GlobalStyles.primaryText}>Les toilettes sont-elles mixtes ?</Text>
+                    <Text style={[GlobalStyles.primaryText, {alignSelf: 'flex-start'}]}>Les toilettes sont-elles mixtes ?</Text>
                     <View style={{alignSelf: 'stretch', marginVertical: 5}}>
                         <FormRadioButtons
                             onPress={(value) => this._handlePressRadioButtonMixtToilets(value)}

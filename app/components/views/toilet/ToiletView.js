@@ -105,6 +105,7 @@ class ToiletView extends React.Component {
                 gender: toilet.gender,
                 userRating: toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
+                _handleAddReviewButtonPress: this._handleAddReviewButtonPress
             });
     }
 
@@ -236,7 +237,7 @@ class ToiletView extends React.Component {
                         {this.renderRating(toilet)}
                     </View>
                 </ScrollView>
-                {this.renderUserRating()}
+                {this.renderFooter()}
             </View>
         );
     }
@@ -278,7 +279,7 @@ class ToiletView extends React.Component {
                                   }}/>
     }
 
-    renderUserRating() {
+    renderFooter() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         let buttonLabel = "Donner votre avis";
         let userRating;
