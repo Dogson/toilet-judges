@@ -6,7 +6,7 @@ import {createStore, combineReducers, connect} from 'redux';
 import {Font} from "expo";
 
 //Reducers
-import homeReducer from "./components/views/home/HomeReducer"
+import searchReducer from "./components/views/home/SearchReducer"
 import toiletReducer from "./components/views/toilet/ToiletReducer"
 import authReducer from "./components/views/auth/AuthReducer";
 import rootReducer from "./components/views/root/RootReducer";
@@ -16,7 +16,7 @@ import AppRedux from "./components/views/root/AppRedux"
 
 let reducer = combineReducers({
     rootReducer: rootReducer,
-    homeReducer: homeReducer,
+    searchReducer: searchReducer,
     toiletReducer: toiletReducer,
     authReducer: authReducer
 });
