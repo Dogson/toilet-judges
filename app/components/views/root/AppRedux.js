@@ -3,14 +3,14 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {connect} from "react-redux";
 
 //Const
-import {Routes} from "../../../config/routes";
+import {MainRoutes, StackConfig} from "../../../config/navigationConfig";
 import {ACTIONS_ROOT} from "./RootActions";
 
 import LoginView from "../auth/LoginView";
 import {DeviceStorage} from "../../../helpers/deviceStorage";
 import {createStackNavigator} from "react-navigation";
 
-const Navigator = createStackNavigator(Routes);
+const Navigator = createStackNavigator(MainRoutes, StackConfig);
 
 class AppRedux extends React.Component {
     constructor() {

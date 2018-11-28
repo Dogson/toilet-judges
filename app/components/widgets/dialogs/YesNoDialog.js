@@ -1,6 +1,6 @@
 import React from 'react';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {GlobalStyles} from "../../styles/styles";
+import {GlobalStyles} from "../../../styles/styles";
 
 export class YesNoDialog extends React.Component {
 

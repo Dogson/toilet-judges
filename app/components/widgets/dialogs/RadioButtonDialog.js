@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {View, Text, TouchableNativeFeedback} from 'react-native';
 import {Button, Dialog, Portal, RadioButton} from 'react-native-paper';
-import {GlobalStyles} from "../../styles/styles";
+import {GlobalStyles} from "../../../styles/styles";
+import RadioGroup from 'react-native-radio-buttons-group';
 import {FormRadioButtons} from "../form/FormRadioButtons";
 
 export class RadioButtonDialog extends React.Component {
@@ -23,15 +24,18 @@ export class RadioButtonDialog extends React.Component {
                         onDismiss={this.props.cancel}>
                         <Dialog.Title>{this.props.title}</Dialog.Title>
                         <Dialog.Content>
-                            <FormRadioButtons
-                                onPressRadioButton={(value) => this._handlePressRadioButton(value)}
-                                options={this.props.options}
-                                defaultChecked={this.props.defaultChecked}
-                            />
+                            <View style={{alignItems: 'flex-start'}}>
+                                <FormRadioButtons
+                                    onPress={this._handlePressRadioButton}
+                                    options={this.props.options}
+                                    flexDirection='column'
+                                    checked={this.props.checked}
+                                />
+                            </View>
                         </Dialog.Content>
                         <Dialog.Actions>
                             <Button
-                                onPress={() => this._handlePressRadioButton(this.props.defaultChecked)}>Annuler</Button>
+                                onPress={() => this._handlePressRadioButton(this.props.checked)}>Annuler</Button>
                         </Dialog.Actions>
                     </Dialog>
                 </Portal>

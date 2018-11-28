@@ -19,18 +19,18 @@ import {AuthEndpoints} from "../../../endpoints/authEndpoints";
 import {GlobalStyles} from "../../../styles/styles";
 
 //COMPONENTS
-import {FormInput} from "../../form/FormInput";
+import {FormInput} from "../../widgets/form/FormInput";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 
 class LoginView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handlePressSubmitButton = this.handlePressSubmitButton.bind(this);
-        this.handleChangeEmail = this.handleChangeEmail.bind(this);
-        this.handleChangePassword = this.handleChangePassword.bind(this);
-        this.handleChangeUsername = this.handleChangeUsername.bind(this);
-        this.handleKeyboardSpacerToggle = this.handleKeyboardSpacerToggle.bind(this);
+        this._handlePressSubmitButton = this._handlePressSubmitButton.bind(this);
+        this._handleChangeEmail = this._handleChangeEmail.bind(this);
+        this._handleChangePassword = this._handleChangePassword.bind(this);
+        this._handleChangeUsername = this._handleChangeUsername.bind(this);
+        this._handleKeyboardSpacerToggle = this._handleKeyboardSpacerToggle.bind(this);
 
         this.state = {
             emailErrorMessage: null,
@@ -47,19 +47,19 @@ class LoginView extends React.Component {
 
 
     //EVENTS
-    handleChangeEmail(text) {
+    _handleChangeEmail(text) {
         this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: text});
     }
 
-    handleChangePassword(text) {
+    _handleChangePassword(text) {
         this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: text});
     }
 
-    handleChangeUsername(text) {
+    _handleChangeUsername(text) {
         this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: text});
     }
 
-    handlePressSubmitButton() {
+    _handlePressSubmitButton() {
         let _this = this;
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
@@ -111,11 +111,11 @@ class LoginView extends React.Component {
 
     }
 
-    handlePressSwitch() {
+    _handlePressSwitch() {
         this.setState({registerScreen: !this.state.registerScreen});
     }
 
-    handleKeyboardSpacerToggle(toggle) {
+    _handleKeyboardSpacerToggle(toggle) {
         this.setState({keyboardToggle: toggle})
     }
 
@@ -187,7 +187,7 @@ class LoginView extends React.Component {
             return <View style={{marginTop: 50}}>
                 <Text style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>{questionLabel}</Text>
                 <Button title={buttonTitle}
-                        onPress={() => this.handlePressSwitch()}
+                        onPress={() => this._handlePressSwitch()}
                         buttonStyle={GlobalStyles.secondaryButton}
                         titleStyle={GlobalStyles.secondaryButtonTitle}
                 ></Button>
@@ -200,30 +200,31 @@ class LoginView extends React.Component {
             {this.renderLogo()}
             <FormInput label="E-mail"
                 value={this.props.email}
-                       onChangeText={(text) => this.handleChangeEmail(text)}
+                       onChangeText={(text) => this._handleChangeEmail(text)}
                        placeholder="toilette@alaturc.com"
                        errorMessage={this.state.emailErrorMessage}
                        keyboardType="email-address"
                        autoCapitalize="none"></FormInput>
             <FormInput label="Nom d'utilisateur"
                 value={this.props.username}
-                       onChangeText={(text) => this.handleChangeUsername(text)}
+                       onChangeText={(text) => this._handleChangeUsername(text)}
                        placeholder="Mr. Hankey"
                        errorMessage={this.state.usernameErrorMessage}
             ></FormInput>
             <FormInput label="Mot de passe"
                        value={this.props.password}
-                       onChangeText={(text) => this.handleChangePassword(text)}
+                       onChangeText={(text) => this._handleChangePassword(text)}
                        placeholder="**********"
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="S'INSCRIRE"
-                    onPress={() => this.handlePressSubmitButton()}
+                    onPress={() => this._handlePressSubmitButton()}
                     buttonStyle={GlobalStyles.primaryButton}
+                    titleStyle={GlobalStyles.defaultFont}
             ></Button>
             {this.renderSwitchButton()}
 
-            <KeyboardSpacer onToggle={(toggle) => this.handleKeyboardSpacerToggle(toggle)}/>
+            <KeyboardSpacer onToggle={(toggle) => this._handleKeyboardSpacerToggle(toggle)}/>
         </View>
     }
 
@@ -231,23 +232,24 @@ class LoginView extends React.Component {
         return <View style={[GlobalStyles.withMarginContainer, {marginBottom: 20}]}>
             {this.renderLogo()}
             <FormInput value={this.props.email}
-                       onChangeText={(text) => this.handleChangeEmail(text)}
+                       onChangeText={(text) => this._handleChangeEmail(text)}
                        placeholder="toilette@alaturc.com"
                        errorMessage={this.state.emailErrorMessage}
                        keyboardType="email-address"
                        autoCapitalize="none"></FormInput>
             <FormInput value={this.props.password}
-                       onChangeText={(text) => this.handleChangePassword(text)}
+                       onChangeText={(text) => this._handleChangePassword(text)}
                        placeholder="**********"
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
             <Button title="SE CONNECTER"
-                    onPress={() => this.handlePressSubmitButton()}
+                    onPress={() => this._handlePressSubmitButton()}
                     buttonStyle={GlobalStyles.primaryButton}
+                    titleStyle={GlobalStyles.defaultFont}
             ></Button>
             {this.renderSwitchButton()}
 
-            <KeyboardSpacer onToggle={(toggle) => this.handleKeyboardSpacerToggle(toggle)}/>
+            <KeyboardSpacer onToggle={(toggle) => this._handleKeyboardSpacerToggle(toggle)}/>
         </View>
     }
 
