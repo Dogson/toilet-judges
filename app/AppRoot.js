@@ -1,7 +1,7 @@
-//@flow
 import React from 'react';
 import {Provider as StoreProvider} from 'react-redux';
 import {Provider as PaperProvider} from 'react-native-paper';
+import { MenuProvider } from 'react-native-popup-menu';
 import {createStore, combineReducers, connect} from 'redux';
 import {Font} from "expo";
 
@@ -45,7 +45,9 @@ export class AppRoot extends React.Component<{}> {
     render() {
         return <StoreProvider store={store}>
             <PaperProvider>
+                <MenuProvider backHandler>
                 {this.state.fontsLoaded ? <AppRedux/> : null}
+                </MenuProvider>
             </PaperProvider>
         </StoreProvider>
     }

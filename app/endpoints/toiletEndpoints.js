@@ -58,4 +58,28 @@ export class ToiletEndpoints {
                 console.log(err);
             });
     }
+
+    static deleteUserReview(userRatingId) {
+        const url = APP_CONFIG.apiUrl;
+        let apiKey = "rating/"+userRatingId;
+
+        return FetchHelper.delete({
+            url: url,
+            apiKey: apiKey
+        })
+            .then((response) => {
+                status = response.status;
+                return response.json()
+            })
+            .then((data) => {
+                if (status === 200) {
+                    return data;
+                }
+                else {
+                    return Promise.reject(data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+    }
 }
