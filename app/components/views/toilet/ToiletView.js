@@ -99,13 +99,17 @@ class ToiletView extends React.Component {
 
     _handleYourReviewPress() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
+        if (!toilet.userRating) {
+            return;
+        }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
             {
                 placeName: this.state.toiletPlace.name,
                 gender: toilet.gender,
                 userRating: toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
-                _handleAddReviewButtonPress: this._handleAddReviewButtonPress
+                _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
+                onDeleteReview: this._handleFinishReviewing
             });
     }
 
@@ -208,7 +212,7 @@ class ToiletView extends React.Component {
                     <Text style={GlobalStyles.secondaryText}>
                         {genderName}
                     </Text>
-                    <Text style={GlobalStyles.secondaryText, GlobalStyles.pressableText}>
+                    <Text style={[GlobalStyles.secondaryText, GlobalStyles.pressableText]}>
                         Changer
                     </Text>
                 </View>

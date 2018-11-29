@@ -43,25 +43,39 @@ class ReviewDetails extends React.Component {
             _handleAddReviewButtonPress: this.props.navigation.getParam('_handleAddReviewButtonPress')
         };
 
-        this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+        this._handleEditReviewPress = this._handleEditReviewPress.bind(this);
+        this._handleDeleteReviewPress = this._handleDeleteReviewPress.bind(this);
+        this._handleDeleteReviewConfirm = this._handleDeleteReviewConfirm.bind(this);
     }
 
-    _handleAddReviewButtonPress() {
+    componentDidMount() {
+        this.props.navigation.setParams({
+            handleEdit: this._handleEditReviewPress,
+            handleDelete: this._handleDeleteReviewPress
+        });
+    }
+
+    _handleEditReviewPress() {
         this.state._handleAddReviewButtonPress();
     }
 
-    renderFooter() {
-        return (
-            <View style={GlobalStyles.footerContainer}>
-                <Button
-                    title="Modifier votre avis"
-                    onPress={this._handleAddReviewButtonPress}
-                    buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
-                        paddingHorizontal: 10
-                    }]}
-                    titleStyle={GlobalStyles.defaultFont}/>
-            </View>
+    _handleDeleteReviewPress() {
+        Alert.alert(
+            "",
+            'Voulez-vous vraiment supprimer votre avis ?',
+            [
+                {text: 'Non', style: 'cancel'},
+                {text: 'Oui', onPress: this._handleDeleteReviewConfirm},
+            ]
         )
+    }
+
+    _handleDeleteReviewConfirm() {
+        ToiletEndpoints.deleteUserReview(this.state.userRating._id)
+            .then(() => {
+                this.props.navigation.goBack(null);
+                this.props.navigation.getParam('onDeleteReview')(this.state.currentToiletIndex);
+            });
     }
 
     renderAccessibleDetail() {
@@ -149,7 +163,6 @@ class ReviewDetails extends React.Component {
                     {this.renderMixedDetail()}
                 </View>
             </View>
-            {this.renderFooter()}
         </View>
     }
 }
