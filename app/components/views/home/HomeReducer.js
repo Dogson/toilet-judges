@@ -1,13 +1,13 @@
-import {ACTIONS_SEARCH} from "./SearchActions";
+import {ACTIONS_HOME} from "./HomeActions";
 
-export default searchReducer = (state = {}, action) => {
+export default homeReducer = (state = {}, action) => {
     switch (action.type) {
-        case ACTIONS_SEARCH.SET_POSITION :
+        case ACTIONS_HOME.SET_POSITION :
             return {
                 ...state,
                 position: action.value
             };
-        case ACTIONS_SEARCH.SET_TOILETS_LIST :
+        case ACTIONS_HOME.SET_TOILETS_LIST :
             return {
                 ...state,
                 toiletsList: action.value || []

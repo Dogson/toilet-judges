@@ -3,8 +3,8 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableNativeFeedback, Alert} from "react-native";
 
 // STYLES
-import {GlobalStyles} from '../../../styles/styles'
-import {APP_CONFIG} from "../../../config/appConfig";
+import {GlobalStyles} from '../../styles/styles'
+import {APP_CONFIG} from "../../config/appConfig";
 
 export class SearchResults extends React.Component {
     mapToiletListWithKey() {
@@ -28,7 +28,7 @@ export class SearchResults extends React.Component {
                 data={this.mapToiletListWithKey()}
                 keyboardShouldPersistTaps='always'
                 renderItem={({item}) =>
-                    <TouchableNativeFeedback onPress={() => this.props._handlePressToilet(item)}
+                    <TouchableNativeFeedback onPress={() => this.props.handlePressToilet(item)}
                                              background={TouchableNativeFeedback.SelectableBackground()}>
                         <View styles={GlobalStyles.sectionContainer}>
                             <Text style={[styles.item, GlobalStyles.primaryText]}>
