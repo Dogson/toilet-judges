@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../../config/const";
+import {PLACE_TYPES} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 // API ENDPOINTS
@@ -38,8 +38,6 @@ class ReviewDetails extends React.Component {
 
         this.state = {
             userRating: this.props.navigation.getParam('userRating'),
-            placeName: this.props.navigation.getParam('placeName'),
-            gender: this.props.navigation.getParam('gender'),
             _handleAddReviewButtonPress: this.props.navigation.getParam('_handleAddReviewButtonPress')
         };
 
@@ -71,30 +69,20 @@ class ReviewDetails extends React.Component {
     }
 
     _handleDeleteReviewConfirm() {
-        ToiletEndpoints.deleteUserReview(this.state.userRating._id)
-            .then(() => {
-                this.props.navigation.goBack(null);
-                this.props.navigation.getParam('onDeleteReview')(this.state.currentToiletIndex);
-            });
+        this.props.navigation.goBack(null);
+        this.props.navigation.getParam('onDeleteReview')();
     }
 
     renderAccessibleDetail() {
-        let accessible = this.state.userRating.hasHandicappedToilets;
+        let accessible = this.state.userRating.isAccessible;
         if (accessible == null) {
             return;
         }
-        if (accessible) {
-            accessible = {
-                text: 'Accès handicappé',
-                color: STYLE_VAR.backgroundDefault
-            }
-        }
-        else {
-            accessible = {
-                text: 'Aucun accès \n handicappé',
-                color: STYLE_VAR.backgroundLightGray
-            }
-        }
+        accessible = {
+            text: accessible ? 'Accès handicappé' : 'Aucun accès \n handicappé',
+            color: accessible ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+        };
+
 
         return <View style={GlobalStyles.iconWithTextBlock}>
             <Icon reverse
@@ -108,40 +96,21 @@ class ReviewDetails extends React.Component {
     }
 
     renderMixedDetail() {
-        let mixed = this.state.userRating.hasMixtToilets;
+        let mixed = this.state.userRating.isMixed;
         if (mixed == null) {
             return;
         }
-        if (mixed) {
-            mixed = {
-                text: 'Toilettes mixtes',
-                iconName: 'human-male-female'
-            }
-        }
-        else {
-            let iconName;
-            switch (this.state.gender) {
-                case GENDERS.MAN:
-                    iconName = "human-male";
-                    break;
-                case GENDERS.WOMAN:
-                    iconName = "human-female";
-                    break;
-                default:
-                    return;
-            }
+        mixed = {
+            text: mixed ? 'Toilettes mixtes' : "Toilettes non mixtes",
+            color: mixed ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+        };
 
-            mixed = {
-                text: 'Non mixtes',
-                iconName: iconName
-            }
-        }
 
         return <View style={GlobalStyles.iconWithTextBlock}>
-            <Icon name={mixed.iconName}
+            <Icon name="human-male-female"
                   reverse
                   type="material-community"
-                  color={STYLE_VAR.backgroundDefault}
+                  color={mixed.color}
                   size={20}/>
             <Text style={[GlobalStyles.secondaryText]}>
                 {mixed.text}

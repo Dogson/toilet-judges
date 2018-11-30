@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../../config/appConfig"
-import {GENDERS, PLACE_TYPES, RATINGS} from "../../../../config/const";
+import {PLACE_TYPES, RATINGS} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 // API ENDPOINTS
@@ -37,9 +37,6 @@ class ReviewStepTwo extends React.Component {
         super(props);
         this.state = {
             userRating: this.props.navigation.getParam('userRating'),
-            toilets: this.props.navigation.getParam('toilets'),
-            toiletPlace: this.props.navigation.getParam('toiletPlace'),
-            currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
         };
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handlePressSubmit = this._handlePressSubmit.bind(this);
@@ -55,10 +52,7 @@ class ReviewStepTwo extends React.Component {
 
     _handlePressSubmit() {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_THREE, {
-            currentToiletIndex: this.state.currentToiletIndex,
             userRating: this.state.userRating,
-            toilets: this.state.toilets,
-            toiletPlace: this.state.toiletPlace,
             title: this.props.navigation.getParam('title'),
             onFinishRating: this.props.navigation.getParam('onFinishRating')
         });
