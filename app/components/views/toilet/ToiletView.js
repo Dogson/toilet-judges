@@ -1,26 +1,37 @@
 // LIBRAIRIES
 import React from 'react';
-import {BackHandler, Text, View, Alert, StyleSheet, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
+import {
+    BackHandler,
+    Text,
+    ScrollView,
+    View,
+    Alert,
+    StyleSheet,
+    TouchableNativeFeedback,
+    ActivityIndicator
+} from 'react-native';
 import {connect} from "react-redux";
-import {Icon} from 'react-native-elements';
+import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../config/const";
+import {GENDERS, GENDER_STRING, PLACE_TYPES} from "../../../config/const";
 import {ACTIONS_TOILET} from "./ToiletActions";
-import {STYLE_VAR} from "../../../config/stylingVar";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 
 // API ENDPOINTS
 import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints';
 
 //COMPONENTS
-import {GlobalRating} from "../../rating/GlobalRating";
+import {GlobalRating} from "../../widgets/rating/GlobalRating";
+import {ToiletRating} from "../../widgets/rating/ToiletRating";
 
 //STYLES
 import {GlobalStyles} from '../../../styles/styles'
-import {YesNoDialog} from "../../dialogs/YesNoDialog";
-import {RadioButtonDialog} from "../../dialogs/RadioButtonDialog";
+import {YesNoDialog} from "../../widgets/dialogs/YesNoDialog";
+import {RadioButtonDialog} from "../../widgets/dialogs/RadioButtonDialog";
 import {ERROR_TYPES} from "../../../config/errorTypes";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 
 class ToiletView extends React.Component {
 
@@ -32,13 +43,16 @@ class ToiletView extends React.Component {
                 toiletPlace: this.props.navigation.getParam('toiletPlace'),
                 userGender: APP_CONFIG.defaultGender
             };
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-        this.handleGenderChangeButtonPress = this.handleGenderChangeButtonPress.bind(this);
+        this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
+        this._handleGenderChangeButtonPress = this._handleGenderChangeButtonPress.bind(this);
+        this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+        this._handleYourReviewPress = this._handleYourReviewPress.bind(this);
+        this._handleFinishReviewing = this._handleFinishReviewing.bind(this);
     }
 
 
     componentWillMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.addEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
     componentDidMount() {
@@ -47,30 +61,71 @@ class ToiletView extends React.Component {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        BackHandler.removeEventListener('hardwareBackPress', this._handleBackButtonClick);
+    }
+
+    // function called by child when getting back
+    _handleFinishReviewing(currentToiletIndex) {
+        this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
+        this.getToilets(currentToiletIndex);
     }
 
     // HANDLING EVENTS
-    handleBackButtonClick() {
+    _handleBackButtonClick() {
         this.props.navigation.goBack(null);
         return true;
     }
 
-    handleGenderChangeButtonPress() {
+    _handleGenderChangeButtonPress() {
         this.setState({showGenderPopup: true});
     }
 
-    handleChangeGender(gender) {
+    _handleChangeGenderConfirm(gender) {
         this.setToiletGender(gender);
         this.setState({showGenderPopup: false});
     }
 
+    _handleAddReviewButtonPress() {
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
+            currentToiletIndex: this.props.currentToiletIndex,
+            userRating: toilet.userRating,
+            toilets: this.props.toilets,
+            toiletPlace: this.state.toiletPlace,
+            title: toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
+            onFinishRating: this._handleFinishReviewing
+        });
+    }
+
+    _handleYourReviewPress() {
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
+        if (!toilet.userRating) {
+            return;
+        }
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
+            {
+                placeName: this.state.toiletPlace.name,
+                gender: toilet.gender,
+                userRating: toilet.userRating,
+                transition: TRANSITIONS.FROM_BOTTOM,
+                _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
+                onDeleteReview: this._handleFinishReviewing
+            });
+    }
+
     // DISPATCH ACTIONS
-    getToilets() {
+    getToilets(currentToiletIndex) {
         ToiletEndpoints.getToilets(this.state.toiletPlace._id)
             .then((toilets) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILETS, value: toilets});
-                this.setToiletGender(this.state.userGender);
+                if (currentToiletIndex) {
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_CURRENT_TOILET, value: currentToiletIndex});
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
+                else {
+                    this.setToiletGender(this.state.userGender);
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
             })
             .catch((err) => {
                 if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
@@ -118,12 +173,11 @@ class ToiletView extends React.Component {
                 return;
         }
         return (
-            <View style={styles.descriptionBlock}>
+            <View style={GlobalStyles.iconWithTextBlock}>
                 <Icon reverse name={iconName}
                       color={STYLE_VAR.backgroundDefault}
-                      containerStyle={styles.descriptionLineItem}
                       size={20}/>
-                <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
+                <Text style={[GlobalStyles.secondaryText]}>
                     {this.state.toiletPlace.placeType}
                 </Text>
             </View>
@@ -131,19 +185,17 @@ class ToiletView extends React.Component {
     }
 
     renderGender() {
-        let genderName;
+        const gender = this.props.toilets[this.props.currentToiletIndex].gender;
+        const genderName = GENDER_STRING[gender];
         let iconName;
-        switch (this.props.toilets[this.props.currentToiletIndex].gender) {
+        switch (gender) {
             case GENDERS.MAN:
-                genderName = "Hommes";
                 iconName = "human-male";
                 break;
             case GENDERS.WOMAN:
-                genderName = "Femmes";
                 iconName = "human-female";
                 break;
             case GENDERS.MIXT:
-                genderName = "Mixtes";
                 iconName = "human-male-female";
                 break;
             default:
@@ -151,17 +203,16 @@ class ToiletView extends React.Component {
         }
         return (
             <TouchableNativeFeedback
-                onPress={this.handleGenderChangeButtonPress}>
-                <View style={styles.descriptionBlock}>
+                onPress={this._handleGenderChangeButtonPress}>
+                <View style={GlobalStyles.iconWithTextBlock}>
                     <Icon reverse name={iconName}
                           type="material-community"
                           color={STYLE_VAR.backgroundDefault}
-                          containerStyle={styles.descriptionLineItem}
                           size={20}/>
-                    <Text style={[GlobalStyles.secondaryText, styles.descriptionLineItem]}>
+                    <Text style={GlobalStyles.secondaryText}>
                         {genderName}
                     </Text>
-                    <Text style={[GlobalStyles.secondaryText, GlobalStyles.pressableText, styles.descriptionLineItem]}>
+                    <Text style={[GlobalStyles.secondaryText, GlobalStyles.pressableText]}>
                         Changer
                     </Text>
                 </View>
@@ -172,17 +223,23 @@ class ToiletView extends React.Component {
     renderToiletDetails() {
         const toilet = this.props.toilets[this.props.currentToiletIndex];
         return (
-            <View style={GlobalStyles.stackContainer}>
-                <View style={GlobalStyles.sectionContainer}>
-                    <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
-                        {this.renderPlaceType()}
-                        {this.renderGender()}
+            <View style={{
+                flex: 1,
+                backgroundColor: 'white'
+            }}>
+                <ScrollView style={GlobalStyles.stackContainer}>
+                    <View style={GlobalStyles.sectionContainer}>
+                        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+                            {this.renderPlaceType()}
+                            {this.renderGender()}
+                        </View>
                     </View>
-                </View>
-                {this.renderGenderPopup()}
-                <View style={GlobalStyles.sectionContainer}>
-                    {this.renderRating(toilet)}
-                </View>
+                    {this.renderGenderPopup()}
+                    <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
+                        {this.renderRating(toilet)}
+                    </View>
+                </ScrollView>
+                {this.renderFooter()}
             </View>
         );
     }
@@ -207,36 +264,55 @@ class ToiletView extends React.Component {
 
     renderGenderPopup() {
         const genders = this.props.toilets.map((toilet) => {
-            let genderText;
-            switch (toilet.gender) {
-                case GENDERS.MAN :
-                    genderText = "Hommes";
-                    break;
-                case GENDERS.WOMAN :
-                    genderText = "Femmes";
-                    break;
-                default:
-                    genderText = "Mixtes"
-            }
+            let genderText = GENDER_STRING[toilet.gender];
             return {
                 value: toilet.gender,
-                text: genderText
+                label: genderText
             }
         });
         const genderChecked = this.props.toilets[this.props.currentToiletIndex].gender;
         return <RadioButtonDialog visible={this.state.showGenderPopup}
                                   title="Afficher les toilettes : "
                                   options={genders}
-                                  defaultChecked={genderChecked}
+                                  checked={genderChecked}
                                   cancel={() => this.setState({showGenderPopup: false})}
                                   onPressRadioButton={(option) => {
-                                      this.handleChangeGender(option)
+                                      this._handleChangeGenderConfirm(option)
                                   }}/>
     }
 
+    renderFooter() {
+        const toilet = this.props.toilets[this.props.currentToiletIndex];
+        let buttonLabel = "Donner votre avis";
+        let userRating;
+        if (toilet.userRating) {
+            buttonLabel = "Modifier votre avis";
+            userRating =
+                <View styles={[GlobalStyles.flexColumnCenter]}>
+                    <Text style={GlobalStyles.secondaryText}>Votre avis</Text>
+                    <ToiletRating size={15} rating={toilet.userRating.rating.global} readonly={true} containerStyle={{paddingTop: 0, paddingBottom: 2}}></ToiletRating>
+                    <Text style={[GlobalStyles.secondaryText, {fontFamily: STYLE_VAR.text.bold, fontSize: STYLE_VAR.text.size.smaller}]}>Détails</Text>
+                </View>
+        }
+
+        return <TouchableNativeFeedback onPress={this._handleYourReviewPress}>
+            <View style={GlobalStyles.footerContainer}>
+                <Button title={buttonLabel}
+                        onPress={() => this._handleAddReviewButtonPress()}
+                        buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
+                            // marginBottom: 15
+                        }]}
+                        titleStyle={GlobalStyles.defaultFont}
+                ></Button>
+                {userRating}
+            </View>
+        </TouchableNativeFeedback>
+    }
+
+
     render() {
         let body;
-        let containerStyle = {};
+        let containerStyle = {flex: 1};
         if (!this.props.isReady) {
             body = this.renderLoading();
             containerStyle = GlobalStyles.loading;
@@ -252,7 +328,9 @@ class ToiletView extends React.Component {
         else {
             body = this.renderToiletDetails();
         }
-        return <View style={containerStyle} key={this.state.toiletPlace._id}>{body}</View>;
+        return <View style={containerStyle} key={this.state.toiletPlace._id}>
+            {body}
+        </View>;
     }
 }
 
@@ -266,7 +344,6 @@ function mapStateToProps(state) {
 
 
 const styles = StyleSheet.create({
-    descriptionBlock: {flexDirection: "column", paddingBottom: 7, alignItems: 'center'},
     backgroundStyle: {
         backgroundColor: 'white',
         alignSelf: 'center',
