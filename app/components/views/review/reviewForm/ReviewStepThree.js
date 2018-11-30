@@ -15,7 +15,7 @@ import {Icon, Button} from 'react-native-elements';
 
 // CONST
 import {APP_CONFIG} from "../../../../config/appConfig"
-import {GENDERS, PLACE_TYPES} from "../../../../config/const";
+import {PLACE_TYPES} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 // API ENDPOINTS
@@ -37,10 +37,7 @@ class ReviewStepThree extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userRating: this.props.navigation.getParam('userRating'),
-            toilets: this.props.navigation.getParam('toilets'),
-            toiletPlace: this.props.navigation.getParam('toiletPlace'),
-            currentToiletIndex: this.props.navigation.getParam('currentToiletIndex'),
+            userRating: this.props.navigation.getParam('userRating')
         };
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handlePressSubmit = this._handlePressSubmit.bind(this);
@@ -58,11 +55,8 @@ class ReviewStepThree extends React.Component {
     }
 
     _handlePressSubmit() {
-        ToiletEndpoints.rateToilet(this.state.toilets[this.state.currentToiletIndex]._id, this.state.userRating)
-            .then((toilet) => {
-                this.props.navigation.navigate(ROUTE_NAMES.TOILET);
-                this.props.navigation.getParam('onFinishRating')(this.state.currentToiletIndex);
-            });
+        this.props.navigation.navigate(ROUTE_NAMES.TOILET);
+        this.props.navigation.getParam('onFinishRating')(this.state.userRating);
     }
 
 
@@ -117,11 +111,11 @@ class ReviewStepThree extends React.Component {
 
     //RENDER COMPONENTS
     renderFooter() {
-        const isButtonDisabled =  (!this.state.userRating.rating ||
-                this.state.userRating.rating.cleanliness == null ||
-                this.state.userRating.rating.functionality == null ||
-                this.state.userRating.rating.decoration == null ||
-                this.state.userRating.rating.value == null);
+        const isButtonDisabled = (!this.state.userRating.rating ||
+            this.state.userRating.rating.cleanliness == null ||
+            this.state.userRating.rating.functionality == null ||
+            this.state.userRating.rating.decoration == null ||
+            this.state.userRating.rating.value == null);
 
         return (
             <View style={GlobalStyles.footerContainer}>
@@ -138,8 +132,6 @@ class ReviewStepThree extends React.Component {
     }
 
     renderBody() {
-        let toilet = this.state.toilets[this.state.currentToiletIndex];
-
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingHorizontal: 15}}>
                 <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 3/3</Text>
@@ -157,7 +149,8 @@ class ReviewStepThree extends React.Component {
                 </View>
                 <View style={[GlobalStyles.flexColumn, styles.ratingSection]}>
                     <Text style={GlobalStyles.primaryText}>Équipements</Text>
-                    <Text style={GlobalStyles.secondaryText}>Présence de savon, sèche-main, chasse d'eau fonctionnelle...</Text>
+                    <Text style={GlobalStyles.secondaryText}>Présence de savon, sèche-main, chasse d'eau
+                        fonctionnelle...</Text>
                     <View style={styles.rating}>
                         <ToiletRating onFinishRating={this._handleFinishRatingFunctionality}
                                       rating={this.state.userRating.rating.functionality}
@@ -177,7 +170,8 @@ class ReviewStepThree extends React.Component {
                 </View>
                 <View style={[GlobalStyles.flexColumn, styles.ratingSection]}>
                     <Text style={GlobalStyles.primaryText}>Qualité/Prix</Text>
-                    <Text style={GlobalStyles.secondaryText}>Si la pinte est à 13€, on peut s'attendre à des urinoirs en argent.</Text>
+                    <Text style={GlobalStyles.secondaryText}>Si la pinte est à 13€, on peut s'attendre à des urinoirs en
+                        argent.</Text>
                     <View style={styles.rating}>
                         <ToiletRating onFinishRating={this._handleFinishRatingValue}
                                       rating={this.state.userRating.rating.value}

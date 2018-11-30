@@ -15,7 +15,7 @@ import {ROUTE_NAMES} from "../../../config/navigationConfig";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 
 // API ENDPOINTS
-import {ToiletPlacesListEndpoints} from '../../../endpoints/toiletPlacesListEndpoints'
+import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints'
 
 //COMPONENTS
 import {SearchResults} from '../../widgets/search/SearchResults';
@@ -122,9 +122,11 @@ class SearchView extends React.Component {
         this.getToiletsBySearch();
     }
 
-    _handlePressToilet(toiletPlace) {
+    _handlePressToilet(toilet) {
         this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
-            toiletPlace: toiletPlace
+            placeId: toilet._id,
+            placeName: toilet.placeName,
+            placeType: toilet.placeType
         });
     }
 
@@ -140,7 +142,7 @@ class SearchView extends React.Component {
     };
 
     getNearbyToilets = () => {
-        ToiletPlacesListEndpoints.getAllPlaces()
+        ToiletEndpoints.getAllToilets()
             .then((toilets) => {
                 if (toilets) {
                     this.props.dispatch({type: ACTIONS_SEARCH.SET_TOILETS_LIST, value: toilets});
@@ -154,7 +156,7 @@ class SearchView extends React.Component {
     };
 
     getToiletsBySearch() {
-        ToiletPlacesListEndpoints.getToiletsFromSearch(this.state.searchQuery)
+        ToiletEndpoints.getToiletsFromSearch(this.state.searchQuery)
             .then((toilets) => {
                 if (toilets) {
                     this.props.dispatch({type: ACTIONS_SEARCH.SET_TOILETS_LIST, value: toilets});

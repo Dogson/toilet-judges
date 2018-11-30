@@ -78,7 +78,6 @@ class LoginView extends React.Component {
                     return false;
                 }
                 else if (!data.token) {
-                    console.log(data);
                     Alert.alert("Une erreur est survenue.");
                     return;
                 }
@@ -95,7 +94,6 @@ class LoginView extends React.Component {
         function register() {
             AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then((data) => {
                 if (!data.token) {
-                    console.log(data);
                     Alert.alert("Une erreur est survenue.");
                     return;
                 }
