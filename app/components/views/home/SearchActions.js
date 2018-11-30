@@ -1,4 +1,4 @@
-export const ACTIONS_HOME = {
+export const ACTIONS_SEARCH = {
     SET_POSITION: "SET_POSITION",
     SET_TOILETS_LIST: "SET_TOILETS_LIST"
 };

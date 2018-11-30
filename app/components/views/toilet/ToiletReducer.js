@@ -7,16 +7,15 @@ export default toiletReducer = (state = {}, action) => {
                 ...state,
                 isReady: false
             };
-        case ACTIONS_TOILET.SET_TOILETS :
+        case ACTIONS_TOILET.STOP_LOADING:
             return {
                 ...state,
-                toilets: action.value
-            };
-        case ACTIONS_TOILET.SET_CURRENT_TOILET :
-            return {
-                ...state,
-                currentToiletIndex: action.value,
                 isReady: true
+            };
+        case ACTIONS_TOILET.SET_TOILET :
+            return {
+                ...state,
+                toilet: action.value
             };
         default:
             return state;

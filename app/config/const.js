@@ -5,8 +5,11 @@ export const PLACE_TYPES = {
     HOTEL: "Hotel"
 };
 
-export const GENDERS = {
-    WOMAN: 2,
-    MAN: 1,
-    MIXT: 0
-};
+export const RATINGS = [
+    '',
+    'Horrible',
+    'Médiocre',
+    'Moyen',
+    'Bien',
+    'Excellent'
+];
