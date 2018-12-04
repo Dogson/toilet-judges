@@ -17,7 +17,8 @@ import ReviewStepOne from "../components/views/review/reviewForm/ReviewStepOne"
 import ReviewStepTwo from "../components/views/review/reviewForm/ReviewStepTwo"
 import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThree"
 import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetails"
-
+import LoginView from "../components/views/auth/LoginView"
+import RegisterView from "../components/views/auth/RegisterView"
 
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
@@ -113,6 +114,21 @@ const MainRoutes = {
     }
 };
 
+const LoginRoutes = {
+    Login: {
+        screen: LoginView,
+        navigationOptions: {
+            header: null,
+        }
+    },
+    Register: {
+        screen: RegisterView,
+        navigationOptions: {
+            header: null
+        }
+    },
+};
+
 const ROUTE_NAMES = {
     HOME: 'Home',
     SEARCH: 'Search',
@@ -120,7 +136,9 @@ const ROUTE_NAMES = {
     REVIEW_STEP_ONE: 'ReviewStepOne',
     REVIEW_STEP_TWO: 'ReviewStepTwo',
     REVIEW_STEP_THREE: 'ReviewStepThree',
-    REVIEW_DETAILS: 'ReviewDetails'
+    REVIEW_DETAILS: 'ReviewDetails',
+    LOGIN: 'Login',
+    REGISTER: 'Register'
 };
 
 const TRANSITIONS = {
@@ -130,7 +148,7 @@ const TRANSITIONS = {
 const transitionConfig = () => {
     return {
         transitionSpec: {
-            duration: 200,
+            duration: 400,
             easing: Easing.out(Easing.poly(4)),
             timing: Animated.timing,
             useNativeDriver: true,
@@ -199,4 +217,4 @@ const StackConfig = {
     transitionConfig: transitionConfig
 };
 
-export {MainRoutes, ROUTE_NAMES, TRANSITIONS, StackConfig};
+export {MainRoutes, LoginRoutes, ROUTE_NAMES, TRANSITIONS, StackConfig};

@@ -1,7 +1,7 @@
 // LIBRAIRIES
 import React from 'react';
 import {connect} from "react-redux";
-import {ScrollView, View, Image, Text, Alert} from "react-native";
+import {View, Image, Text, Alert, ScrollView, ActivityIndicator} from "react-native";
 import {Button} from 'react-native-elements';
 import {DeviceStorage} from "../../../helpers/deviceStorage";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -23,20 +23,21 @@ import {FormInput} from "../../widgets/form/FormInput";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 import {ROUTE_NAMES} from "../../../config/navigationConfig";
 
-class LoginView extends React.Component {
+class RegisterView extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            emailErrorMessage: null,
+            passwordErrorMessage: null,
+            registerScreen: false,
+            isReady: true
+        };
 
         this._handlePressSubmitButton = this._handlePressSubmitButton.bind(this);
         this._handleChangeEmail = this._handleChangeEmail.bind(this);
         this._handleChangePassword = this._handleChangePassword.bind(this);
         this._handleChangeUsername = this._handleChangeUsername.bind(this);
-
-        this.state = {
-            emailErrorMessage: null,
-            passwordErrorMessage: null,
-            isReady: true
-        }
     }
 
     componentDidUpdate(prevProps) {
@@ -44,7 +45,6 @@ class LoginView extends React.Component {
             this.validateForm();
         }
     }
-
 
     //EVENTS
     _handleChangeEmail(text) {
@@ -64,13 +64,15 @@ class LoginView extends React.Component {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             this.setState({isReady: false});
-            AuthEndpoints.login(_this.props.email, _this.props.password).then((data) => {
-                if (data.errorType === ERROR_TYPES.WRONG_CRED) {
-                    _this.setState({passwordErrorMessage: "Votre e-mail/mot de passe est incorrect"});
-                    this.setState({isReady: true});
+            AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then((data) => {
+                if (data.errorType === ERROR_TYPES.USER_EXISTS) {
+                    this.setState({
+                        passwordErrorMessage: "Cette adresse e-mail est déja associé à un compte.",
+                        isReady: true
+                    });
                     return;
                 }
-                else if (!data.token) {
+                if (!data.token) {
                     Alert.alert("Une erreur est survenue.");
                     this.setState({isReady: true});
                     return;
@@ -79,22 +81,22 @@ class LoginView extends React.Component {
                     _this.setState({hasSubmitted: false, isReady: true});
                     _this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
                 });
-            }).catch((error) => {
-                this.setState({isReady: true});
-                console.log(error);
+            }).catch(() => {
+                _this.setState({isReady: true});
                 Alert.alert("Une erreur est survenue.")
             })
         }
     }
 
     _handlePressSwitch() {
-        this.props.navigation.navigate(ROUTE_NAMES.REGISTER);
+        this.props.navigation.goBack(null);
     }
 
-    //FORM VALIDATION
+    // FORM VALIDATION
     validateForm() {
         let emailErrorMessage = null;
         let passwordErrorMessage = null;
+        let usernameErrorMessage = null;
         let isValid = true;
         let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!regEmail.test(this.props.email)) {
@@ -105,9 +107,14 @@ class LoginView extends React.Component {
             passwordErrorMessage = "Veuillez entrer un mot de passe";
             isValid = false;
         }
+        if (!this.props.username || this.props.username.length < 1) {
+            usernameErrorMessage = "Veuillez entrer un nom d'utilisateur";
+            isValid = false;
+        }
         this.setState({
             emailErrorMessage: emailErrorMessage,
-            passwordErrorMessage: passwordErrorMessage
+            passwordErrorMessage: passwordErrorMessage,
+            usernameErrorMessage: usernameErrorMessage
         });
         return isValid;
     }
@@ -125,11 +132,12 @@ class LoginView extends React.Component {
         </View>
     }
 
-    renderRegisterSwitchButton() {
+    renderLoginSwitchButton() {
         return <View style={{marginTop: 50}}>
             <Text
-                style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>Pas de compte ?</Text>
-            <Button title="S'INSCRIRE"
+                style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>Vous possédez déja un
+                compte ?</Text>
+            <Button title="SE CONNECTER"
                     onPress={() => this._handlePressSwitch()}
                     buttonStyle={GlobalStyles.secondaryButton}
                     titleStyle={GlobalStyles.secondaryButtonTitle}
@@ -141,36 +149,45 @@ class LoginView extends React.Component {
         return <ScrollView style={[GlobalStyles.withMarginContainer, {marginVertical: 50}]}
                            keyboardShouldPersistTaps="handled">
             {this.renderLogo()}
-            <FormInput value={this.props.email}
+            <FormInput label="E-mail"
+                       value={this.props.email}
                        onChangeText={(text) => this._handleChangeEmail(text)}
                        placeholder="toilette@alaturc.com"
                        errorMessage={this.state.emailErrorMessage}
                        keyboardType="email-address"
                        autoCapitalize="none"></FormInput>
-            <FormInput value={this.props.password}
+            <FormInput label="Nom d'utilisateur"
+                       value={this.props.username}
+                       onChangeText={(text) => this._handleChangeUsername(text)}
+                       placeholder="Mr. Hankey"
+                       errorMessage={this.state.usernameErrorMessage}
+            ></FormInput>
+            <FormInput label="Mot de passe"
+                       value={this.props.password}
                        onChangeText={(text) => this._handleChangePassword(text)}
                        placeholder="**********"
                        errorMessage={this.state.passwordErrorMessage}
                        secureTextEntry={true}></FormInput>
-            <Button title="SE CONNECTER"
+            <Button title="S'INSCRIRE"
                     onPress={() => this._handlePressSubmitButton()}
                     buttonStyle={GlobalStyles.primaryButton}
                     titleStyle={GlobalStyles.defaultFont}
-                    loading={!this.state.isReady}
-            ></Button>
-            {this.renderRegisterSwitchButton()}
+                    loading={!this.state.isReady}></Button>
+            {this.renderLoginSwitchButton()}
 
             <KeyboardSpacer/>
         </ScrollView>
     }
+
+
 }
 
 function mapStateToProps(state) {
     return {
         password: state.authReducer.password,
-        email: state.authReducer.email
+        email: state.authReducer.email,
+        username: state.authReducer.username
     };
 }
 
-
-export default connect(mapStateToProps)(LoginView);
+export default connect(mapStateToProps)(RegisterView);
