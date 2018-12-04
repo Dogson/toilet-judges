@@ -3,7 +3,7 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {connect} from "react-redux";
 
 //Const
-import {MainRoutes, StackConfig} from "../../../config/navigationConfig";
+import {MainRoutes, LoginRoutes, StackConfig} from "../../../config/navigationConfig";
 import {ACTIONS_ROOT} from "./RootActions";
 
 import LoginView from "../auth/LoginView";
@@ -11,6 +11,7 @@ import {DeviceStorage} from "../../../helpers/deviceStorage";
 import {createStackNavigator} from "react-navigation";
 
 const Navigator = createStackNavigator(MainRoutes, StackConfig);
+const LoginNavigator = createStackNavigator(LoginRoutes, StackConfig);
 
 class AppRedux extends React.Component {
     constructor() {
@@ -20,9 +21,14 @@ class AppRedux extends React.Component {
             loading: true
         };
 
-        this.newJWT = this.newJWT.bind(this);
 
-        this.loadJWT();
+
+        DeviceStorage.deleteJWT().then(() => {
+            this.newJWT = this.newJWT.bind(this);
+            this.loadJWT();
+        });
+
+
     }
 
     loadJWT() {
@@ -48,7 +54,7 @@ class AppRedux extends React.Component {
             body = <ActivityIndicator></ActivityIndicator>
         }
         else if (!this.props.jwt || this.props.jwt === '') {
-            body = <LoginView/>
+            body = <LoginNavigator/>;
         }
         else body = <Navigator/>;
         return (
