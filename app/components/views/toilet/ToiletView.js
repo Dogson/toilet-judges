@@ -158,6 +158,51 @@ class ToiletView extends React.Component {
         );
     }
 
+    renderAccessibleDetail() {
+        let accessible = this.props.toilet.isAccessible;
+        if (accessible == null) {
+            return;
+        }
+        accessible = {
+            text: accessible ? 'Accès\nhandicappé' : 'Aucun accès\nhandicappé',
+            color: accessible ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+        };
+
+
+        return <View style={GlobalStyles.iconWithTextBlock}>
+            <Icon reverse
+                  name="accessible"
+                  color={accessible.color}
+                  size={20}/>
+            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center'}]}>
+                {accessible.text}
+            </Text>
+        </View>
+    }
+
+    renderMixedDetail() {
+        let mixed = this.props.toilet.isMixed;
+        if (mixed == null) {
+            return;
+        }
+        mixed = {
+            text: mixed ? 'Toilettes\nmixtes' : "Toilettes\nnon mixtes",
+            color: mixed ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+        };
+
+
+        return <View style={GlobalStyles.iconWithTextBlock}>
+            <Icon name="human-male-female"
+                  reverse
+                  type="material-community"
+                  color={mixed.color}
+                  size={20}/>
+            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center'}]}>
+                {mixed.text}
+            </Text>
+        </View>
+    }
+
     renderToiletDetails() {
         return (
             <View style={{
@@ -168,6 +213,8 @@ class ToiletView extends React.Component {
                     <View style={GlobalStyles.sectionContainer}>
                         <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
                             {this.renderPlaceType()}
+                            {this.renderAccessibleDetail()}
+                            {this.renderMixedDetail()}
                         </View>
                     </View>
                     <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>

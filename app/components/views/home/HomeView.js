@@ -25,13 +25,15 @@ export default class HomeView extends React.Component {
 
     render() {
         return <View style={[GlobalStyles.flexColumnCenter, {flex: 1, marginBottom: 100}]}>
-            <Image
-                style={{width: 80, height: 80}}
-                source={TOILET_WELCOME}
-            />
-            <Text style={GlobalStyles.secondaryText}>
-                Votre prochain havre de paix
-            </Text>
+            <View style={{paddingVertical: 20}}>
+                <Image
+                    style={{width: 80, height: 80, alignSelf: 'center'}}
+                    source={TOILET_WELCOME}
+                />
+                <Text style={GlobalStyles.secondaryText}>
+                    Votre prochain havre de paix
+                </Text>
+            </View>
             <TouchableNativeFeedback onPress={this._handleSearchPress}>
                 <View style={styles.search}>
                     <SearchBar
