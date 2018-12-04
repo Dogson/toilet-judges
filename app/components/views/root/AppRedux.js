@@ -21,14 +21,8 @@ class AppRedux extends React.Component {
             loading: true
         };
 
-
-
-        DeviceStorage.deleteJWT().then(() => {
-            this.newJWT = this.newJWT.bind(this);
-            this.loadJWT();
-        });
-
-
+        this.newJWT = this.newJWT.bind(this);
+        this.loadJWT();
     }
 
     loadJWT() {
