@@ -12,6 +12,7 @@ import getSceneIndicesForInterpolationInputRange
 
 import HomeView from "../components/views/home/HomeView"
 import SearchView from "../components/views/home/SearchView"
+import MapFullView from "../components/views/home/MapFullView"
 import ToiletView from "../components/views/toilet/ToiletView"
 import ReviewStepOne from "../components/views/review/reviewForm/ReviewStepOne"
 import ReviewStepTwo from "../components/views/review/reviewForm/ReviewStepTwo"
@@ -39,6 +40,12 @@ const MainRoutes = {
     },
     Search: {
         screen: SearchView,
+        navigationOptions: {
+            header: null
+        }
+    },
+    Map: {
+        screen: MapFullView,
         navigationOptions: {
             header: null
         }
@@ -96,17 +103,17 @@ const MainRoutes = {
                     <View style={{padding: 15}}><Icon name="close"></Icon></View>
                 </TouchableNativeFeedback>,
                 headerRight: <View>
-                        <Menu>
-                            <MenuTrigger><Icon name="more-vert" containerStyle={{padding: 15}}/></MenuTrigger>
-                            <MenuOptions customStyles={{
-                                optionsWrapper: {width: 'auto', right: 0},
-                                optionWrapper: {paddingVertical: 15, paddingHorizontal: 10},
-                                optionText: GlobalStyles.primaryText,
-                            }}>
-                                <MenuOption onSelect={navigation.state.params.handleEdit} text="Modifier l'avis"/>
-                                <MenuOption onSelect={navigation.state.params.handleDelete} text="Supprimer l'avis"/>
-                            </MenuOptions>
-                        </Menu>
+                    <Menu>
+                        <MenuTrigger><Icon name="more-vert" containerStyle={{padding: 15}}/></MenuTrigger>
+                        <MenuOptions customStyles={{
+                            optionsWrapper: {width: 'auto', right: 0},
+                            optionWrapper: {paddingVertical: 15, paddingHorizontal: 10},
+                            optionText: GlobalStyles.primaryText,
+                        }}>
+                            <MenuOption onSelect={navigation.state.params.handleEdit} text="Modifier l'avis"/>
+                            <MenuOption onSelect={navigation.state.params.handleDelete} text="Supprimer l'avis"/>
+                        </MenuOptions>
+                    </Menu>
                 </View>,
                 headerTintColor: STYLE_VAR.text.color.primary
             };
@@ -132,6 +139,7 @@ const LoginRoutes = {
 const ROUTE_NAMES = {
     HOME: 'Home',
     SEARCH: 'Search',
+    MAP: 'Map',
     TOILET: 'Toilet',
     REVIEW_STEP_ONE: 'ReviewStepOne',
     REVIEW_STEP_TWO: 'ReviewStepTwo',

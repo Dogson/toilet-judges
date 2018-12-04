@@ -2,11 +2,6 @@ import {ACTIONS_SEARCH} from "./SearchActions";
 
 export default searchReducer = (state = {}, action) => {
     switch (action.type) {
-        case ACTIONS_SEARCH.SET_POSITION :
-            return {
-                ...state,
-                position: action.value
-            };
         case ACTIONS_SEARCH.SET_TOILETS_LIST :
             return {
                 ...state,
