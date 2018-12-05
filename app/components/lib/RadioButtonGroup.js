@@ -1,3 +1,5 @@
+// altered to change the way selected button are handled
+
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {STYLE_VAR} from "../../styles/stylingVar";
