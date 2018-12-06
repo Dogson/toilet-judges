@@ -71,8 +71,9 @@ class ToiletView extends React.Component {
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
+        let id = this.props.toilet ? this.props.toilet._id : this.props.navigation.getParam('place').id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.rateToilet(this.props.toilet._id, userRating)
+        ToiletEndpoints.rateToilet(id, userRating)
             .then(() => {
                 this.refreshToilet();
             });
@@ -86,9 +87,9 @@ class ToiletView extends React.Component {
 
     _handleAddReviewButtonPress() {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
-            userRating: this.props.toilet.userRating,
-            title: this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
-            placeName: this.props.toilet.placeName,
+            userRating: this.props.toilet ? this.props.toilet.userRating : null,
+            title: this.props.toilet && this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
+            placeName: this.props.navigation.getParam('place').name,
             onFinishRating: this._handleFinishReview
         });
     }
@@ -108,7 +109,8 @@ class ToiletView extends React.Component {
 
     // DISPATCH ACTIONS
     refreshToilet() {
-        ToiletEndpoints.getToilet(this.props.navigation.getParam('placeId'))
+        let place = this.props.navigation.getParam('place');
+        ToiletEndpoints.getToilet(place.id)
             .then((toilet) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
                 this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
@@ -122,46 +124,44 @@ class ToiletView extends React.Component {
 
     // RENDERING COMPONENTS
     renderRating() {
-        const rating = this.props.toilet.rating || {};
+        let rating = {};
+        let ratingCount = 0;
+        if (this.props.toilet && this.props.toilet.rating) {
+            rating = this.props.toilet.rating
+            ratingCount = this.props.toilet.ratingCount;
+        }
         return <GlobalRating rating={rating}
-                             ratingCount={this.props.toilet.ratingCount}></GlobalRating>
+                             ratingCount={ratingCount}></GlobalRating>
 
     }
 
     renderPlaceType() {
-        let iconName;
-        switch (this.props.toilet.placeType) {
-            case PLACE_TYPES.RESTAURANT:
-                iconName = 'restaurant';
-                break;
-            case PLACE_TYPES.BAR:
-                iconName = 'local-bar';
-                break;
-            case PLACE_TYPES.CINEMA:
-                iconName = 'local-movies';
-                break;
-            case PLACE_TYPES.HOTEL:
-                iconName = 'hotel';
-                break;
-            default:
-                return;
-        }
+        let place = this.props.navigation.getParam('place');
+        let placeDetails = PLACE_TYPES.find((placeType) => {
+           return placeType.id === place.type;
+        });
+        if (!placeDetails)
+            return null;
         return (
             <View style={GlobalStyles.iconWithTextBlock}>
-                <Icon reverse name={iconName}
+                <Icon reverse name={placeDetails.icon.name}
+                      type={placeDetails.icon.type}
                       color={STYLE_VAR.backgroundDefault}
                       size={20}/>
                 <Text style={[GlobalStyles.secondaryText]}>
-                    {this.props.toilet.placeType}
+                    {placeDetails.name}
                 </Text>
             </View>
         );
     }
 
     renderAccessibleDetail() {
+        if (!this.props.toilet) {
+            return null;
+        }
         let accessible = this.props.toilet.isAccessible;
         if (accessible == null) {
-            return;
+            return null;
         }
         accessible = {
             text: accessible ? 'Accès\nhandicappé' : 'Aucun accès\nhandicappé',
@@ -181,6 +181,9 @@ class ToiletView extends React.Component {
     }
 
     renderMixedDetail() {
+        if (!this.props.toilet) {
+            return null;
+        }
         let mixed = this.props.toilet.isMixed;
         if (mixed == null) {
             return;
@@ -218,7 +221,7 @@ class ToiletView extends React.Component {
                         </View>
                     </View>
                     <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
-                        {this.renderRating(this.props.toilet)}
+                        {this.renderRating()}
                     </View>
                 </ScrollView>
                 {this.renderFooter()}
@@ -232,16 +235,10 @@ class ToiletView extends React.Component {
         )
     }
 
-    renderNoToilets() {
-        return (
-            <Text>Pas de toilettes</Text>
-        )
-    }
-
     renderFooter() {
         let buttonLabel = "Donner votre avis";
         let userRating;
-        if (this.props.toilet.userRating) {
+        if (this.props.toilet && this.props.toilet.userRating) {
             buttonLabel = "Modifier votre avis";
             userRating =
                 <View styles={[GlobalStyles.flexColumnCenter]}>
@@ -276,10 +273,6 @@ class ToiletView extends React.Component {
         if (!this.props.isReady) {
             body = this.renderLoading();
             containerStyle = GlobalStyles.loading;
-        }
-        else if (!this.props.toilet) {
-            body = this.renderNoToilets();
-            containerStyle = styles.backgroundStyle
         }
         else {
             body = this.renderToiletDetails();

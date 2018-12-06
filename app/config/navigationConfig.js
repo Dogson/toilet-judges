@@ -54,7 +54,7 @@ const MainRoutes = {
         screen: ToiletView,
         navigationOptions: ({navigation}) => {
             return {
-                title: navigation.getParam('placeName'),
+                title: navigation.getParam('place').name,
                 headerTintColor: STYLE_VAR.text.color.primary,
                 headerTitleStyle: GlobalStyles.primaryText
             };

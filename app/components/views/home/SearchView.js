@@ -1,5 +1,7 @@
 // LIBRAIRIES
 
+import {PLACE_TYPES} from "../../../config/const";
+
 let _ = require('lodash');
 import React from 'react';
 import {MapView} from 'expo';
@@ -51,7 +53,6 @@ export default class SearchView extends React.Component {
             }
         };
 
-        this._handlePressToilet = this._handlePressToilet.bind(this);
         this._handleKeyboardSpacerToggle = this._handleKeyboardSpacerToggle.bind(this);
         this._handlePressMap = this._handlePressMap.bind(this);
 
@@ -97,14 +98,6 @@ export default class SearchView extends React.Component {
                     right: 20
                 }
             })
-        });
-    }
-
-    _handlePressToilet(toilet) {
-        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
-            placeId: toilet._id,
-            placeName: toilet.placeName,
-            placeType: toilet.placeType
         });
     }
 
@@ -164,8 +157,7 @@ export default class SearchView extends React.Component {
     render() {
         let result;
         let mapIcon = this.renderMapIcon();
-        result =
-            <View style={{
+        result = <View style={{
                 flex: 1,
                 justifyContent: 'center',
                 marginTop: StatusBar.currentHeight
@@ -179,7 +171,18 @@ export default class SearchView extends React.Component {
                     fetchDetails={true}
                     renderDescription={row => row.description || row.formatted_address || row.name}// custom description render
                     onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                        console.log(data, details);
+                        let place = {
+                            id: details.place_id,
+                            name: details.name,
+                            type: details.types.find((type) => {
+                                return PLACE_TYPES.map((place_type) => {
+                                    return place_type.id;
+                                }).includes(type);
+                            })
+                        };
+
+                        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
+
                     }}
                     getDefaultValue={() => ''}
                     query={{
