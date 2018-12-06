@@ -53,9 +53,10 @@ export default class SearchView extends React.Component {
 
         this._handlePressToilet = this._handlePressToilet.bind(this);
         this._handleKeyboardSpacerToggle = this._handleKeyboardSpacerToggle.bind(this);
-        this._handlePressMap = this._handlePressMap.bind(this);;
+        this._handlePressMap = this._handlePressMap.bind(this);
 
         this.renderRightButton = this.renderRightButton.bind(this);
+        this.renderLeftButton = this.renderLeftButton.bind(this);
     }
 
     componentDidMount() {
@@ -114,6 +115,19 @@ export default class SearchView extends React.Component {
     }
 
     // RENDERING COMPONENTS
+    renderLeftButton() {
+        let _this = this;
+        function doAction() {
+            _this.props.navigation.goBack(null);
+        }
+
+        return <TouchableNativeFeedback onPress={doAction}><View
+            style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
+            name="arrow-back"
+            iconStyle={{color: STYLE_VAR.text.color.primary}}
+        ></Icon></View></TouchableNativeFeedback>
+    }
+
     renderRightButton() {
         let _this = this;
 
@@ -124,7 +138,7 @@ export default class SearchView extends React.Component {
 
         if (this.search && this.search.getAddressText() && this.search.getAddressText().length > 0) {
             return <TouchableNativeFeedback onPress={clearInput}><View
-                style={{justifyContent: 'center', padding: 8}}><Icon
+                style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
                 name="close"
                 iconStyle={{color: STYLE_VAR.text.color.primary}}
             ></Icon></View></TouchableNativeFeedback>
@@ -149,7 +163,6 @@ export default class SearchView extends React.Component {
 
     render() {
         let result;
-        let searchResults;
         let mapIcon = this.renderMapIcon();
         result =
             <View style={{
@@ -157,9 +170,6 @@ export default class SearchView extends React.Component {
                 justifyContent: 'center',
                 marginTop: StatusBar.currentHeight
             }}>
-                <NavigationEvents
-                    onWillFocus={payload => this.onViewFocused(payload)}
-                />
                 <GooglePlacesAutocomplete
                     ref={search => this.search = search}
                     placeholder='Rechercher un établissement'
@@ -182,7 +192,7 @@ export default class SearchView extends React.Component {
                         // default: 'geocode'
                     }}
                     styles={{
-                        textInputContainer: GlobalStyles.container,
+                        textInputContainer: [GlobalStyles.container, {height: 50, alignItems: 'center', paddingBottom: 7.5}],
                         textInput: GlobalStyles.primaryText,
                         description: GlobalStyles.primaryText,
                         separator: {
@@ -203,6 +213,7 @@ export default class SearchView extends React.Component {
                         types: 'establishment'
                     }}
                     debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                    renderLeftButton={this.renderLeftButton}
                     renderRightButton={this.renderRightButton}
                 />
                 {/*{searchResults}*/}
