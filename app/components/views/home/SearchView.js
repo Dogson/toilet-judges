@@ -208,7 +208,7 @@ export default class SearchView extends React.Component {
                         }
                     }}
                     currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-                    currentLocationLabel="Current location"
+                    currentLocationLabel="Toilettes près de vous"
                     nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                     GooglePlacesSearchQuery={{
                         // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
@@ -219,7 +219,6 @@ export default class SearchView extends React.Component {
                     renderLeftButton={this.renderLeftButton}
                     renderRightButton={this.renderRightButton}
                 />
-                {/*{searchResults}*/}
                 {/*{mapIcon}*/}
                 <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
             </View>;
