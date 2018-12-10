@@ -72,6 +72,13 @@ export const PLACE_TYPES = [
         }
     },
     {
+        id: 'book_store',
+        name: 'Librairie',
+        icon: {
+            name: 'local-library'
+        }
+    },
+    {
         id: 'museum',
         name: 'Musée',
         icon: {

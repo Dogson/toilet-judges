@@ -156,14 +156,14 @@ export default class SearchView extends React.Component {
 
     renderRowDescription(row) {
         if (row.isPredefinedPlace)
-            return <Text style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text>;
+            return <View key={row.place_id} style={{flex: 0.9}}><Text style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text></View>;
         if (row.structured_formatting)
             return <View key={row.place_id} style={{flex: 0.9}}>
                 <Text numberOfLines={1} style={GlobalStyles.primaryText}>{row.structured_formatting.main_text}</Text>
                 <Text numberOfLines={1}
                       style={GlobalStyles.secondaryText}>{row.structured_formatting.secondary_text}</Text>
             </View>;
-        return <Text style={GlobalStyles.primaryText}>{row.name}</Text>;
+        return <View key={row.place_id} style={{flex: 0.9}}><Text style={GlobalStyles.primaryText}>{row.name}</Text></View>;
     }
 
     render() {
@@ -185,6 +185,7 @@ export default class SearchView extends React.Component {
                 fetchDetails={true}
                 renderRow={(row) => this.renderRowDescription(row)}
                 onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                    console.log(details.types);
                     let place = {
                         id: details.place_id,
                         name: details.name,
