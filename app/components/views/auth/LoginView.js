@@ -45,6 +45,12 @@ class LoginView extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
+        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: null});
+        this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: null});
+    }
+
 
     //EVENTS
     _handleChangeEmail(text) {

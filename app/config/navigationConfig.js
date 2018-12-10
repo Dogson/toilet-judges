@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Easing, Animated, TouchableNativeFeedback, View} from 'react-native';
+import {Easing, Animated, TouchableNativeFeedback, View, Button, Text} from 'react-native';
 import {Icon} from "react-native-elements";
 import Menu, {
     MenuOptions,
@@ -24,7 +24,8 @@ import UserProfileView from "../components/views/settings/UserProfileView"
 
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
-import {createStackNavigator} from "react-navigation";
+import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
+import {DeviceStorage} from "../helpers/deviceStorage";
 
 
 /**
@@ -259,14 +260,14 @@ const DrawerRoutes = {
         screen: MainStackNavigator,
         navigationOptions: {
             headerMode: 'screen',
-            drawerLabel: 'Accueil',
+            drawerLabel:  'Accueil',
             drawerIcon: <Icon name="home"/>
         }
     },
     UserProfile: {
         screen: UserProfileStackNavigator,
         navigationOptions: {
-            drawerLabel: 'Votre profil',
+            drawerLabel: 'Profil',
             drawerIcon: <Icon name="account" type="material-community"/>
         }
     }
