@@ -111,12 +111,11 @@ export default class SearchView extends React.Component {
     renderLeftButton() {
         let _this = this;
         function doAction() {
-            _this.search.triggerBlur();
             _this.props.navigation.openDrawer();
         }
 
         return <TouchableNativeFeedback onPress={doAction}><View
-            style={{justifyContent: 'center', paddingHorizontal: 10, paddingTop: 7.5}}><Icon
+            style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
             name="bars" type="font-awesome"
             size={20}
             iconStyle={{color: STYLE_VAR.text.color.primary}}
@@ -212,11 +211,11 @@ export default class SearchView extends React.Component {
                 }}
                 styles={{
                     textInputContainer: [GlobalStyles.container, {
-                        height: 50,
+                        height: 'auto',
                         alignItems: 'center',
                         paddingBottom: 7.5
                     }],
-                    textInput: GlobalStyles.primaryText,
+                    textInput: [GlobalStyles.primaryText, {height: 'auto'}],
                     row: {height: 'auto'},
                     listView: GlobalStyles.container,
                     loader: {
