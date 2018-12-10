@@ -174,11 +174,9 @@ export default class SearchView extends React.Component {
                         let place = {
                             id: details.place_id,
                             name: details.name,
-                            type: details.types.find((type) => {
-                                return PLACE_TYPES.map((place_type) => {
-                                    return place_type.id;
-                                }).includes(type);
-                            })
+                            type: PLACE_TYPES.map((place_type) => {
+                                return place_type.id
+                            }).find((type) => {return details.types.includes(type)})
                         };
 
                         this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
@@ -191,7 +189,7 @@ export default class SearchView extends React.Component {
                         language: 'fr', // language of the result
                         types: 'establishment',
                         location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
-                        radius: 500
+                        radius: 2000
                         // default: 'geocode'
                     }}
                     styles={{
