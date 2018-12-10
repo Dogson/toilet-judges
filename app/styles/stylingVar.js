@@ -1,6 +1,9 @@
 export const STYLE_VAR = {
     ratingColor: '#F3C22E',
     text: {
+        font: {
+            fontFamily: 'roboto-regular'
+        },
         color: {
             primary: '#4D4D4D',
             secondary: '#777',

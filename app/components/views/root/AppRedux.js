@@ -3,15 +3,14 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {connect} from "react-redux";
 
 //Const
-import {MainRoutes, LoginRoutes, StackConfig} from "../../../config/navigationConfig";
+import {MainRoutes, LoginRoutes, StackConfig, DrawerRoutes, transitionConfig} from "../../../config/navigationConfig";
 import {ACTIONS_ROOT} from "./RootActions";
 
-import LoginView from "../auth/LoginView";
 import {DeviceStorage} from "../../../helpers/deviceStorage";
-import {createStackNavigator} from "react-navigation";
+import {createDrawerNavigator, createStackNavigator} from "react-navigation";
 
-const Navigator = createStackNavigator(MainRoutes, StackConfig);
 const LoginNavigator = createStackNavigator(LoginRoutes, StackConfig);
+const DrawerNavigator = createDrawerNavigator(DrawerRoutes);
 
 class AppRedux extends React.Component {
     constructor() {
@@ -50,7 +49,7 @@ class AppRedux extends React.Component {
         else if (!this.props.jwt || this.props.jwt === '') {
             body = <LoginNavigator/>;
         }
-        else body = <Navigator/>;
+        else body = <DrawerNavigator></DrawerNavigator>;
         return (
             <View style={styles.container}>
                 {body}
