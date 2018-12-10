@@ -10,9 +10,9 @@ export const PLACE_TYPES = [
     },
     {
         id: 'doctor',
-        name: 'Docteur',
+        name: 'Médecin',
         icon: {
-            name: 'doctor',
+            name: 'medical-bag',
             type: 'material-community'
 
         }

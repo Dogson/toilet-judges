@@ -8,7 +8,6 @@ import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 const TOILET_WELCOME = require('../../../../assets/img/toiletWelcome.png');
 
 export default class HomeView extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -24,7 +23,7 @@ export default class HomeView extends React.Component {
 
 
     render() {
-        return <View style={[GlobalStyles.flexColumnCenter, {flex: 1, marginBottom: 100}]}>
+        return <View style={[GlobalStyles.flexColumnCenter, {flex: 1, marginBottom: 170}]}>
             <View style={{paddingVertical: 20}}>
                 <Image
                     style={{width: 80, height: 80, alignSelf: 'center'}}

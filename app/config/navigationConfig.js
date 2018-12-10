@@ -20,9 +20,11 @@ import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThr
 import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetails"
 import LoginView from "../components/views/auth/LoginView"
 import RegisterView from "../components/views/auth/RegisterView"
+import UserProfileView from "../components/views/settings/UserProfileView"
 
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
+import {createStackNavigator} from "react-navigation";
 
 
 /**
@@ -31,11 +33,98 @@ import {GlobalStyles} from "../styles/styles";
  *
  * */
 
+
+const transitionConfig = () => {
+    return {
+        transitionSpec: {
+            duration: 400,
+            easing: Easing.out(Easing.poly(4)),
+            timing: Animated.timing,
+            useNativeDriver: true,
+        },
+        screenInterpolator: (sceneProps) => {
+            const {layout, position, scene} = sceneProps;
+            const width = layout.initWidth;
+            const height = layout.initHeight;
+            const {index, route} = scene
+            const params = route.params || {}; // <- That's new
+            const transition = params.transition || 'default'; // <- That's new
+            return {
+                slideFromBottom: StackViewStyleInterpolator.forVertical(sceneProps),
+                default: forHorizontal(sceneProps)
+            }[transition];
+        },
+    }
+};
+
+function forInitial(props) {
+    const {navigation, scene} = props;
+
+    const focused = navigation.state.index === scene.index;
+    const opacity = focused ? 1 : 0;
+    // If not focused, move the scene far away.
+    const translate = focused ? 0 : 1000000;
+    return {
+        opacity,
+        transform: [{translateX: translate}, {translateY: translate}]
+    };
+}
+
+function forHorizontal(props) {
+    const {layout, position, scene} = props;
+
+    if (!layout.isMeasured) {
+        return forInitial(props);
+    }
+    const interpolate = getSceneIndicesForInterpolationInputRange(props);
+
+    if (!interpolate) return {opacity: 0};
+
+    const {first, last} = interpolate;
+    const index = scene.index;
+    const opacity = position.interpolate({
+        inputRange: [first, first + 0.01, index, last - 0.01, last],
+        outputRange: [0, 1, 1, 0.85, 0],
+        extrapolate: 'clamp'
+    });
+
+    const width = layout.initWidth;
+    const translateX = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [width, 0, 0],
+        extrapolate: 'clamp'
+    });
+    const translateY = 0;
+
+    return {
+        opacity,
+        transform: [{translateX}, {translateY}]
+    };
+}
+
+
 const MainRoutes = {
     Home: {
         screen: HomeView,
-        navigationOptions: {
-            header: null,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'transparent',
+                    elevation: 0,
+                    zIndex: 100
+                },
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText,
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                    </TouchableNativeFeedback>
+                )
+            }
         }
     },
     Search: {
@@ -121,6 +210,27 @@ const MainRoutes = {
     }
 };
 
+const UserProfileRoutes = {
+    UserProfile: {
+        screen: UserProfileView,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                    </TouchableNativeFeedback>
+                ),
+                title: "Votre profil",
+                headerTintColor: STYLE_VAR.text.color.primary,
+                headerTitleStyle: GlobalStyles.primaryText
+            }
+        }
+    },
+};
+
 const LoginRoutes = {
     Login: {
         screen: LoginView,
@@ -136,8 +246,35 @@ const LoginRoutes = {
     },
 };
 
+const MainStackNavigator = createStackNavigator(MainRoutes, {
+    transitionConfig: transitionConfig
+});
+const UserProfileStackNavigator = createStackNavigator(UserProfileRoutes, {
+    transitionConfig: transitionConfig
+});
+
+
+const DrawerRoutes = {
+    Home: {
+        screen: MainStackNavigator,
+        navigationOptions: {
+            headerMode: 'screen',
+            drawerLabel: 'Accueil',
+            drawerIcon: <Icon name="home"/>
+        }
+    },
+    UserProfile: {
+        screen: UserProfileStackNavigator,
+        navigationOptions: {
+            drawerLabel: 'Votre profil',
+            drawerIcon: <Icon name="account" type="material-community"/>
+        }
+    }
+};
+
 const ROUTE_NAMES = {
     HOME: 'Home',
+    USER_PROFILE: 'UserProfile',
     SEARCH: 'Search',
     MAP: 'Map',
     TOILET: 'Toilet',
@@ -153,76 +290,4 @@ const TRANSITIONS = {
     FROM_BOTTOM: 'slideFromBottom',
 };
 
-const transitionConfig = () => {
-    return {
-        transitionSpec: {
-            duration: 400,
-            easing: Easing.out(Easing.poly(4)),
-            timing: Animated.timing,
-            useNativeDriver: true,
-        },
-        screenInterpolator: (sceneProps) => {
-            const {layout, position, scene} = sceneProps;
-            const width = layout.initWidth;
-            const height = layout.initHeight;
-            const {index, route} = scene
-            const params = route.params || {}; // <- That's new
-            const transition = params.transition || 'default'; // <- That's new
-            return {
-                slideFromBottom: StackViewStyleInterpolator.forVertical(sceneProps),
-                default: forHorizontal(sceneProps)
-            }[transition];
-        },
-    }
-};
-
-function forInitial(props) {
-    const {navigation, scene} = props;
-
-    const focused = navigation.state.index === scene.index;
-    const opacity = focused ? 1 : 0;
-    // If not focused, move the scene far away.
-    const translate = focused ? 0 : 1000000;
-    return {
-        opacity,
-        transform: [{translateX: translate}, {translateY: translate}]
-    };
-}
-
-function forHorizontal(props) {
-    const {layout, position, scene} = props;
-
-    if (!layout.isMeasured) {
-        return forInitial(props);
-    }
-    const interpolate = getSceneIndicesForInterpolationInputRange(props);
-
-    if (!interpolate) return {opacity: 0};
-
-    const {first, last} = interpolate;
-    const index = scene.index;
-    const opacity = position.interpolate({
-        inputRange: [first, first + 0.01, index, last - 0.01, last],
-        outputRange: [0, 1, 1, 0.85, 0],
-        extrapolate: 'clamp'
-    });
-
-    const width = layout.initWidth;
-    const translateX = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [width, 0, 0],
-        extrapolate: 'clamp'
-    });
-    const translateY = 0;
-
-    return {
-        opacity,
-        transform: [{translateX}, {translateY}]
-    };
-}
-
-const StackConfig = {
-    transitionConfig: transitionConfig
-};
-
-export {MainRoutes, LoginRoutes, ROUTE_NAMES, TRANSITIONS, StackConfig};
+export {MainRoutes, UserProfileRoutes, LoginRoutes, DrawerRoutes, ROUTE_NAMES, TRANSITIONS, transitionConfig};

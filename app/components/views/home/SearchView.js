@@ -111,12 +111,14 @@ export default class SearchView extends React.Component {
     renderLeftButton() {
         let _this = this;
         function doAction() {
-            _this.props.navigation.goBack(null);
+            _this.search.triggerBlur();
+            _this.props.navigation.openDrawer();
         }
 
         return <TouchableNativeFeedback onPress={doAction}><View
-            style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
-            name="arrow-back"
+            style={{justifyContent: 'center', paddingHorizontal: 10, paddingTop: 7.5}}><Icon
+            name="bars" type="font-awesome"
+            size={20}
             iconStyle={{color: STYLE_VAR.text.color.primary}}
         ></Icon></View></TouchableNativeFeedback>
     }
@@ -185,7 +187,6 @@ export default class SearchView extends React.Component {
                 fetchDetails={true}
                 renderRow={(row) => this.renderRowDescription(row)}
                 onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                    console.log(details.types);
                     let place = {
                         id: details.place_id,
                         name: details.name,
