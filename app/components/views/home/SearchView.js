@@ -154,72 +154,88 @@ export default class SearchView extends React.Component {
         </View>
     }
 
+    renderRowDescription(row) {
+        if (row.isPredefinedPlace)
+            return <Text style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text>;
+        if (row.structured_formatting)
+            return <View key={row.place_id} style={{flex: 0.9}}>
+                <Text numberOfLines={1} style={GlobalStyles.primaryText}>{row.structured_formatting.main_text}</Text>
+                <Text numberOfLines={1}
+                      style={GlobalStyles.secondaryText}>{row.structured_formatting.secondary_text}</Text>
+            </View>;
+        return <Text style={GlobalStyles.primaryText}>{row.name}</Text>;
+    }
+
     render() {
         let result;
         let mapIcon = this.renderMapIcon();
         result = <View style={{
-                flex: 1,
-                justifyContent: 'center',
-                marginTop: StatusBar.currentHeight
-            }}>
-                <GooglePlacesAutocomplete
-                    ref={search => this.search = search}
-                    placeholder='Rechercher un établissement'
-                    minLength={2} // minimum length of text to search
-                    autoFocus={true}// Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-                    listViewDisplayed='auto'  // true/false/undefined
-                    fetchDetails={true}
-                    renderDescription={row => row.description || row.formatted_address || row.name}// custom description render
-                    onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                        let place = {
-                            id: details.place_id,
-                            name: details.name,
-                            type: PLACE_TYPES.map((place_type) => {
-                                return place_type.id
-                            }).find((type) => {return details.types.includes(type)})
-                        };
+            flex: 1,
+            justifyContent: 'center',
+            marginTop: StatusBar.currentHeight
+        }}>
+            <GooglePlacesAutocomplete
+                isRowScrollable={false}
+                numberOfLines={2}
+                ref={search => this.search = search}
+                placeholder='Rechercher un établissement'
+                minLength={2} // minimum length of text to search
+                autoFocus={true}// Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                listViewDisplayed='auto'  // true/false/undefined
+                fetchDetails={true}
+                renderRow={(row) => this.renderRowDescription(row)}
+                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                    let place = {
+                        id: details.place_id,
+                        name: details.name,
+                        type: PLACE_TYPES.map((place_type) => {
+                            return place_type.id
+                        }).find((type) => {
+                            return details.types.includes(type)
+                        })
+                    };
 
-                        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
-
-                    }}
-                    getDefaultValue={() => ''}
-                    query={{
-                        // available options: https://developers.google.com/places/web-service/autocomplete
-                        key: 'AIzaSyAgIyeHg-lrGIJyMD04jw6R7HYURNLvWYY',
-                        language: 'fr', // language of the result
-                        types: 'establishment',
-                        location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
-                        radius: 2000
-                        // default: 'geocode'
-                    }}
-                    styles={{
-                        textInputContainer: [GlobalStyles.container, {height: 50, alignItems: 'center', paddingBottom: 7.5}],
-                        textInput: GlobalStyles.primaryText,
-                        description: GlobalStyles.primaryText,
-                        separator: {
-                            paddingHorizontal: 10
-                        },
-                        row: {height: 'auto', marginRight: 10},
-                        listView: GlobalStyles.container,
-                        predefinedPlacesDescription: {
-                            color: '#1faadb'
-                        }
-                    }}
-                    currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-                    currentLocationLabel="Toilettes près de vous"
-                    nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-                    GooglePlacesSearchQuery={{
-                        // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-                        rankby: 'distance',
-                        types: 'establishment'
-                    }}
-                    debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
-                    renderLeftButton={this.renderLeftButton}
-                    renderRightButton={this.renderRightButton}
-                />
-                {/*{mapIcon}*/}
-                <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
-            </View>;
+                    this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
+                    return false;
+                }}
+                getDefaultValue={() => ''}
+                query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyAgIyeHg-lrGIJyMD04jw6R7HYURNLvWYY',
+                    language: 'fr', // language of the result
+                    types: 'establishment',
+                    location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
+                    radius: 2000
+                    // default: 'geocode'
+                }}
+                styles={{
+                    textInputContainer: [GlobalStyles.container, {
+                        height: 50,
+                        alignItems: 'center',
+                        paddingBottom: 7.5
+                    }],
+                    textInput: GlobalStyles.primaryText,
+                    row: {height: 'auto'},
+                    listView: GlobalStyles.container,
+                    loader: {
+                        alignSelf: 'center'
+                    }
+                }}
+                currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                currentLocationLabel="Toilettes près de vous"
+                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    rankby: 'distance',
+                    types: 'establishment'
+                }}
+                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                renderLeftButton={this.renderLeftButton}
+                renderRightButton={this.renderRightButton}
+            />
+            {/*{mapIcon}*/}
+            <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
+        </View>;
         return result;
     }
 }
