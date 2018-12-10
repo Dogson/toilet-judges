@@ -1,37 +1,43 @@
 // LIBRAIRIES
+
+import {PLACE_TYPES} from "../../../config/const";
+
+let _ = require('lodash');
 import React from 'react';
 import {MapView} from 'expo';
 import {connect} from "react-redux";
-import {View, Text, StyleSheet, ActivityIndicator, BackHandler, StatusBar, Image} from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ActivityIndicator,
+    BackHandler,
+    StatusBar,
+    Image,
+    TouchableNativeFeedback
+} from "react-native";
 import {SearchBar, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
-let _ = require('lodash');
-// CONST
-import {APP_CONFIG} from "../../../config/appConfig";
-import {ACTIONS_SEARCH} from "./SearchActions";
-import {ACTIONS_ROOT} from "../root/RootActions";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
-import {ERROR_TYPES} from "../../../config/errorTypes";
-
-// API ENDPOINTS
-import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints'
+import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
+import NavigationEvents from "react-navigation/src/views/NavigationEvents";
+import {DeviceStorage} from "../../../helpers/deviceStorage";
 
 //COMPONENTS
 import {SearchResults} from '../../widgets/search/SearchResults';
 import {YesNoDialog} from '../../widgets/dialogs/YesNoDialog'
 
+//CONST
+import {ACTIONS_ROOT} from "../root/RootActions";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+
 //STYLE
 import {GlobalStyles} from "../../../styles/styles";
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 import {STYLE_VAR} from "../../../styles/stylingVar";
-import NavigationEvents from "react-navigation/src/views/NavigationEvents";
 
-class SearchView extends React.Component {
+export default class SearchView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showExitDialog: false,
             styles: StyleSheet.create({
                 mapButton: {
                     position: 'absolute',
@@ -39,27 +45,37 @@ class SearchView extends React.Component {
                     right: 20
                 }
             }),
-            focusInput: true,
-            isReady: false
+            position: {
+                coords: {
+                    latitude: null,
+                    longitude: null
+                }
+            }
         };
 
-        this._handleChangeText = this._handleChangeText.bind(this);
-        this._handleChangeText = _.debounce(this._handleChangeText, 500);
-
-        this._handlePressToilet = this._handlePressToilet.bind(this);
         this._handleKeyboardSpacerToggle = this._handleKeyboardSpacerToggle.bind(this);
         this._handlePressMap = this._handlePressMap.bind(this);
+
+        this.renderRightButton = this.renderRightButton.bind(this);
+        this.renderLeftButton = this.renderLeftButton.bind(this);
     }
 
     componentDidMount() {
-        this.getNearbyToilets();
+        this.mounted = true;
+        if (!this.state.position.coords.latitude)
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    if (this.mounted) {
+                        this.setState({position: position});
+                    }
+
+                }, (error) => {
+                    console.log(error);
+                });
     }
 
-    onViewFocused(payload) {
-        // automatically open up keyboard if user comes from Home View
-        if (!payload.lastState) {
-            this.search.focus();
-        }
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     //HANDLING EVENTS
@@ -85,77 +101,43 @@ class SearchView extends React.Component {
         });
     }
 
-
-    _handleChangeText(searchQuery) {
-        this.setState({...this.state, searchQuery});
-        this.getToiletsBySearch();
-    }
-
-    _handlePressToilet(toilet) {
-        this.props.navigation.navigate(ROUTE_NAMES.TOILET, {
-            placeId: toilet._id,
-            placeName: toilet.placeName,
-            placeType: toilet.placeType
-        });
-    }
-
     _handlePressMap() {
         this.props.navigation.navigate(ROUTE_NAMES.MAP, {
             transition: TRANSITIONS.FROM_BOTTOM
         });
     }
 
-    getNearbyToilets = () => {
-        this.setState({isReady: false});
-        ToiletEndpoints.getAllToilets()
-            .then((toilets) => {
-                this.setState({isReady: true});
-                if (toilets) {
-                    this.props.dispatch({type: ACTIONS_SEARCH.SET_TOILETS_LIST, value: toilets});
-                }
-            })
-            .catch((err) => {
-                this.setState({isReady: true});
-                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
-                    this.backToLoginView();
-                }
-            });
-    };
-
-    getToiletsBySearch() {
-        this.setState({isReady: false});
-        ToiletEndpoints.getToiletsFromSearch(this.state.searchQuery)
-            .then((toilets) => {
-                this.setState({isReady: true});
-                if (toilets) {
-                    this.props.dispatch({type: ACTIONS_SEARCH.SET_TOILETS_LIST, value: toilets});
-                }
-            })
-            .catch((err) => {
-                this.setState({isReady: true});
-                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
-                    this.backToLoginView();
-                }
-            });
-    }
-
     // RENDERING COMPONENTS
-    renderLoading() {
-        return (
-            <ActivityIndicator size="large"/>
-        )
+    renderLeftButton() {
+        let _this = this;
+        function doAction() {
+            _this.props.navigation.goBack(null);
+        }
+
+        return <TouchableNativeFeedback onPress={doAction}><View
+            style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
+            name="arrow-back"
+            iconStyle={{color: STYLE_VAR.text.color.primary}}
+        ></Icon></View></TouchableNativeFeedback>
     }
 
-    renderSearchResults() {
-        if (!this.state.isReady) {
-            return <View style={[GlobalStyles.container, GlobalStyles.flexColumnCenter, {marginTop: 28, flex: 1}]}>{this.renderLoading()}</View>
-        }
-        else {
-            return <SearchResults searchQuery={this.state.searchQuery} toiletsList={this.props.toiletsList || []}
-                                  _handlePressToilet={this._handlePressToilet}/>
+    renderRightButton() {
+        let _this = this;
+
+        function clearInput() {
+            _this.search.setAddressText("");
+            _this.search._request("");
         }
 
-    };
+        if (this.search && this.search.getAddressText() && this.search.getAddressText().length > 0) {
+            return <TouchableNativeFeedback onPress={clearInput}><View
+                style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}><Icon
+                name="close"
+                iconStyle={{color: STYLE_VAR.text.color.primary}}
+            ></Icon></View></TouchableNativeFeedback>
+        }
+        return null;
+    }
 
     renderMapIcon() {
         if (!this.state.isReady)
@@ -172,59 +154,89 @@ class SearchView extends React.Component {
         </View>
     }
 
+    renderRowDescription(row) {
+        if (row.isPredefinedPlace)
+            return <View key={row.place_id} style={{flex: 0.9}}><Text style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text></View>;
+        if (row.structured_formatting)
+            return <View key={row.place_id} style={{flex: 0.9}}>
+                <Text numberOfLines={1} style={GlobalStyles.primaryText}>{row.structured_formatting.main_text}</Text>
+                <Text numberOfLines={1}
+                      style={GlobalStyles.secondaryText}>{row.structured_formatting.secondary_text}</Text>
+            </View>;
+        return <View key={row.place_id} style={{flex: 0.9}}><Text style={GlobalStyles.primaryText}>{row.name}</Text></View>;
+    }
+
     render() {
         let result;
-        let searchResults;
         let mapIcon = this.renderMapIcon();
-        let searchBarStyle = [styles.searchBar];
-        searchResults = this.renderSearchResults();
-        result =
-            <View style={{
-                flex: 1,
-                justifyContent: 'center',
-                marginTop: StatusBar.currentHeight
-            }}>
-                <NavigationEvents
-                    onWillFocus={payload => this.onViewFocused(payload)}
-                />
-                <View style={searchBarStyle}>
-                    <SearchBar
-                        ref={search => this.search = search}
-                        platform={APP_CONFIG.platform}
-                        placeholder='Rechercher un restaurant, bar...'
-                        onChangeText={(searchQuery) => this._handleChangeText(searchQuery)}
-                        onCancel={() => {
-                            this.props.navigation.goBack(null)
-                        }}
-                        containerStyle={[styles.searchBar]}
-                        rightIconContainerStyle={styles.clearButton}
-                        inputStyle={GlobalStyles.primaryText}/>
-                </View>
-                {searchResults}
-                {mapIcon}
-                <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
-            </View>;
+        result = <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            marginTop: StatusBar.currentHeight
+        }}>
+            <GooglePlacesAutocomplete
+                isRowScrollable={false}
+                numberOfLines={2}
+                ref={search => this.search = search}
+                placeholder='Rechercher un établissement'
+                minLength={2} // minimum length of text to search
+                autoFocus={true}// Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                listViewDisplayed='auto'  // true/false/undefined
+                fetchDetails={true}
+                renderRow={(row) => this.renderRowDescription(row)}
+                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                    console.log(details.types);
+                    let place = {
+                        id: details.place_id,
+                        name: details.name,
+                        type: PLACE_TYPES.map((place_type) => {
+                            return place_type.id
+                        }).find((type) => {
+                            return details.types.includes(type)
+                        })
+                    };
+
+                    this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
+                    return false;
+                }}
+                getDefaultValue={() => ''}
+                query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyAgIyeHg-lrGIJyMD04jw6R7HYURNLvWYY',
+                    language: 'fr', // language of the result
+                    types: 'establishment',
+                    location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
+                    radius: 2000
+                    // default: 'geocode'
+                }}
+                styles={{
+                    textInputContainer: [GlobalStyles.container, {
+                        height: 50,
+                        alignItems: 'center',
+                        paddingBottom: 7.5
+                    }],
+                    textInput: GlobalStyles.primaryText,
+                    row: {height: 'auto'},
+                    listView: GlobalStyles.container,
+                    loader: {
+                        alignSelf: 'center'
+                    }
+                }}
+                currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                currentLocationLabel="Toilettes près de vous"
+                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    rankby: 'distance',
+                    types: 'establishment'
+                }}
+                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                renderLeftButton={this.renderLeftButton}
+                renderRightButton={this.renderRightButton}
+            />
+            {/*{mapIcon}*/}
+            <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
+        </View>;
         return result;
     }
 }
-
-
-function mapStateToProps(state) {
-    return {
-        toiletsList: state.searchReducer.toiletsList
-    };
-}
-
-const styles = StyleSheet.create({
-    searchBar: {
-        top: '1%',
-        left: '1%',
-        borderRadius: 5,
-        width: '98%',
-    },
-    clearButton: {
-        paddingRight: '4%'
-    }
-});
-
-export default connect(mapStateToProps)(SearchView);
