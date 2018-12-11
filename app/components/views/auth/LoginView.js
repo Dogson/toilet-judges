@@ -3,7 +3,6 @@ import React from 'react';
 import {connect} from "react-redux";
 import {ScrollView, View, Image, Text, Alert} from "react-native";
 import {Button} from 'react-native-elements';
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 
@@ -70,25 +69,15 @@ class LoginView extends React.Component {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             this.setState({isReady: false});
-            AuthEndpoints.login(_this.props.email, _this.props.password).then((data) => {
-                if (data.errorType === ERROR_TYPES.WRONG_CRED) {
-                    _this.setState({passwordErrorMessage: "Votre e-mail/mot de passe est incorrect"});
-                    this.setState({isReady: true});
-                    return;
-                }
-                else if (!data.token) {
-                    Alert.alert("Une erreur est survenue.");
-                    this.setState({isReady: true});
-                    return;
-                }
-                DeviceStorage.saveJWT(data.token).then(() => {
-                    _this.setState({hasSubmitted: false, isReady: true});
-                    _this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
-                });
+            AuthEndpoints.login(_this.props.email, _this.props.password).then(() => {
             }).catch((error) => {
+                if (ERROR_TYPES.USER_NOT_FOUND.indexOf(error.code) > -1) {
+                    this.setState({passwordErrorMessage:  "Votre e-mail/mot de passe est incorrect"});
+                }
+                else {
+                    Alert.alert("Une erreur est survenue.")
+                }
                 this.setState({isReady: true});
-                console.log(error);
-                Alert.alert("Une erreur est survenue.")
             })
         }
     }

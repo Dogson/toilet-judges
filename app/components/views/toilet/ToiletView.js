@@ -116,9 +116,9 @@ class ToiletView extends React.Component {
                 this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
             })
             .catch((err) => {
-                if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
-                    this.backToLoginView();
-                }
+                // if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
+                //     this.backToLoginView();
+                // }
             });
     }
 

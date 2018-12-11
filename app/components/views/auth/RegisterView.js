@@ -3,9 +3,7 @@ import React from 'react';
 import {connect} from "react-redux";
 import {View, Image, Text, Alert, ScrollView, ActivityIndicator} from "react-native";
 import {Button} from 'react-native-elements';
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
 
 // CONST
 import {ACTIONS_AUTH} from "./AuthActions";
@@ -64,27 +62,19 @@ class RegisterView extends React.Component {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             this.setState({isReady: false});
-            AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then((data) => {
-                if (data.errorType === ERROR_TYPES.USER_EXISTS) {
-                    this.setState({
-                        passwordErrorMessage: "Cette adresse e-mail est déja associé à un compte.",
-                        isReady: true
-                    });
-                    return;
+
+            AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then(() => {
+            }).catch((error) => {
+                if (ERROR_TYPES.USER_EXISTS.indexOf(error.code) > -1) {
+                    this.setState({passwordErrorMessage: "Cette adresse e-mail est déja associée à un compte."});
                 }
-                if (!data.token) {
-                    Alert.alert("Une erreur est survenue.");
-                    this.setState({isReady: true});
-                    return;
+                else {
+                    Alert.alert("Une erreur est survenue.")
                 }
-                DeviceStorage.saveJWT(data.token).then(() => {
-                    _this.setState({hasSubmitted: false, isReady: true});
-                    _this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: data.token});
-                });
-            }).catch(() => {
                 _this.setState({isReady: true});
-                Alert.alert("Une erreur est survenue.")
-            })
+
+            });
+
         }
     }
 
@@ -101,6 +91,10 @@ class RegisterView extends React.Component {
         let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!regEmail.test(this.props.email)) {
             emailErrorMessage = "Veuillez entrer une adresse e-mail valide";
+            isValid = false;
+        }
+        if (!this.props.password || this.props.password.length < 7) {
+            passwordErrorMessage = "Le mot de passe doit contenir au moins 6 caractères";
             isValid = false;
         }
         if (!this.props.password || this.props.password.length < 1) {

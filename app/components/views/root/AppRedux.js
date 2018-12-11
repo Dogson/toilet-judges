@@ -11,23 +11,19 @@ import {
 } from "../../../config/navigationConfig";
 import {ACTIONS_ROOT} from "./RootActions";
 
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 import {createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
 import {Icon} from "react-native-elements";
 import {GlobalStyles} from "../../../styles/styles";
 import {STYLE_VAR} from "../../../styles/stylingVar";
+import {AuthEndpoints} from "../../../endpoints/authEndpoints";
 
 class AppRedux extends React.Component {
     constructor() {
         super();
         this.state = {
-            jwt: '',
+            user: null,
             loading: true
         };
-
-        this.newJWT = this.newJWT.bind(this);
-        this.deleteJWT = this.deleteJWT.bind(this);
-        this.loadJWT();
 
         let _this = this;
 
@@ -37,7 +33,7 @@ class AppRedux extends React.Component {
                     <View style={{flex: 1}}>
                         <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
                             <DrawerItems {...props} />
-                            <TouchableNativeFeedback onPress={_this.deleteJWT}>
+                            <TouchableNativeFeedback onPress={() => AuthEndpoints.logout()}>
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'flex-start',
@@ -72,31 +68,9 @@ class AppRedux extends React.Component {
         this.DrawerNavigator = createDrawerNavigator(DrawerRoutes, Logout);
     }
 
-    deleteJWT() {
-        DeviceStorage.deleteJWT()
-            .then(() => {
-                this.props.dispatch({type: ACTIONS_ROOT.DELETE_JWT});
-                this.setState({loading: false})
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
-
-    loadJWT() {
-        DeviceStorage.loadJWT()
-            .then((jwt) => {
-                this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: jwt});
-                this.setState({loading: false})
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
-
-    newJWT(jwt) {
-        DeviceStorage.saveJWT(jwt).then(() => {
-            this.props.dispatch({type: ACTIONS_ROOT.SET_JWT, value: jwt});
+    componentDidMount() {
+        let _this = this;AuthEndpoints.checkLoginStatus((exist, isLoggedIn) => {
+            _this.setState({loading: false, exist, isLoggedIn});
         });
     }
 
@@ -107,7 +81,7 @@ class AppRedux extends React.Component {
         if (this.state.loading) {
             body = <ActivityIndicator></ActivityIndicator>
         }
-        else if (!this.props.jwt || this.props.jwt === '') {
+        else if (!this.props.user) {
             body = <LoginNavigator/>;
         }
         else body = <DrawerNavigator></DrawerNavigator>;
@@ -128,7 +102,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
     return {
-        jwt: state.rootReducer.jwt
+        user: state.rootReducer.user
     };
 }
 

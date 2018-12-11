@@ -25,7 +25,6 @@ import UserProfileView from "../components/views/settings/UserProfileView"
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
 import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
-import {DeviceStorage} from "../helpers/deviceStorage";
 
 
 /**

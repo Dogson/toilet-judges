@@ -20,7 +20,6 @@ import {SearchBar, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
 import NavigationEvents from "react-navigation/src/views/NavigationEvents";
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 
 //COMPONENTS
 import {SearchResults} from '../../widgets/search/SearchResults';
@@ -76,13 +75,6 @@ export default class SearchView extends React.Component {
 
     componentWillUnmount() {
         this.mounted = false;
-    }
-
-    //HANDLING EVENTS
-    backToLoginView() {
-        DeviceStorage.deleteJWT().then(() => {
-            this.props.dispatch({type: ACTIONS_ROOT.DELETE_JWT});
-        });
     }
 
     _handleKeyboardSpacerToggle(toggle, height) {

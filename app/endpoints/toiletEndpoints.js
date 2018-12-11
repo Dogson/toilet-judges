@@ -1,5 +1,4 @@
 import {APP_CONFIG} from "../config/appConfig";
-import {FetchHelper} from "../helpers/fetchHelper";
 
 export class ToiletEndpoints {
 

@@ -1,5 +1,4 @@
 export const ERROR_TYPES = {
-    NOT_LOGGED: 'Not logged',
-    WRONG_CRED: 'Wrong credentials',
-    USER_EXISTS: 'User exists'
+    USER_NOT_FOUND: ['auth/user-not-found', 'auth/wrong-password'],
+    USER_EXISTS: ['auth/email-already-in-use']
 };
