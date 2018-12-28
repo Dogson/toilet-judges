@@ -43,6 +43,15 @@ class ReviewStepOne extends React.Component {
                 rating: null
             }
         }
+        else {
+            if (userRating.isMixed === undefined) {
+                userRating.isMixed = null;
+            }
+            if (userRating.isAccessible === undefined) {
+                userRating.isAccessible = null;
+            }
+
+        }
         this.state = {
             userRating: userRating,
             placeName: this.props.navigation.getParam('placeName'),
@@ -147,7 +156,6 @@ class ReviewStepOne extends React.Component {
                         ?</Text>
                     <View style={{alignSelf: 'stretch', marginVertical: 5}}>
                         <FormRadioButtons
-                            title="kek"
                             onPress={(value) => this._handlePressRadioButtonAccessibleToilet(value)}
                             options={booleanOptionsAccessible}
                             checked={this.state.userRating.isAccessible}

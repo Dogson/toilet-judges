@@ -32,6 +32,7 @@ import {YesNoDialog} from "../../widgets/dialogs/YesNoDialog";
 import {RadioButtonDialog} from "../../widgets/dialogs/RadioButtonDialog";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
 
 class ToiletView extends React.Component {
 
@@ -63,7 +64,7 @@ class ToiletView extends React.Component {
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         if (!this.props.toilet.userRating)
             return true;
-        ToiletEndpoints.deleteUserReview(this.props.toilet.userRating._id)
+        RatingEndpoints.deleteUserReview(this.props.toilet.uid, this.props.toilet.userRating.uid)
             .then(() => {
                 this.refreshToilet();
             });
@@ -71,12 +72,20 @@ class ToiletView extends React.Component {
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
-        let id = this.props.toilet ? this.props.toilet._id : this.props.navigation.getParam('place').id;
+        let id = this.props.toilet ? this.props.toilet.uid : this.props.navigation.getParam('place').id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.rateToilet(id, userRating)
-            .then(() => {
-                this.refreshToilet();
-            });
+        if (userRating.uid) {
+            RatingEndpoints.updateUserReview(id, userRating)
+                .then(() => {
+                    this.refreshToilet();
+                });
+        }
+        else {
+            RatingEndpoints.createUserReview(id, userRating)
+                .then(() => {
+                    this.refreshToilet();
+                });
+        }
     }
 
     // HANDLING EVENTS
@@ -95,7 +104,7 @@ class ToiletView extends React.Component {
     }
 
     _handleYourReviewPress() {
-        if (!this.props.toilet.userRating) {
+        if (!this.props.toilet || !this.props.toilet.userRating) {
             return true;
         }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
@@ -114,11 +123,6 @@ class ToiletView extends React.Component {
             .then((toilet) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
                 this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
-            })
-            .catch((err) => {
-                // if (err.errorType === ERROR_TYPES.NOT_LOGGED) {
-                //     this.backToLoginView();
-                // }
             });
     }
 
