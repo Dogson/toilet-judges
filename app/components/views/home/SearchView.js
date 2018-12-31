@@ -71,11 +71,19 @@ export default class SearchView extends React.Component {
                 }, (error) => {
                     console.log(error);
                 });
+
+        this.placesAutocompleteToken = this.createPlacesAutocompleteSessionToken()
     }
 
     componentWillUnmount() {
         this.mounted = false;
     }
+
+    createPlacesAutocompleteSessionToken(a) {
+        return a
+            ? (a ^ Math.random() * 16 >> a / 4).toString(16)
+            : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, this.createPlacesAutocompleteSessionToken);
+    };
 
     _handleKeyboardSpacerToggle(toggle, height) {
         let bottom = 20;
@@ -198,7 +206,9 @@ export default class SearchView extends React.Component {
                     language: 'fr', // language of the result
                     types: 'establishment',
                     location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
-                    radius: 2000
+                    radius: 2000,
+                    sessionToken: this.placesAutocompleteToken,
+                    fields: 'address_component, adr_address, alt_id, formatted_address, geometry, icon, id, name, permanently_closed, photo, place_id, plus_code, scope, type, url, utc_offset, vicinity'
                     // default: 'geocode'
                 }}
                 styles={{

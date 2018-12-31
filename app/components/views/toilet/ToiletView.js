@@ -72,7 +72,7 @@ class ToiletView extends React.Component {
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
-        let id = this.props.toilet ? this.props.toilet.uid : this.props.navigation.getParam('place').id;
+        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.navigation.getParam('place').id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         if (userRating.uid) {
             RatingEndpoints.updateUserReview(id, userRating)
@@ -131,7 +131,7 @@ class ToiletView extends React.Component {
         let rating = {};
         let ratingCount = 0;
         if (this.props.toilet && this.props.toilet.rating) {
-            rating = this.props.toilet.rating
+            rating = this.props.toilet.rating;
             ratingCount = this.props.toilet.ratingCount;
         }
         return <GlobalRating rating={rating}
@@ -142,7 +142,7 @@ class ToiletView extends React.Component {
     renderPlaceType() {
         let place = this.props.navigation.getParam('place');
         let placeDetails = PLACE_TYPES.find((placeType) => {
-           return placeType.id === place.type;
+            return placeType.id === place.type;
         });
         if (!placeDetails)
             return null;
