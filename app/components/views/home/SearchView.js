@@ -20,7 +20,6 @@ import {SearchBar, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
 import NavigationEvents from "react-navigation/src/views/NavigationEvents";
-import {DeviceStorage} from "../../../helpers/deviceStorage";
 
 //COMPONENTS
 import {SearchResults} from '../../widgets/search/SearchResults';
@@ -72,18 +71,19 @@ export default class SearchView extends React.Component {
                 }, (error) => {
                     console.log(error);
                 });
+
+        this.placesAutocompleteToken = this.createPlacesAutocompleteSessionToken()
     }
 
     componentWillUnmount() {
         this.mounted = false;
     }
 
-    //HANDLING EVENTS
-    backToLoginView() {
-        DeviceStorage.deleteJWT().then(() => {
-            this.props.dispatch({type: ACTIONS_ROOT.DELETE_JWT});
-        });
-    }
+    createPlacesAutocompleteSessionToken(a) {
+        return a
+            ? (a ^ Math.random() * 16 >> a / 4).toString(16)
+            : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, this.createPlacesAutocompleteSessionToken);
+    };
 
     _handleKeyboardSpacerToggle(toggle, height) {
         let bottom = 20;
@@ -206,7 +206,9 @@ export default class SearchView extends React.Component {
                     language: 'fr', // language of the result
                     types: 'establishment',
                     location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
-                    radius: 2000
+                    radius: 2000,
+                    sessionToken: this.placesAutocompleteToken,
+                    fields: 'address_component, adr_address, alt_id, formatted_address, geometry, icon, id, name, permanently_closed, photo, place_id, plus_code, scope, type, url, utc_offset, vicinity'
                     // default: 'geocode'
                 }}
                 styles={{

@@ -1,37 +1,110 @@
 import {APP_CONFIG} from "../config/appConfig";
 import {FetchHelper} from "../helpers/fetchHelper";
+import {auth, database, provider} from "../config/firebase";
+import {ACTIONS_ROOT} from "../components/views/root/RootActions";
+
+import {store} from '../AppRoot'
 
 export class AuthEndpoints {
+
     static login(email, password) {
-        const url = APP_CONFIG.apiUrl;
-        const apiKey = "login";
-        return FetchHelper.post({
-            url: url,
-            apiKey: apiKey,
-            data: {
-                email: email,
-                password: password
-            }
-        })
-            .then((response) => {
-                return response.json();
-            })
+        return new Promise((resolve, reject) => {
+            auth.signInWithEmailAndPassword(email, password)
+                .then((data) => {
+                    //Get the user object from the realtime database
+                    let {user} = data;
+                    database.ref('users').child(user.uid).once('value')
+                        .then((snapshot) => {
+                            const exists = (snapshot.val() !== null);
+
+                            //if the user exist in the DB, replace the user variable with the returned snapshot
+                            if (exists) user = snapshot.val();
+                            store.dispatch({type: ACTIONS_ROOT.LOGIN, user});
+                            resolve({exists, user});
+                        })
+                        .catch((error) => reject(error));
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     }
 
     static register(email, username, password) {
-        const url = APP_CONFIG.apiUrl;
-        const apiKey = "register";
-        return FetchHelper.post({
-            url: url,
-            apiKey: apiKey,
-            data: {
-                email: email,
-                username: username,
-                password: password
-            }
-        })
-            .then((response) => {
-                return response.json();
-            })
+        return new Promise((resolve, reject) => {
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((data) => {
+                    let user = {username, uid: data.user.uid};
+                    return this.createUser(user);
+                }).catch((error) => {
+                reject(error);
+            });
+        });
+
     }
+
+    //Send Password Reset Email
+    static resetPassword(email) {
+        return new Promise((resolve, reject) => {
+            auth.sendPasswordResetEmail(email)
+                .then(() => resolve())
+                .catch((error) => reject(error));
+        });
+    }
+
+    //Sign log out
+    static logout() {
+        return new Promise((resolve, reject) => {
+            auth.signOut()
+                .then(() => {
+                    store.dispatch({type: ACTIONS_ROOT.LOGOUT});
+                    resolve()
+                })
+                .catch((error) => reject(error));
+        });
+    }
+
+    static createUser(user) {
+        return new Promise((resolve, reject) => {
+            const userRef = database.ref().child('users');
+
+            userRef.child(user.uid).update({...user})
+                .then(() => {
+                    resolve(user);
+                    store.dispatch({type: ACTIONS_ROOT.LOGIN, user});
+                })
+                .catch((error) => reject({message: error}));
+        });
+    }
+
+    static checkLoginStatus(callback) {
+        auth.onAuthStateChanged((user) => {
+            let isLoggedIn = (user !== null);
+
+            if (isLoggedIn) {
+                //Get the user object from the realtime database
+                database.ref('users').child(user.uid).once('value')
+                    .then((snapshot) => {
+
+                        const exists = (snapshot.val() !== null);
+
+                        //if the user exist in the DB, replace the user variable with the returned snapshot
+                        if (exists) {
+                            user = snapshot.val();
+                            store.dispatch({type: ACTIONS_ROOT.LOGIN, user});
+                        }
+                        callback(exists, isLoggedIn);
+                    })
+                    .catch((error) => {
+                        //unable to get user
+                        store.dispatch({type: ACTIONS_ROOT.LOGOUT});
+                        callback(false, false);
+                    });
+            } else {
+                store.dispatch({type: ACTIONS_ROOT.LOGOUT});
+                callback(false, isLoggedIn)
+            }
+        });
+    }
+
 }
