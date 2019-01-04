@@ -65,9 +65,6 @@ class RegisterView extends React.Component {
             this.setState({isReady: false});
 
             AuthEndpoints.register(_this.props.email, _this.props.username, _this.props.password).then(() => {
-                this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
-                this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: null});
-                this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: null});
             }).catch((error) => {
                 if (ERROR_TYPES.USER_EXISTS.indexOf(error.code) > -1) {
                     this.setState({passwordErrorMessage: "Cette adresse e-mail est déja associée à un compte."});
