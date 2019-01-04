@@ -1,8 +1,8 @@
 // LIBRAIRIES
 import React from 'react';
 import {connect} from "react-redux";
-import {View, Image, Text, Alert, ScrollView, ActivityIndicator} from "react-native";
-import {Button} from 'react-native-elements';
+import {View, Image, Text, Alert, ScrollView, StatusBar, TouchableNativeFeedback} from "react-native";
+import {Button, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 // CONST
@@ -20,6 +20,7 @@ import {GlobalStyles} from "../../../styles/styles";
 import {FormInput} from "../../widgets/form/FormInput";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 import {ROUTE_NAMES} from "../../../config/navigationConfig";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 
 class RegisterView extends React.Component {
     constructor(props) {
@@ -139,38 +140,51 @@ class RegisterView extends React.Component {
         </View>
     }
 
-    render() {
-        return <ScrollView style={[GlobalStyles.withMarginContainer, {marginVertical: 50}]}
-                           keyboardShouldPersistTaps="handled">
-            {this.renderLogo()}
-            <FormInput label="E-mail"
-                       value={this.props.email}
-                       onChangeText={(text) => this._handleChangeEmail(text)}
-                       placeholder="toilette@alaturc.com"
-                       errorMessage={this.state.emailErrorMessage}
-                       keyboardType="email-address"
-                       autoCapitalize="none"></FormInput>
-            <FormInput label="Nom d'utilisateur"
-                       value={this.props.username}
-                       onChangeText={(text) => this._handleChangeUsername(text)}
-                       placeholder="Mr. Hankey"
-                       errorMessage={this.state.usernameErrorMessage}
-            ></FormInput>
-            <FormInput label="Mot de passe"
-                       value={this.props.password}
-                       onChangeText={(text) => this._handleChangePassword(text)}
-                       placeholder="**********"
-                       errorMessage={this.state.passwordErrorMessage}
-                       secureTextEntry={true}></FormInput>
-            <Button title="S'INSCRIRE"
-                    onPress={() => this._handlePressSubmitButton()}
-                    buttonStyle={GlobalStyles.primaryButton}
-                    titleStyle={GlobalStyles.defaultFont}
-                    loading={!this.state.isReady}></Button>
-            {this.renderLoginSwitchButton()}
+    renderGoBackButton() {
+        return <TouchableNativeFeedback onPress={() => {
+            this._handlePressSwitch()
+        }}>
+            <View style={{position: 'absolute', left: 0, top: StatusBar.currentHeight, padding: 15}}>
+                <Icon name="arrow-back" color={STYLE_VAR.text.color.primary}></Icon>
+            </View>
+        </TouchableNativeFeedback>
+    }
 
-            <KeyboardSpacer/>
-        </ScrollView>
+    render() {
+        return <View>
+            {this.renderGoBackButton()}
+            <ScrollView style={[GlobalStyles.withMarginContainer, {marginVertical: 50}]}
+                        keyboardShouldPersistTaps="handled">
+                {this.renderLogo()}
+                <FormInput label="E-mail"
+                           value={this.props.email}
+                           onChangeText={(text) => this._handleChangeEmail(text)}
+                           placeholder="toilette@alaturc.com"
+                           errorMessage={this.state.emailErrorMessage}
+                           keyboardType="email-address"
+                           autoCapitalize="none"></FormInput>
+                <FormInput label="Nom d'utilisateur"
+                           value={this.props.username}
+                           onChangeText={(text) => this._handleChangeUsername(text)}
+                           placeholder="Mr. Hankey"
+                           errorMessage={this.state.usernameErrorMessage}
+                ></FormInput>
+                <FormInput label="Mot de passe"
+                           value={this.props.password}
+                           onChangeText={(text) => this._handleChangePassword(text)}
+                           placeholder="**********"
+                           errorMessage={this.state.passwordErrorMessage}
+                           secureTextEntry={true}></FormInput>
+                <Button title="S'INSCRIRE"
+                        onPress={() => this._handlePressSubmitButton()}
+                        buttonStyle={GlobalStyles.primaryButton}
+                        titleStyle={GlobalStyles.defaultFont}
+                        loading={!this.state.isReady}></Button>
+                {this.renderLoginSwitchButton()}
+
+                <KeyboardSpacer/>
+            </ScrollView>
+        </View>
     }
 
 

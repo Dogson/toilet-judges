@@ -4,6 +4,7 @@ import {auth, database, provider} from "../config/firebase";
 import {ACTIONS_ROOT} from "../components/views/root/RootActions";
 
 import {store} from '../AppRoot'
+import {ACTIONS_AUTH} from "../components/views/auth/AuthActions";
 
 export class AuthEndpoints {
 
@@ -32,11 +33,16 @@ export class AuthEndpoints {
 
     static register(email, username, password) {
         return new Promise((resolve, reject) => {
+            let user;
             auth.createUserWithEmailAndPassword(email, password)
                 .then((data) => {
-                    let user = {username, uid: data.user.uid};
-                    return this.createUser(user);
+                    user = {username, uid: data.user.uid};
+                    return data.user.updateProfile({displayName: username});
+                })
+                .then(() => {
+                    this.createUser(user)
                 }).catch((error) => {
+                    console.log(error);
                 reject(error);
             });
         });
@@ -72,6 +78,9 @@ export class AuthEndpoints {
                 .then(() => {
                     resolve(user);
                     store.dispatch({type: ACTIONS_ROOT.LOGIN, user});
+                    store.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
+                    store.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: null});
+                    store.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: null});
                 })
                 .catch((error) => reject({message: error}));
         });

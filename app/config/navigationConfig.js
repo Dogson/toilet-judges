@@ -25,6 +25,7 @@ import UserProfileView from "../components/views/settings/UserProfileView"
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
 import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
+import PasswordResetView from "../components/views/auth/PasswordResetView";
 
 
 /**
@@ -244,6 +245,12 @@ const LoginRoutes = {
             header: null
         }
     },
+    PasswordReset: {
+        screen: PasswordResetView,
+        navigationOptions: {
+            header: null
+        }
+    }
 };
 
 const MainStackNavigator = createStackNavigator(MainRoutes, {
@@ -283,7 +290,8 @@ const ROUTE_NAMES = {
     REVIEW_STEP_THREE: 'ReviewStepThree',
     REVIEW_DETAILS: 'ReviewDetails',
     LOGIN: 'Login',
-    REGISTER: 'Register'
+    REGISTER: 'Register',
+    PASSWORD_RESET: 'PasswordReset'
 };
 
 const TRANSITIONS = {
