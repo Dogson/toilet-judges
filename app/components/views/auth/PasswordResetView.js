@@ -145,6 +145,7 @@ class PasswordResetView extends React.Component {
                     <Button title="SE CONNECTER"
                             onPress={() => this._handlePressSwitch()}
                             buttonStyle={GlobalStyles.primaryButton}
+                            titleStyle={GlobalStyles.defaultFont}
                     ></Button>
                 </View>
             </View>
