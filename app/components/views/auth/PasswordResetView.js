@@ -1,13 +1,13 @@
 // LIBRAIRIES
 import React from 'react';
 import {connect} from "react-redux";
-import {ScrollView, View, Image, Text, Alert} from "react-native";
-import {Button} from 'react-native-elements';
+import {ScrollView, View, Image, Text, Alert, TouchableNativeFeedback, StatusBar} from "react-native";
+import {Button, Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
 
 // CONST
 import {ACTIONS_AUTH} from "./AuthActions";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 import {ACTIONS_ROOT} from "../root/RootActions";
 
 const TOILET_LOGO = require('../../../../assets/img/toiletLogo.png');
@@ -22,7 +22,7 @@ import {FormInput} from "../../widgets/form/FormInput";
 import {ERROR_TYPES} from "../../../config/errorTypes";
 import {ROUTE_NAMES} from "../../../config/navigationConfig";
 
-class LoginView extends React.Component {
+class PasswordResetView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -37,14 +37,13 @@ class LoginView extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        this.setState({emailSent: false});
         if (this.state.hasSubmitted && prevProps.email !== this.props.email) {
             this.validateForm();
         }
     }
 
     componentWillUnmount() {
-        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
+        this.setState({emailSent: false});
     }
 
 
@@ -59,14 +58,21 @@ class LoginView extends React.Component {
         if (this.validateForm()) {
             this.setState({isReady: false});
             AuthEndpoints.resetPassword(this.props.email).then(() => {
-                this.setState({emailSent: true})
+                this.setState({emailSent: true, isReady: true})
             }).catch((error) => {
-            else {
-                    Alert.alert("Une erreur est survenue.")
+                if (ERROR_TYPES.USER_NOT_FOUND.indexOf(error.code) > -1) {
+                    this.setState({emailErrorMessage: "L'utilisateur n'a pas été trouvé"})
+                }
+                else {
+                    Alert.alert("Une erreur est survenue.");
                 }
                 this.setState({isReady: true});
             })
         }
+    }
+
+    _handlePressSwitch() {
+        this.props.navigation.navigate(ROUTE_NAMES.LOGIN);
     }
 
     //FORM VALIDATION
@@ -97,52 +103,73 @@ class LoginView extends React.Component {
         </View>
     }
 
-    renderLoginButton() {
-        return <View style={{marginTop: 50}}>
-            <Text
-                style={[GlobalStyles.secondaryText, {alignSelf: 'center', marginBottom: 5}]}>Pas de compte ?</Text>
-            <Button title="S'INSCRIRE"
-                    onPress={() => this._handlePressSwitch()}
-                    buttonStyle={GlobalStyles.secondaryButton}
-                    titleStyle={GlobalStyles.secondaryButtonTitle}
-            ></Button>
-        </View>
+    renderGoBackButton() {
+        return <TouchableNativeFeedback onPress={() => {
+            this._handlePressSwitch()
+        }}>
+            <View style={{position: 'absolute', left: 0, top: StatusBar.currentHeight, padding: 15}}>
+                <Icon name="arrow-back" color={STYLE_VAR.text.color.primary}></Icon>
+            </View>
+        </TouchableNativeFeedback>
+    }
+
+    renderBody() {
+        if (!this.state.emailSent) {
+            return <View>
+                <Text style={GlobalStyles.primaryText}>Réinitialisation du mot de passe</Text>
+                <Text style={GlobalStyles.secondaryText}>Vous recevrez un lien vous permettant de réinitialiser votre
+                    mot de passe.</Text>
+                <FormInput value={this.props.email}
+                           inputContainerStyle={{marginVertical: 20}}
+                           onChangeText={(text) => this._handleChangeEmail(text)}
+                           placeholder="toilette@alaturc.com"
+                           errorMessage={this.state.emailErrorMessage}
+                           keyboardType="email-address"
+                           autoCapitalize="none"></FormInput>
+                <View style={{marginTop: 10}}>
+                    <Button title="REINITIALISER"
+                            onPress={() => this._handlePressSubmitButton()}
+                            buttonStyle={GlobalStyles.primaryButton}
+                            loading={!this.state.isReady}
+                    ></Button>
+                </View>
+            </View>
+        }
+        else {
+            return <View>
+                <Text style={GlobalStyles.primaryText}>E-mail envoyé</Text>
+                <Text style={GlobalStyles.secondaryText}>L'e-mail de réinitialisation de mot de passe a été envoyé à
+                    l'adresse suivante : </Text>
+                <Text style={[GlobalStyles.secondaryText, GlobalStyles.boldText]}>{this.props.email}</Text>
+                <View style={{marginTop: 30}}>
+                    <Button title="SE CONNECTER"
+                            onPress={() => this._handlePressSwitch()}
+                            buttonStyle={GlobalStyles.primaryButton}
+                    ></Button>
+                </View>
+            </View>
+        }
     }
 
     render() {
-        return <ScrollView style={[GlobalStyles.withMarginContainer, {marginVertical: 50}]}
-                           keyboardShouldPersistTaps="handled">
-            {this.renderLogo()}
-            <FormInput value={this.props.email}
-                       onChangeText={(text) => this._handleChangeEmail(text)}
-                       placeholder="toilette@alaturc.com"
-                       errorMessage={this.state.emailErrorMessage}
-                       keyboardType="email-address"
-                       autoCapitalize="none"></FormInput>
-            <FormInput value={this.props.password}
-                       onChangeText={(text) => this._handleChangePassword(text)}
-                       placeholder="**********"
-                       errorMessage={this.state.passwordErrorMessage}
-                       secureTextEntry={true}></FormInput>
-            <Button title="SE CONNECTER"
-                    onPress={() => this._handlePressSubmitButton()}
-                    buttonStyle={GlobalStyles.primaryButton}
-                    titleStyle={GlobalStyles.defaultFont}
-                    loading={!this.state.isReady}
-            ></Button>
-            {this.renderRegisterSwitchButton()}
+        return <View>
+            {this.renderGoBackButton()}
+            <ScrollView style={[GlobalStyles.withMarginContainer, {marginVertical: 50}]}
+                        keyboardShouldPersistTaps="handled">
+                {this.renderLogo()}
+                {this.renderBody()}
 
-            <KeyboardSpacer/>
-        </ScrollView>
+                <KeyboardSpacer/>
+            </ScrollView>
+        </View>
     }
 }
 
 function mapStateToProps(state) {
     return {
-        password: state.authReducer.password,
         email: state.authReducer.email
     };
 }
 
 
-export default connect(mapStateToProps)(LoginView);
+export default connect(mapStateToProps)(PasswordResetView);

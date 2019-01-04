@@ -1,7 +1,7 @@
 // LIBRAIRIES
 import React from 'react';
 import {connect} from "react-redux";
-import {ScrollView, View, Image, Text, Alert} from "react-native";
+import {ScrollView, View, Image, Text, Alert, TouchableNativeFeedback} from "react-native";
 import {Button} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
@@ -27,6 +27,7 @@ class LoginView extends React.Component {
         super(props);
 
         this._handlePressSubmitButton = this._handlePressSubmitButton.bind(this);
+        this._handlePressForgottenPasswordButton = this._handlePressForgottenPasswordButton.bind(this);
         this._handleChangeEmail = this._handleChangeEmail.bind(this);
         this._handleChangePassword = this._handleChangePassword.bind(this);
         this._handleChangeUsername = this._handleChangeUsername.bind(this);
@@ -42,12 +43,6 @@ class LoginView extends React.Component {
         if (this.state.hasSubmitted && (prevProps.email !== this.props.email || prevProps.password !== this.props.password || prevProps.username !== this.props.username)) {
             this.validateForm();
         }
-    }
-
-    componentWillUnmount() {
-        this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
-        this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: null});
-        this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: null});
     }
 
 
@@ -70,6 +65,9 @@ class LoginView extends React.Component {
         if (this.validateForm()) {
             this.setState({isReady: false});
             AuthEndpoints.login(_this.props.email, _this.props.password).then(() => {
+                this.props.dispatch({type: ACTIONS_AUTH.EMAIL_FIELD_CHANGE, value: null});
+                this.props.dispatch({type: ACTIONS_AUTH.PASSWORD_FIELD_CHANGE, value: null});
+                this.props.dispatch({type: ACTIONS_AUTH.USERNAME_FIELD_CHANGE, value: null});
             }).catch((error) => {
                 if (ERROR_TYPES.USER_NOT_FOUND.indexOf(error.code) > -1) {
                     this.setState({passwordErrorMessage:  "Votre e-mail/mot de passe est incorrect"});
@@ -85,6 +83,11 @@ class LoginView extends React.Component {
     _handlePressSwitch() {
         this.props.navigation.navigate(ROUTE_NAMES.REGISTER);
     }
+
+    _handlePressForgottenPasswordButton() {
+        this.props.navigation.navigate(ROUTE_NAMES.PASSWORD_RESET)
+    }
+
 
     //FORM VALIDATION
     validateForm() {
@@ -153,8 +156,10 @@ class LoginView extends React.Component {
                     titleStyle={GlobalStyles.defaultFont}
                     loading={!this.state.isReady}
             ></Button>
+            <TouchableNativeFeedback onPress={this._handlePressForgottenPasswordButton}>
+                <View style={{alignSelf: 'center', padding: 10}}><Text style={[GlobalStyles.secondaryText, GlobalStyles.pressableText]}>Mot de passe oublié ?</Text></View>
+            </TouchableNativeFeedback>
             {this.renderRegisterSwitchButton()}
-
             <KeyboardSpacer/>
         </ScrollView>
     }
