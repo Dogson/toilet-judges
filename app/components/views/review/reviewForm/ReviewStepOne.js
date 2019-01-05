@@ -137,7 +137,11 @@ class ReviewStepOne extends React.Component {
             <View style={GlobalStyles.flexColumn}>
                 <View style={[GlobalStyles.flexRowSpaceBetween, GlobalStyles.sectionContainer]}>
                     <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Établissement</Text>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>{this.state.placeName}</Text>
+                    <View style={[GlobalStyles.flexRow, {
+                        flex: 1, justifyContent: 'flex-end', marginTop: 5, paddingLeft: 10
+                    }]}>
+                        <Text style={[GlobalStyles.primaryText, {textAlign: 'right'}]}>{this.state.placeName}</Text>
+                    </View>
                 </View>
                 <View style={[GlobalStyles.sectionContainer, GlobalStyles.flexColumnCenter]}>
                     <Text style={[GlobalStyles.primaryText, {alignSelf: 'flex-start'}]}>Les toilettes sont-elles mixtes ?</Text>
