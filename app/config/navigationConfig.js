@@ -26,6 +26,7 @@ import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
 import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
 import PasswordResetView from "../components/views/auth/PasswordResetView";
+import EditEmailView from "../components/views/settings/EditEmailView";
 
 
 /**
@@ -230,6 +231,22 @@ const UserProfileRoutes = {
             }
         }
     },
+    EditEmailView: {
+        screen: EditEmailView,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
+        }
+    }
 };
 
 const LoginRoutes = {
@@ -282,6 +299,7 @@ const DrawerRoutes = {
 const ROUTE_NAMES = {
     HOME: 'Home',
     USER_PROFILE: 'UserProfile',
+    EDIT_EMAIL: 'EditEmailView',
     SEARCH: 'Search',
     MAP: 'Map',
     TOILET: 'Toilet',
