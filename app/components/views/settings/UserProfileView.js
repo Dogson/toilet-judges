@@ -53,7 +53,9 @@ export default class UserProfileView extends React.Component {
     }
 
     _handlePressEditPassword() {
-
+        this.props.navigation.navigate(ROUTE_NAMES.EDIT_PASSWORD, {
+            transition: TRANSITIONS.FROM_BOTTOM
+        })
     }
 
     // RENDERING COMPONENT

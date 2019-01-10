@@ -20,13 +20,14 @@ import ReviewStepThree from "../components/views/review/reviewForm/ReviewStepThr
 import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetails"
 import LoginView from "../components/views/auth/LoginView"
 import RegisterView from "../components/views/auth/RegisterView"
+import PasswordResetView from "../components/views/auth/PasswordResetView";
 import UserProfileView from "../components/views/settings/UserProfileView"
+import EditEmailView from "../components/views/settings/EditEmailView";
+import EditPasswordView from "../components/views/settings/EditPaswordView";
 
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
 import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
-import PasswordResetView from "../components/views/auth/PasswordResetView";
-import EditEmailView from "../components/views/settings/EditEmailView";
 
 
 /**
@@ -246,6 +247,22 @@ const UserProfileRoutes = {
                 headerTintColor: STYLE_VAR.text.color.primary
             };
         }
+    },
+    EditPasswordView: {
+        screen: EditPasswordView,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
+        }
     }
 };
 
@@ -300,6 +317,7 @@ const ROUTE_NAMES = {
     HOME: 'Home',
     USER_PROFILE: 'UserProfile',
     EDIT_EMAIL: 'EditEmailView',
+    EDIT_PASSWORD: 'EditPasswordView',
     SEARCH: 'Search',
     MAP: 'Map',
     TOILET: 'Toilet',
