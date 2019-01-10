@@ -7,9 +7,10 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 // CONST
 import {ACTIONS_AUTH} from "./AuthActions";
+import {ACTIONS_ROOT} from "../root/RootActions";
+
 const TOILET_LOGO = require('../../../../assets/img/toiletLogo.png');
-import {STYLE_VAR} from "../../../styles/stylingVar";
-import {ERROR_TYPES} from "../../../config/errorTypes";
+
 
 // API ENDPOINTS
 import {AuthEndpoints} from "../../../endpoints/authEndpoints";
@@ -17,6 +18,9 @@ import {GlobalStyles} from "../../../styles/styles";
 
 //COMPONENTS
 import {FormInput} from "../../widgets/form/FormInput";
+import {ERROR_TYPES} from "../../../config/errorTypes";
+import {ROUTE_NAMES} from "../../../config/navigationConfig";
+import {STYLE_VAR} from "../../../styles/stylingVar";
 
 class RegisterView extends React.Component {
     constructor(props) {
@@ -121,7 +125,7 @@ class RegisterView extends React.Component {
                 source={TOILET_LOGO}
             />
             <Text style={GlobalStyles.logoText}>
-                toilet advisor
+                toilet judges
             </Text>
         </View>
     }

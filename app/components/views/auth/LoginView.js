@@ -115,7 +115,7 @@ class LoginView extends React.Component {
                 source={TOILET_LOGO}
             />
             <Text style={GlobalStyles.logoText}>
-                toilet advisor
+                toilet judges
             </Text>
         </View>
     }
