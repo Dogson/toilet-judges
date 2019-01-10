@@ -1,36 +1,23 @@
 // LIBRAIRIES
 import React from 'react';
 import {
-    BackHandler,
     Text,
     ScrollView,
     View,
-    Alert,
     StyleSheet,
-    TouchableNativeFeedback,
-    ActivityIndicator
 } from 'react-native';
-import {connect} from "react-redux";
-import {Icon, Button} from 'react-native-elements';
+import {Button} from 'react-native-elements';
 
 // CONST
-import {APP_CONFIG} from "../../../../config/appConfig"
-import {PLACE_TYPES, RATINGS} from "../../../../config/const";
+import {RATINGS} from "../../../../config/const";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
+import {GlobalStyles} from '../../../../styles/styles'
+import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 
 // API ENDPOINTS
-import {ToiletEndpoints} from '../../../../endpoints/toiletEndpoints';
 
 //COMPONENTS
-import {GlobalRating} from "../../../widgets/rating/GlobalRating";
 import {ToiletRating} from "../../../widgets/rating/ToiletRating";
-
-//STYLES
-import {GlobalStyles} from '../../../../styles/styles'
-import {FormRadioButtons} from "../../../widgets/form/FormRadioButtons";
-import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
-import {RadioButtonDialog} from "../../../widgets/dialogs/RadioButtonDialog";
-import {ROUTE_NAMES} from "../../../../config/navigationConfig";
 
 class ReviewStepTwo extends React.Component {
     constructor(props) {

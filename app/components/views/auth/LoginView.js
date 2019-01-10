@@ -7,20 +7,17 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 
 // CONST
+import {GlobalStyles} from "../../../styles/styles";
 import {ACTIONS_AUTH} from "./AuthActions";
-import {ACTIONS_ROOT} from "../root/RootActions";
-
 const TOILET_LOGO = require('../../../../assets/img/toiletLogo.png');
-
+import {ERROR_TYPES} from "../../../config/errorTypes";
+import {ROUTE_NAMES} from "../../../config/navigationConfig";
 
 // API ENDPOINTS
 import {AuthEndpoints} from "../../../endpoints/authEndpoints";
-import {GlobalStyles} from "../../../styles/styles";
 
 //COMPONENTS
 import {FormInput} from "../../widgets/form/FormInput";
-import {ERROR_TYPES} from "../../../config/errorTypes";
-import {ROUTE_NAMES} from "../../../config/navigationConfig";
 
 class LoginView extends React.Component {
     constructor(props) {

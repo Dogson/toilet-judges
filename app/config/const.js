@@ -1,5 +1,5 @@
-// LES DIFFERENTS TYPES SONT PAR ORDRE DE PRIORITE.
-// Ex : pour un établissement "Boite de nuit" et "Bar" on retiendra uniquement Boite de nuit
+// THE TYPES ARE ORDERED BY PRIORITY
+// IE : for an place that is both a bar and a night club, we will consider it like a night club
 export const PLACE_TYPES = [
     {
         id: 'gym',

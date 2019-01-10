@@ -1,7 +1,3 @@
-import {Text, TouchableNativeFeedback, View} from "react-native";
-import {RadioButton} from "react-native-paper";
-import {GlobalStyles} from "../../../styles/styles";
-import {STYLE_VAR} from "../../../styles/stylingVar";
 import RadioGroup from '../../lib/RadioButtonGroup';
 import * as React from "react";
 

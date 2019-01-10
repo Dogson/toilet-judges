@@ -1,11 +1,17 @@
+// LIBRAIRIES
 import React from 'react';
-import {View, Text, StyleSheet, TouchableNativeFeedback, BackHandler, StatusBar, Image} from "react-native";
-import {GlobalStyles} from "../../../styles/styles";
-import {SearchBar} from "react-native-elements";
+import {View, Text, StyleSheet, TouchableNativeFeedback, Image} from "react-native";
+
+// CONST
 import {APP_CONFIG} from "../../../config/appConfig";
 import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
-
 const TOILET_WELCOME = require('../../../../assets/img/toiletWelcome.png');
+
+// API ENDPOINTS
+import {GlobalStyles} from "../../../styles/styles";
+
+//COMPONENTS
+import {SearchBar} from "react-native-elements";
 
 export default class HomeView extends React.Component {
     constructor(props) {

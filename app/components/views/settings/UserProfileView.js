@@ -1,24 +1,22 @@
 // LIBRAIRIES
 import React from 'react';
-import _ from 'lodash';
 import {
-    BackHandler,
     Text,
     ScrollView,
     View,
-    Alert,
-    StyleSheet,
     TouchableNativeFeedback,
-    ActivityIndicator
 } from 'react-native';
-import {connect} from "react-redux";
-import {Icon, Button} from 'react-native-elements';
-import {GlobalStyles} from "../../../styles/styles";
+import {Icon} from 'react-native-elements';
 import * as firebase from "firebase";
-import {ACTIONS_AUTH} from "../auth/AuthActions";
+
+
+// CONST
 import {STYLE_VAR} from "../../../styles/stylingVar";
-import {FormInput} from "../../widgets/form/FormInput";
-import {ROUTE_NAMES, TRANSITIONS, UserProfileRoutes} from "../../../config/navigationConfig";
+import {GlobalStyles} from "../../../styles/styles";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+// API ENDPOINTS
+
+// COMPONENTS
 
 export default class UserProfileView extends React.Component {
 

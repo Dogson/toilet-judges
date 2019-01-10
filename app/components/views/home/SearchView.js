@@ -1,37 +1,23 @@
 // LIBRAIRIES
-
-import {PLACE_TYPES} from "../../../config/const";
-
-let _ = require('lodash');
 import React from 'react';
-import {MapView} from 'expo';
-import {connect} from "react-redux";
 import {
     View,
     Text,
     StyleSheet,
-    ActivityIndicator,
-    BackHandler,
     StatusBar,
-    Image,
     TouchableNativeFeedback
 } from "react-native";
-import {SearchBar, Icon} from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
-import NavigationEvents from "react-navigation/src/views/NavigationEvents";
 
 //COMPONENTS
-import {SearchResults} from '../../widgets/search/SearchResults';
-import {YesNoDialog} from '../../widgets/dialogs/YesNoDialog'
 
 //CONST
-import {ACTIONS_ROOT} from "../root/RootActions";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
-
-//STYLE
 import {GlobalStyles} from "../../../styles/styles";
 import {STYLE_VAR} from "../../../styles/stylingVar";
+import {PLACE_TYPES} from "../../../config/const";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 
 export default class SearchView extends React.Component {
     constructor(props) {
@@ -225,7 +211,7 @@ export default class SearchView extends React.Component {
                     }
                 }}
                 currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-                currentLocationLabel="Toilettes près de vous"
+                currentLocationLabel="Établissements près de vous"
                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                 GooglePlacesSearchQuery={{
                     // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search

@@ -1,23 +1,21 @@
+// LIBRAIRIES
 import React from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     TouchableNativeFeedback,
-    BackHandler,
     StatusBar,
-    Image,
     ActivityIndicator
 } from "react-native";
-import {GlobalStyles} from "../../../styles/styles";
-import {Icon, SearchBar} from "react-native-elements";
-import {APP_CONFIG} from "../../../config/appConfig";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
-import {ACTIONS_SEARCH} from "./SearchActions";
-import {STYLE_VAR} from "../../../styles/stylingVar";
+import {Icon} from "react-native-elements";
 import {MapView} from "expo";
 
-const TOILET_WELCOME = require('../../../../assets/img/toiletWelcome.png');
+//CONST
+import {GlobalStyles} from "../../../styles/styles";
+
+//API ENDPOINTS
+
+//COMPONENTS
 
 export default class MapFullView extends React.Component {
 

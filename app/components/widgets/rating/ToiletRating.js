@@ -1,10 +1,8 @@
 import React from 'react';
 import Rating from 'react-native-star-rating';
-import {View, Image} from 'react-native';
+import {View} from 'react-native';
 
 import {STYLE_VAR} from "../../../styles/stylingVar";
-
-const TOILET_IMAGE = require('../../../../assets/img/toiletRating.png');
 
 export class ToiletRating extends React.Component {
     render() {

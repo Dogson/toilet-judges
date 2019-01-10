@@ -1,6 +1,4 @@
-import {APP_CONFIG} from "../config/appConfig";
 import * as firebase from "firebase";
-import {RatingEndpoints} from "./ratingEndpoints";
 
 export class ToiletEndpoints {
 
