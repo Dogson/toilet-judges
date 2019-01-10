@@ -69,6 +69,9 @@ class RegisterView extends React.Component {
                 if (ERROR_TYPES.USER_EXISTS.indexOf(error.code) > -1) {
                     this.setState({passwordErrorMessage: "Cette adresse e-mail est déja associée à un compte."});
                 }
+                else if (ERROR_TYPES.WEAK_PASSWORD.indexOf(error.code) > -1) {
+                    this.setState({passwordErrorMessage: "Le mot de passe n'est pas assez complexe."})
+                }
                 else {
                     Alert.alert("Une erreur est survenue.")
                 }
@@ -94,7 +97,7 @@ class RegisterView extends React.Component {
             emailErrorMessage = "Veuillez entrer une adresse e-mail valide";
             isValid = false;
         }
-        if (!this.props.password || this.props.password.length < 7) {
+        if (!this.props.password || this.props.password.length < 6) {
             passwordErrorMessage = "Le mot de passe doit contenir au moins 6 caractères";
             isValid = false;
         }

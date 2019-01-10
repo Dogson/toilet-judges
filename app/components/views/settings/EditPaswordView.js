@@ -69,7 +69,7 @@ export default class EditPaswordView extends React.Component {
                         this.setState({oldPasswordErrorMessage: "Votre mot de passe actuel est incorrect"});
                     }
                     else if (ERROR_TYPES.WEAK_PASSWORD.indexOf(error.code) > -1) {
-                        this.setState({newPasswordErrorMessage: "Le mot de passe n'est pas assez sécurisé"});
+                        this.setState({newPasswordErrorMessage: "Le mot de passe n'est pas assez complexe"});
                     }
                     else {
                         Alert.alert("Une erreur est survenue.")

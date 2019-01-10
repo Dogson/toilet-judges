@@ -34,6 +34,7 @@ export default class UserProfileView extends React.Component {
         this._handlePressEditUsername = this._handlePressEditUsername.bind(this);
         this._handlePressEditPassword = this._handlePressEditPassword.bind(this);
         this._handleFinishEditingEmail = this._handleFinishEditingEmail.bind(this);
+        this._handleFinishEditingUsername = this._handleFinishEditingUsername.bind(this);
     }
 
     // HANDLING EVENTS
@@ -49,7 +50,14 @@ export default class UserProfileView extends React.Component {
     }
 
     _handlePressEditUsername() {
+        this.props.navigation.navigate(ROUTE_NAMES.EDIT_USERNAME, {
+            transition: TRANSITIONS.FROM_BOTTOM,
+            onFinishEditing: this._handleFinishEditingUsername
+        })
+    }
 
+    _handleFinishEditingUsername(username) {
+        this.setState({username: username});
     }
 
     _handlePressEditPassword() {

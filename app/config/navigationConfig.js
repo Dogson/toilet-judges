@@ -24,6 +24,7 @@ import PasswordResetView from "../components/views/auth/PasswordResetView";
 import UserProfileView from "../components/views/settings/UserProfileView"
 import EditEmailView from "../components/views/settings/EditEmailView";
 import EditPasswordView from "../components/views/settings/EditPaswordView";
+import EditUsernameView from "../components/views/settings/EditUsernameView";
 
 import {STYLE_VAR} from "../styles/stylingVar";
 import {GlobalStyles} from "../styles/styles";
@@ -263,6 +264,22 @@ const UserProfileRoutes = {
                 headerTintColor: STYLE_VAR.text.color.primary
             };
         }
+    },
+    EditUsernameView: {
+        screen: EditUsernameView,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
+        }
     }
 };
 
@@ -318,6 +335,7 @@ const ROUTE_NAMES = {
     USER_PROFILE: 'UserProfile',
     EDIT_EMAIL: 'EditEmailView',
     EDIT_PASSWORD: 'EditPasswordView',
+    EDIT_USERNAME: 'EditUsernameView',
     SEARCH: 'Search',
     MAP: 'Map',
     TOILET: 'Toilet',
