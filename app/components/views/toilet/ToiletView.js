@@ -5,7 +5,6 @@ import {
     Text,
     ScrollView,
     View,
-    Alert,
     StyleSheet,
     TouchableNativeFeedback,
     ActivityIndicator
@@ -14,25 +13,19 @@ import {connect} from "react-redux";
 import {Icon, Button} from 'react-native-elements';
 
 // CONST
-import {APP_CONFIG} from "../../../config/appConfig"
 import {PLACE_TYPES} from "../../../config/const";
 import {ACTIONS_TOILET} from "./ToiletActions";
 import {STYLE_VAR} from "../../../styles/stylingVar";
+import {GlobalStyles} from '../../../styles/styles'
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 
 // API ENDPOINTS
 import {ToiletEndpoints} from '../../../endpoints/toiletEndpoints';
+import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
 
 //COMPONENTS
 import {GlobalRating} from "../../widgets/rating/GlobalRating";
 import {ToiletRating} from "../../widgets/rating/ToiletRating";
-
-//STYLES
-import {GlobalStyles} from '../../../styles/styles'
-import {YesNoDialog} from "../../widgets/dialogs/YesNoDialog";
-import {RadioButtonDialog} from "../../widgets/dialogs/RadioButtonDialog";
-import {ERROR_TYPES} from "../../../config/errorTypes";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
-import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
 
 class ToiletView extends React.Component {
 
@@ -293,17 +286,5 @@ function mapStateToProps(state) {
         isReady: state.toiletReducer.isReady
     };
 }
-
-
-const styles = StyleSheet.create({
-    backgroundStyle: {
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        flex: 1,
-        width: '100%'
-    }
-});
 
 export default connect(mapStateToProps)(ToiletView);

@@ -1,21 +1,24 @@
+//LIBRAIRIES
 import React from 'react';
-import {StyleSheet, View, ActivityIndicator, Button, TouchableNativeFeedback, Text} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, TouchableNativeFeedback, Text} from 'react-native';
 import {connect} from "react-redux";
+import {createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
+import {Icon} from "react-native-elements";
 
-//Const
+//CONST
 import {
-    MainRoutes,
     LoginRoutes,
     DrawerRoutes,
     transitionConfig
 } from "../../../config/navigationConfig";
-import {ACTIONS_ROOT} from "./RootActions";
-
-import {createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
-import {Icon} from "react-native-elements";
 import {GlobalStyles} from "../../../styles/styles";
 import {STYLE_VAR} from "../../../styles/stylingVar";
+
+//API ENDPOINTS
 import {AuthEndpoints} from "../../../endpoints/authEndpoints";
+
+//COMPONENTS
+
 
 class AppRedux extends React.Component {
     constructor() {
@@ -24,8 +27,6 @@ class AppRedux extends React.Component {
             user: null,
             loading: true
         };
-
-        let _this = this;
 
         const Logout = {
             contentComponent: (props) => {

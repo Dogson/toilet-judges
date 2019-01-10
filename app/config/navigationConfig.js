@@ -1,5 +1,7 @@
+// LIBRAIRIES
 import * as React from "react";
-import {Easing, Animated, TouchableNativeFeedback, View, Button, Text} from 'react-native';
+import {createStackNavigator} from "react-navigation";
+import {Easing, Animated, TouchableNativeFeedback, View} from 'react-native';
 import {Icon} from "react-native-elements";
 import Menu, {
     MenuOptions,
@@ -10,6 +12,13 @@ import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackV
 import getSceneIndicesForInterpolationInputRange
     from "react-navigation/src/utils/getSceneIndicesForInterpolationInputRange";
 
+// CONST
+import {STYLE_VAR} from "../styles/stylingVar";
+import {GlobalStyles} from "../styles/styles";
+
+// API ENDPOINTS
+
+// COMPONENTS
 import HomeView from "../components/views/home/HomeView"
 import SearchView from "../components/views/home/SearchView"
 import MapFullView from "../components/views/home/MapFullView"
@@ -25,10 +34,6 @@ import UserProfileView from "../components/views/settings/UserProfileView"
 import EditEmailView from "../components/views/settings/EditEmailView";
 import EditPasswordView from "../components/views/settings/EditPaswordView";
 import EditUsernameView from "../components/views/settings/EditUsernameView";
-
-import {STYLE_VAR} from "../styles/stylingVar";
-import {GlobalStyles} from "../styles/styles";
-import {createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
 
 
 /**
@@ -50,7 +55,7 @@ const transitionConfig = () => {
             const {layout, position, scene} = sceneProps;
             const width = layout.initWidth;
             const height = layout.initHeight;
-            const {index, route} = scene
+            const {index, route} = scene;
             const params = route.params || {}; // <- That's new
             const transition = params.transition || 'default'; // <- That's new
             return {

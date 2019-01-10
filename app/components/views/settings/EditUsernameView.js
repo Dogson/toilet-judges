@@ -1,26 +1,20 @@
 // LIBRAIRIES
 import React from 'react';
-import _ from 'lodash';
 import {
-    BackHandler,
     Text,
-    ScrollView,
     View,
     Alert,
-    StyleSheet,
-    TouchableNativeFeedback,
-    ActivityIndicator
 } from 'react-native';
-import {connect} from "react-redux";
-import {Icon, Button} from 'react-native-elements';
-import {GlobalStyles} from "../../../styles/styles";
+import {Button} from 'react-native-elements';
 import * as firebase from "firebase";
-import {ACTIONS_AUTH} from "../auth/AuthActions";
-import {STYLE_VAR} from "../../../styles/stylingVar";
 import {FormInput} from "../../widgets/form/FormInput";
-import {ROUTE_NAMES, TRANSITIONS, UserProfileRoutes} from "../../../config/navigationConfig";
-import {AuthEndpoints} from "../../../endpoints/authEndpoints";
-import {ERROR_TYPES} from "../../../config/errorTypes";
+
+// CONST
+import {GlobalStyles} from "../../../styles/styles";
+
+// API ENDPOINTS
+
+//COMPONENTS
 
 export default class EditUsernameView extends React.Component {
 
@@ -59,7 +53,7 @@ export default class EditUsernameView extends React.Component {
                     _this.props.navigation.goBack(null);
                 })
                 .catch((error) => {
-                    Alert.alert("Une erreur est survenue.")
+                    Alert.alert("Une erreur est survenue.");
                     console.log(error);
                     this.setState({isReady: true});
                 })

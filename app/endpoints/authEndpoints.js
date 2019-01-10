@@ -1,6 +1,4 @@
-import {APP_CONFIG} from "../config/appConfig";
-import {FetchHelper} from "../helpers/fetchHelper";
-import {auth, database, provider} from "../config/firebase";
+import {auth, database} from "../config/firebase";
 import {ACTIONS_ROOT} from "../components/views/root/RootActions";
 
 import {store} from '../AppRoot'
