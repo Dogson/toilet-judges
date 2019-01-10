@@ -18,6 +18,7 @@ import {GlobalStyles} from "../../../styles/styles";
 import {STYLE_VAR} from "../../../styles/stylingVar";
 import {PLACE_TYPES} from "../../../config/const";
 import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+import {APP_CONFIG} from "../../../config/appConfig";
 
 export default class SearchView extends React.Component {
     constructor(props) {
@@ -188,7 +189,7 @@ export default class SearchView extends React.Component {
                 getDefaultValue={() => ''}
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: 'AIzaSyAgIyeHg-lrGIJyMD04jw6R7HYURNLvWYY',
+                    key: APP_CONFIG.GooglePlaceAPIkey,
                     language: 'fr', // language of the result
                     types: 'establishment',
                     location: this.state.position.coords.latitude + "," + this.state.position.coords.longitude,
