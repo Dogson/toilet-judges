@@ -19,7 +19,7 @@ Install [expo](https://play.google.com/store/apps/details?id=host.exp.exponent&r
 
 ## Run project for development
 
-####Run project
+#### Run project
 
 `npm start`
 
