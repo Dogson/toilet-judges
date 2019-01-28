@@ -1,4 +1,6 @@
-import * as firebase from 'firebase';
+import firebase from "@firebase/app";
+import "firebase/auth";
+import "firebase/database";
 import {APP_CONFIG} from "./appConfig";
 require("firebase/functions");
 
@@ -6,9 +8,3 @@ require("firebase/functions");
 const config = APP_CONFIG.firebase;
 
 firebase.initializeApp(config);
-const functions = firebase.functions();
-
-export const database = firebase.database();
-export const auth = firebase.auth();
-export const provider = new firebase.auth.FacebookAuthProvider();
-export const storage = firebase.storage();

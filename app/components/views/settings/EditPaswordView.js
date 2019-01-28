@@ -6,7 +6,9 @@ import {
     Alert,
 } from 'react-native';
 import {Button} from 'react-native-elements';
-import * as firebase from "firebase";
+import firebase from "@firebase/app";
+import "firebase/auth";
+import "firebase/database";
 import {FormInput} from "../../widgets/form/FormInput";
 
 // CONST

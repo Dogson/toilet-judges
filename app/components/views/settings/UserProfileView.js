@@ -7,7 +7,9 @@ import {
     TouchableNativeFeedback,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
-import * as firebase from "firebase";
+import firebase from "@firebase/app";
+import "firebase/auth";
+import "firebase/database";
 
 
 // CONST

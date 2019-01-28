@@ -2,8 +2,8 @@
   "expo": {
     "sdkVersion": "27.0.0",
     "name": "Toilet Judges",
-    "icon": "./toilet.png",
-    "version": "0.0.1",
+    "icon": "./assets/img/toiletLogo.png",
+    "version": "1.0",
     "ios": {
       "bundleIdentifier": "com.dogson.toiletadvisor"
     },
