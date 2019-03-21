@@ -5,11 +5,12 @@ import {
     Text,
     StyleSheet,
     StatusBar,
-    TouchableNativeFeedback
+    TouchableNativeFeedback,
+    ActivityIndicator
 } from "react-native";
 import {Icon} from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
+import {GooglePlacesAutocomplete} from "../../lib/GooglePlacesAutocomplete";
 
 //COMPONENTS
 
@@ -97,6 +98,7 @@ export default class SearchView extends React.Component {
     // RENDERING COMPONENTS
     renderLeftButton() {
         let _this = this;
+
         function doAction() {
             _this.props.navigation.openDrawer();
         }
@@ -127,6 +129,13 @@ export default class SearchView extends React.Component {
         return null;
     }
 
+    renderLoader() {
+        return <View
+            style={{justifyContent: 'center', paddingHorizontal: 15, paddingTop: 7.5}}>
+            <ActivityIndicator size="small"/>
+        </View>
+    }
+
     renderMapIcon() {
         if (!this.state.isReady)
             return;
@@ -144,14 +153,20 @@ export default class SearchView extends React.Component {
 
     renderRowDescription(row) {
         if (row.isPredefinedPlace)
-            return <View key={row.place_id} style={{flex: 0.9}}><Text style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text></View>;
+            return <View key={row.place_id} style={{flex: 0.9}}><Text
+                style={[GlobalStyles.primaryText, {color: '#1faadb'}]}>{row.description}</Text></View>;
+        if (row.isNotFound) {
+            return <View key={row.place_id} style={{flex: 0.9, alignItems: 'center'}}><Text
+                style={[GlobalStyles.secondaryText]}>{row.description}</Text></View>;
+        }
         if (row.structured_formatting)
             return <View key={row.place_id} style={{flex: 0.9}}>
                 <Text numberOfLines={1} style={GlobalStyles.primaryText}>{row.structured_formatting.main_text}</Text>
                 <Text numberOfLines={1}
                       style={GlobalStyles.secondaryText}>{row.structured_formatting.secondary_text}</Text>
             </View>;
-        return <View key={row.place_id} style={{flex: 0.9}}><Text style={GlobalStyles.primaryText}>{row.name}</Text></View>;
+        return <View key={row.place_id} style={{flex: 0.9}}><Text
+            style={GlobalStyles.primaryText}>{row.name}</Text></View>;
     }
 
     render() {
@@ -213,6 +228,7 @@ export default class SearchView extends React.Component {
                 }}
                 currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
                 currentLocationLabel="Établissements près de vous"
+                noResultsLabel="Aucun établissement n'a été trouvé"
                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                 GooglePlacesSearchQuery={{
                     // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
@@ -222,6 +238,8 @@ export default class SearchView extends React.Component {
                 debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
                 renderLeftButton={this.renderLeftButton}
                 renderRightButton={this.renderRightButton}
+                renderLoader={this.renderLoader}
+                autoFillOnNotFound={true}
             />
             {/*{mapIcon}*/}
             <KeyboardSpacer onToggle={(toggle, height) => this._handleKeyboardSpacerToggle(toggle, height)}/>
