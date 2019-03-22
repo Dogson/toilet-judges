@@ -8,7 +8,8 @@ import {
     View,
     StyleSheet,
     TouchableNativeFeedback,
-    ActivityIndicator
+    ActivityIndicator,
+    ToastAndroid
 } from 'react-native';
 import {connect} from "react-redux";
 import {Icon, Button} from 'react-native-elements';
@@ -18,6 +19,7 @@ import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
 import {GlobalStyles} from "../../../../styles/styles";
 import {ToiletRating} from "../../../widgets/rating/ToiletRating";
 import {STYLE_VAR} from "../../../../styles/stylingVar";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../../config/navigationConfig";
 
 // CONST
 
@@ -25,7 +27,7 @@ import {STYLE_VAR} from "../../../../styles/stylingVar";
 
 //COMPONENTS
 
-export class UserReviews extends React.Component {
+export class UserReviewsView extends React.Component {
     // COMPONENT LIFE CYCLE
     constructor(props) {
         super(props);
@@ -33,7 +35,14 @@ export class UserReviews extends React.Component {
         this.state = {
             isLoading: false,
             reviews: []
-        }
+        };
+
+        this.renderRow = this.renderRow.bind(this);
+        this._handlePressUserReview = this._handlePressUserReview.bind(this);
+        this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
+        this._handleDeleteReview = this._handleDeleteReview.bind(this);
+        this._handleFinishReview = this._handleFinishReview.bind(this);
+
     }
 
     componentDidMount() {
@@ -41,7 +50,45 @@ export class UserReviews extends React.Component {
     }
 
     // HANDLING EVENTS
+    _handlePressUserReview(userReview) {
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
+            {
+                placeName: userReview.toilet.name,
+                userRating: userReview,
+                transition: TRANSITIONS.FROM_BOTTOM,
+                _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
+                onDeleteReview: this._handleDeleteReview
+            });
+    }
 
+    _handleAddReviewButtonPress(userReview) {
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
+            userRating : userReview,
+            title: 'Modifier votre avis',
+            placeName: userReview.toilet.name,
+            onFinishRating: this._handleFinishReview,
+            originRoute: ROUTE_NAMES.USER_PROFILE
+        });
+    }
+
+    _handleDeleteReview(userReview) {
+       this.setState({isLoading: true});
+        RatingEndpoints.deleteUserReview(userReview.toiletId, userReview.uid)
+            .then(() => {
+                this.refreshList();
+                ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
+            });
+    }
+
+    _handleFinishReview(userRating) {
+        let toiletId = userRating.toiletId;
+        this.setState({isLoading: true});
+            RatingEndpoints.updateUserReview(toiletId, userRating)
+                .then(() => {
+                    this.refreshList();
+                    ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
+                });
+    }
 
     // DISPATCH ACTIONS
     refreshList() {
@@ -58,9 +105,7 @@ export class UserReviews extends React.Component {
     // RENDERING COMPONENTS
     renderRow({item}) {
         return <TouchableNativeFeedback
-            onPress={() => {
-
-            }}>
+            onPress={() => this._handlePressUserReview(item)}>
             <View style={[GlobalStyles.flexColumn, {
                 justifyContent: 'center',
                 paddingHorizontal: 15,
@@ -76,7 +121,7 @@ export class UserReviews extends React.Component {
                         {item.toilet.name}
                     </Text>
                     <View style={{flex: 0.3}}>
-                        <ToiletRating disabled rating={item.rating.global}/>
+                        <ToiletRating readonly rating={item.rating.global}/>
                     </View>
                 </View>
                 <View>
@@ -100,7 +145,7 @@ export class UserReviews extends React.Component {
 
 
     renderLoading() {
-        return <ActivityIndicator style={{alignSelf: 'center'}} size="large"/>;
+        return <ActivityIndicator style={{alignSelf: 'center', flex: 1}} size="large"/>;
     }
 
     renderBody() {

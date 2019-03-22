@@ -37,7 +37,7 @@ import UserSettingsView from "../components/views/profile/settings/UserSettingsV
 import EditEmailView from "../components/views/profile/settings/EditEmailView";
 import EditPasswordView from "../components/views/profile/settings/EditPaswordView";
 import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
-import {UserReviews} from "../components/views/profile/reviews/UserReviews";
+import {UserReviewsView} from "../components/views/profile/reviews/UserReviewsView";
 
 
 /**
@@ -252,7 +252,7 @@ const UserProfileTabRoutes = {
         }
     },
     Reviews: {
-        screen: UserReviews,
+        screen: UserReviewsView,
         navigationOptions: {
             title: 'Avis',
             tabBarOptions: {
@@ -350,6 +350,74 @@ const UserProfileRoutes = {
                 headerTintColor: STYLE_VAR.text.color.primary
             };
         }
+    },
+    ReviewDetails: {
+        screen: ReviewDetails,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerRight: <View>
+                    <Menu>
+                        <MenuTrigger><Icon name="more-vert" containerStyle={{padding: 15}}/></MenuTrigger>
+                        <MenuOptions customStyles={{
+                            optionsWrapper: {width: 'auto', right: 0},
+                            optionWrapper: {paddingVertical: 15, paddingHorizontal: 10},
+                            optionText: GlobalStyles.primaryText,
+                        }}>
+                            <MenuOption onSelect={navigation.state.params.handleEdit} text="Modifier l'avis"/>
+                            <MenuOption onSelect={navigation.state.params.handleDelete} text="Supprimer l'avis"/>
+                        </MenuOptions>
+                    </Menu>
+                </View>,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
+        }
+    },
+    ReviewStepOne: {
+        screen: ReviewStepOne,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
+    },
+    ReviewStepTwo: {
+        screen: ReviewStepTwo,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
+    },
+    ReviewStepThree: {
+        screen: ReviewStepThree,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
     }
 };
 
@@ -417,7 +485,8 @@ const ROUTE_NAMES = {
     REVIEW_DETAILS: 'ReviewDetails',
     LOGIN: 'Login',
     REGISTER: 'Register',
-    PASSWORD_RESET: 'PasswordReset'
+    PASSWORD_RESET: 'PasswordReset',
+    USER_PROFILE: 'TabWrapper'
 };
 
 const TRANSITIONS = {

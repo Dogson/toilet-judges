@@ -39,7 +39,7 @@ class ReviewDetails extends React.Component {
     }
 
     _handleEditReviewPress() {
-        this.state._handleAddReviewButtonPress();
+        this.state._handleAddReviewButtonPress(this.state.userRating);
     }
 
     _handleDeleteReviewPress() {
@@ -55,7 +55,7 @@ class ReviewDetails extends React.Component {
 
     _handleDeleteReviewConfirm() {
         this.props.navigation.goBack(null);
-        this.props.navigation.getParam('onDeleteReview')();
+        this.props.navigation.getParam('onDeleteReview')(this.state.userRating);
     }
 
     renderAccessibleDetail() {
@@ -110,6 +110,9 @@ class ReviewDetails extends React.Component {
                     <Text style={GlobalStyles.titleText}>
                         Votre avis
                     </Text>
+                </View>
+                <View>
+                    <Text style={GlobalStyles.primaryText}>{this.props.navigation.getParam('placeName')}</Text>
                 </View>
                 <GlobalRating rating={this.state.userRating.rating}/>
                 <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
