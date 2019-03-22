@@ -234,9 +234,71 @@ const MainRoutes = {
     }
 };
 
+const UserProfileTabRoutes = {
+    Settings: {
+        screen: UserSettingsView,
+        navigationOptions: {
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+    Reviews: {
+        screen: UserSettingsView,
+        navigationOptions: {
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+
+            }
+        }
+    }
+}
+
+const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
+
+const UserProfileTabWrapper = createStackNavigator({
+    Tab: {
+        screen: UserProfileTabNavigator,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                    </TouchableNativeFeedback>
+                ),
+                title: "Votre profil",
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                }
+            }
+        }
+    }
+});
+
 const UserSettingsRoutes = {
-    UserSettingsView: {
-        screen: UserSettingsView
+    TabWrapper: {
+        screen: UserProfileTabWrapper,
+        navigationOptions: {
+            header: null
+        }
     },
     EditEmailView: {
         screen: EditEmailView,
@@ -292,66 +354,6 @@ const UserSettingsStackNavigator = createStackNavigator(UserSettingsRoutes, {
     transitionConfig: transitionConfig
 });
 
-
-const UserProfileTabRoutes = {
-    Settings: {
-        screen: UserSettingsStackNavigator,
-        navigationOptions: {
-            tabBarOptions: {
-                activeTintColor: 'white',
-                inactiveTintColor: "#FAFAFA",
-                style: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                },
-                labelStyle: GlobalStyles.tabText
-            }
-        }
-    },
-    Reviews: {
-        screen: UserSettingsStackNavigator,
-        navigationOptions: {
-            tabBarOptions: {
-                activeTintColor: 'white',
-                inactiveTintColor: "#FAFAFA",
-                style: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                },
-                labelStyle: GlobalStyles.tabText
-
-            }
-        }
-    }
-}
-
-const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
-
-const UserProfileTabWrapper = createStackNavigator({
-    Tab: {
-        screen: UserProfileTabNavigator,
-        navigationOptions: ({navigation}) => {
-            return {
-                headerLeft: (
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            navigation.openDrawer()
-                        }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
-                    </TouchableNativeFeedback>
-                ),
-                title: "Votre profil",
-                headerTitleStyle: GlobalStyles.headerText,
-                headerTintColor: 'white',
-                headerStyle: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                }
-            }
-        }
-    }
-})
-
 const LoginRoutes = {
     Login: {
         screen: LoginView,
@@ -378,6 +380,8 @@ const MainStackNavigator = createStackNavigator(MainRoutes, {
 });
 
 
+
+
 const DrawerRoutes = {
     Home: {
         screen: MainStackNavigator,
@@ -388,7 +392,7 @@ const DrawerRoutes = {
         }
     },
     UserProfile: {
-        screen: UserProfileTabWrapper,
+        screen: UserSettingsStackNavigator,
         navigationOptions: {
             headerMode: 'screen',
             drawerLabel: 'Profil',
