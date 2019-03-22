@@ -1,6 +1,9 @@
 // LIBRAIRIES
 import * as React from "react";
-import {createStackNavigator} from "react-navigation";
+import {
+    createMaterialTopTabNavigator,
+    createStackNavigator,
+} from "react-navigation";
 import {Easing, Animated, TouchableNativeFeedback, View} from 'react-native';
 import {Icon} from "react-native-elements";
 import Menu, {
@@ -30,10 +33,10 @@ import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetail
 import LoginView from "../components/views/auth/LoginView"
 import RegisterView from "../components/views/auth/RegisterView"
 import PasswordResetView from "../components/views/auth/PasswordResetView";
-import UserProfileView from "../components/views/settings/UserProfileView"
-import EditEmailView from "../components/views/settings/EditEmailView";
-import EditPasswordView from "../components/views/settings/EditPaswordView";
-import EditUsernameView from "../components/views/settings/EditUsernameView";
+import UserSettingsView from "../components/views/profile/settings/UserSettingsView"
+import EditEmailView from "../components/views/profile/settings/EditEmailView";
+import EditPasswordView from "../components/views/profile/settings/EditPaswordView";
+import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
 
 
 /**
@@ -153,8 +156,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('place').name,
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -163,8 +169,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -173,8 +182,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -183,8 +195,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -219,24 +234,9 @@ const MainRoutes = {
     }
 };
 
-const UserProfileRoutes = {
-    UserProfile: {
-        screen: UserProfileView,
-        navigationOptions: ({navigation}) => {
-            return {
-                headerLeft: (
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            navigation.openDrawer()
-                        }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
-                    </TouchableNativeFeedback>
-                ),
-                title: "Votre profil",
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
-            }
-        }
+const UserSettingsRoutes = {
+    UserSettingsView: {
+        screen: UserSettingsView
     },
     EditEmailView: {
         screen: EditEmailView,
@@ -288,6 +288,70 @@ const UserProfileRoutes = {
     }
 };
 
+const UserSettingsStackNavigator = createStackNavigator(UserSettingsRoutes, {
+    transitionConfig: transitionConfig
+});
+
+
+const UserProfileTabRoutes = {
+    Settings: {
+        screen: UserSettingsStackNavigator,
+        navigationOptions: {
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+    Reviews: {
+        screen: UserSettingsStackNavigator,
+        navigationOptions: {
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+
+            }
+        }
+    }
+}
+
+const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
+
+const UserProfileTabWrapper = createStackNavigator({
+    Tab: {
+        screen: UserProfileTabNavigator,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                    </TouchableNativeFeedback>
+                ),
+                title: "Votre profil",
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                }
+            }
+        }
+    }
+})
+
 const LoginRoutes = {
     Login: {
         screen: LoginView,
@@ -312,9 +376,6 @@ const LoginRoutes = {
 const MainStackNavigator = createStackNavigator(MainRoutes, {
     transitionConfig: transitionConfig
 });
-const UserProfileStackNavigator = createStackNavigator(UserProfileRoutes, {
-    transitionConfig: transitionConfig
-});
 
 
 const DrawerRoutes = {
@@ -322,13 +383,14 @@ const DrawerRoutes = {
         screen: MainStackNavigator,
         navigationOptions: {
             headerMode: 'screen',
-            drawerLabel:  'Accueil',
+            drawerLabel: 'Accueil',
             drawerIcon: <Icon name="home"/>
         }
     },
     UserProfile: {
-        screen: UserProfileStackNavigator,
+        screen: UserProfileTabWrapper,
         navigationOptions: {
+            headerMode: 'screen',
             drawerLabel: 'Profil',
             drawerIcon: <Icon name="account" type="material-community"/>
         }
@@ -336,8 +398,6 @@ const DrawerRoutes = {
 };
 
 const ROUTE_NAMES = {
-    HOME: 'Home',
-    USER_PROFILE: 'UserProfile',
     EDIT_EMAIL: 'EditEmailView',
     EDIT_PASSWORD: 'EditPasswordView',
     EDIT_USERNAME: 'EditUsernameView',
@@ -357,4 +417,4 @@ const TRANSITIONS = {
     FROM_BOTTOM: 'slideFromBottom',
 };
 
-export {MainRoutes, UserProfileRoutes, LoginRoutes, DrawerRoutes, ROUTE_NAMES, TRANSITIONS, transitionConfig};
+export {MainRoutes, UserSettingsRoutes, LoginRoutes, DrawerRoutes, ROUTE_NAMES, TRANSITIONS, transitionConfig};

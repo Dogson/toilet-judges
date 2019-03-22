@@ -13,14 +13,14 @@ import "firebase/database";
 
 
 // CONST
-import {STYLE_VAR} from "../../../styles/stylingVar";
-import {GlobalStyles} from "../../../styles/styles";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+import {STYLE_VAR} from "../../../../styles/stylingVar";
+import {GlobalStyles} from "../../../../styles/styles";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../../config/navigationConfig";
 // API ENDPOINTS
 
 // COMPONENTS
 
-export default class UserProfileView extends React.Component {
+export default class UserSettingsView extends React.Component {
 
     // COMPONENT LIFE CYCLE
     constructor(props) {
