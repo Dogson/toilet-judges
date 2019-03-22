@@ -1,9 +1,7 @@
 // LIBRAIRIES
 import React from 'react';
 import {
-    BackHandler,
     Text,
-    ScrollView,
     FlatList,
     View,
     StyleSheet,
@@ -11,21 +9,17 @@ import {
     ActivityIndicator,
     ToastAndroid
 } from 'react-native';
-import {connect} from "react-redux";
-import {Icon, Button} from 'react-native-elements';
-import {ToiletEndpoints} from "../../../../endpoints/toiletEndpoints";
-import {RatingEndpoints} from "../../../../endpoints/ratingEndpoints";
-import {ACTIONS_TOILET} from "../../toilet/ToiletActions";
-import {GlobalStyles} from "../../../../styles/styles";
-import {ToiletRating} from "../../../widgets/rating/ToiletRating";
-import {STYLE_VAR} from "../../../../styles/stylingVar";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../../config/navigationConfig";
 
 // CONST
+import {GlobalStyles} from "../../../../styles/styles";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../../config/navigationConfig";
 
 // API ENDPOINTS
+import {RatingEndpoints} from "../../../../endpoints/ratingEndpoints";
 
 //COMPONENTS
+import {ToiletRating} from "../../../widgets/rating/ToiletRating";
+
 
 export class UserReviewsView extends React.Component {
     // COMPONENT LIFE CYCLE
