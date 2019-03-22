@@ -9,14 +9,14 @@ import {Button} from 'react-native-elements';
 import firebase from "@firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import {FormInput} from "../../widgets/form/FormInput";
+import {FormInput} from "../../../widgets/form/FormInput";
 
 // CONST
-import {GlobalStyles} from "../../../styles/styles";
-import {ERROR_TYPES} from "../../../config/errorTypes";
+import {GlobalStyles} from "../../../../styles/styles";
+import {ERROR_TYPES} from "../../../../config/errorTypes";
 
 // API ENDPOINTS
-import {AuthEndpoints} from "../../../endpoints/authEndpoints";
+import {AuthEndpoints} from "../../../../endpoints/authEndpoints";
 
 //COMPONENTS
 

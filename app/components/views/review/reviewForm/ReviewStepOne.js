@@ -77,7 +77,8 @@ class ReviewStepOne extends React.Component {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_TWO, {
             userRating: this.state.userRating,
             title: this.props.navigation.getParam('title'),
-            onFinishRating: this.props.navigation.getParam('onFinishRating')
+            onFinishRating: this.props.navigation.getParam('onFinishRating'),
+            originRoute: this.props.navigation.getParam('originRoute')
         });
     }
 

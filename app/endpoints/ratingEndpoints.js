@@ -1,6 +1,7 @@
 import firebase from "@firebase/app";
 import "firebase/auth";
 import "firebase/database";
+import {ToiletEndpoints} from "./toiletEndpoints";
 
 export class RatingEndpoints {
 
@@ -14,5 +15,23 @@ export class RatingEndpoints {
 
     static deleteUserReview(toiletId, userRatingId) {
         return firebase.functions().httpsCallable('deleteUserReview')({toiletId: toiletId, userRatingId: userRatingId});
+    }
+
+    static getCurrentUserReviews() {
+        return this.getUserReviews(firebase.auth().currentUser.uid);
+    }
+
+    static getUserReviews(userId) {
+       return firebase.functions().httpsCallable('getUserReviews')({userId})
+           .then((result) => {
+               const userRatings = result.data;
+               return Promise.all(userRatings.map((userRating) => {
+                   return ToiletEndpoints.getPlaceById(userRating.toiletId)
+                       .then((result) => {
+                           userRating.toilet = result;
+                           return userRating;
+                       })
+               }))
+           });
     }
 }

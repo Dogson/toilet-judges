@@ -7,7 +7,7 @@ import {
     View,
     StyleSheet,
     TouchableNativeFeedback,
-    ActivityIndicator
+    ActivityIndicator, ToastAndroid
 } from 'react-native';
 import {connect} from "react-redux";
 import {Icon, Button} from 'react-native-elements';
@@ -59,6 +59,7 @@ class ToiletView extends React.Component {
             return true;
         RatingEndpoints.deleteUserReview(this.props.toilet.uid, this.props.toilet.userRating.uid)
             .then(() => {
+                ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
                 this.refreshToilet();
             });
     }
@@ -92,7 +93,8 @@ class ToiletView extends React.Component {
             userRating: this.props.toilet ? this.props.toilet.userRating : null,
             title: this.props.toilet && this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
             placeName: this.props.navigation.getParam('place').name,
-            onFinishRating: this._handleFinishReview
+            onFinishRating: this._handleFinishReview,
+            originRoute: ROUTE_NAMES.TOILET
         });
     }
 
@@ -102,6 +104,7 @@ class ToiletView extends React.Component {
         }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
             {
+                placeName: this.props.navigation.getParam('place').name,
                 userRating: this.props.toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
                 _handleAddReviewButtonPress: this._handleAddReviewButtonPress,

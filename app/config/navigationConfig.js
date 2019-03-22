@@ -1,6 +1,9 @@
 // LIBRAIRIES
 import * as React from "react";
-import {createStackNavigator} from "react-navigation";
+import {
+    createMaterialTopTabNavigator,
+    createStackNavigator,
+} from "react-navigation";
 import {Easing, Animated, TouchableNativeFeedback, View} from 'react-native';
 import {Icon} from "react-native-elements";
 import Menu, {
@@ -30,10 +33,11 @@ import ReviewDetails from "../components/views/review/reviewDetails/ReviewDetail
 import LoginView from "../components/views/auth/LoginView"
 import RegisterView from "../components/views/auth/RegisterView"
 import PasswordResetView from "../components/views/auth/PasswordResetView";
-import UserProfileView from "../components/views/settings/UserProfileView"
-import EditEmailView from "../components/views/settings/EditEmailView";
-import EditPasswordView from "../components/views/settings/EditPaswordView";
-import EditUsernameView from "../components/views/settings/EditUsernameView";
+import UserSettingsView from "../components/views/profile/settings/UserSettingsView"
+import EditEmailView from "../components/views/profile/settings/EditEmailView";
+import EditPasswordView from "../components/views/profile/settings/EditPaswordView";
+import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
+import {UserReviewsView} from "../components/views/profile/reviews/UserReviewsView";
 
 
 /**
@@ -153,8 +157,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('place').name,
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -163,8 +170,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -173,8 +183,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -183,8 +196,11 @@ const MainRoutes = {
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
             };
         }
     },
@@ -219,9 +235,45 @@ const MainRoutes = {
     }
 };
 
-const UserProfileRoutes = {
-    UserProfile: {
-        screen: UserProfileView,
+const UserProfileTabRoutes = {
+    Settings: {
+        screen: UserSettingsView,
+        navigationOptions: {
+            title: 'Paramètres',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+    Reviews: {
+        screen: UserReviewsView,
+        navigationOptions: {
+            title: 'Avis',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+
+            }
+        }
+    }
+}
+
+const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
+
+const UserProfileTabWrapper = createStackNavigator({
+    Tab: {
+        screen: UserProfileTabNavigator,
         navigationOptions: ({navigation}) => {
             return {
                 headerLeft: (
@@ -229,13 +281,26 @@ const UserProfileRoutes = {
                         onPress={() => {
                             navigation.openDrawer()
                         }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" color="white" size={20}/></View>
                     </TouchableNativeFeedback>
                 ),
                 title: "Votre profil",
-                headerTintColor: STYLE_VAR.text.color.primary,
-                headerTitleStyle: GlobalStyles.primaryText
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                }
             }
+        }
+    }
+});
+
+const UserProfileRoutes = {
+    TabWrapper: {
+        screen: UserProfileTabWrapper,
+        navigationOptions: {
+            header: null
         }
     },
     EditEmailView: {
@@ -285,8 +350,80 @@ const UserProfileRoutes = {
                 headerTintColor: STYLE_VAR.text.color.primary
             };
         }
+    },
+    ReviewDetails: {
+        screen: ReviewDetails,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerStyle: {
+                    borderWidth: 0,
+                    backgroundColor: 'white',
+                    elevation: 0
+                },
+                headerLeft: <TouchableNativeFeedback onPress={() => navigation.goBack(null)}>
+                    <View style={{padding: 15}}><Icon name="close"></Icon></View>
+                </TouchableNativeFeedback>,
+                headerRight: <View>
+                    <Menu>
+                        <MenuTrigger><Icon name="more-vert" containerStyle={{padding: 15}}/></MenuTrigger>
+                        <MenuOptions customStyles={{
+                            optionsWrapper: {width: 'auto', right: 0},
+                            optionWrapper: {paddingVertical: 15, paddingHorizontal: 10},
+                            optionText: GlobalStyles.primaryText,
+                        }}>
+                            <MenuOption onSelect={navigation.state.params.handleEdit} text="Modifier l'avis"/>
+                            <MenuOption onSelect={navigation.state.params.handleDelete} text="Supprimer l'avis"/>
+                        </MenuOptions>
+                    </Menu>
+                </View>,
+                headerTintColor: STYLE_VAR.text.color.primary
+            };
+        }
+    },
+    ReviewStepOne: {
+        screen: ReviewStepOne,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
+    },
+    ReviewStepTwo: {
+        screen: ReviewStepTwo,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
+    },
+    ReviewStepThree: {
+        screen: ReviewStepThree,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
     }
 };
+
+const UserSettingsStackNavigator = createStackNavigator(UserProfileRoutes, {
+    transitionConfig: transitionConfig
+});
 
 const LoginRoutes = {
     Login: {
@@ -312,9 +449,8 @@ const LoginRoutes = {
 const MainStackNavigator = createStackNavigator(MainRoutes, {
     transitionConfig: transitionConfig
 });
-const UserProfileStackNavigator = createStackNavigator(UserProfileRoutes, {
-    transitionConfig: transitionConfig
-});
+
+
 
 
 const DrawerRoutes = {
@@ -322,13 +458,14 @@ const DrawerRoutes = {
         screen: MainStackNavigator,
         navigationOptions: {
             headerMode: 'screen',
-            drawerLabel:  'Accueil',
+            drawerLabel: 'Accueil',
             drawerIcon: <Icon name="home"/>
         }
     },
     UserProfile: {
-        screen: UserProfileStackNavigator,
+        screen: UserSettingsStackNavigator,
         navigationOptions: {
+            headerMode: 'screen',
             drawerLabel: 'Profil',
             drawerIcon: <Icon name="account" type="material-community"/>
         }
@@ -336,8 +473,6 @@ const DrawerRoutes = {
 };
 
 const ROUTE_NAMES = {
-    HOME: 'Home',
-    USER_PROFILE: 'UserProfile',
     EDIT_EMAIL: 'EditEmailView',
     EDIT_PASSWORD: 'EditPasswordView',
     EDIT_USERNAME: 'EditUsernameView',
@@ -350,7 +485,8 @@ const ROUTE_NAMES = {
     REVIEW_DETAILS: 'ReviewDetails',
     LOGIN: 'Login',
     REGISTER: 'Register',
-    PASSWORD_RESET: 'PasswordReset'
+    PASSWORD_RESET: 'PasswordReset',
+    USER_PROFILE: 'TabWrapper'
 };
 
 const TRANSITIONS = {

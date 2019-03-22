@@ -9,10 +9,10 @@ import {Button} from 'react-native-elements';
 import firebase from "@firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import {FormInput} from "../../widgets/form/FormInput";
+import {FormInput} from "../../../widgets/form/FormInput";
 
 // CONST
-import {GlobalStyles} from "../../../styles/styles";
+import {GlobalStyles} from "../../../../styles/styles";
 
 // API ENDPOINTS
 

@@ -40,7 +40,7 @@ class ReviewStepThree extends React.Component {
     }
 
     _handlePressSubmit() {
-        this.props.navigation.navigate(ROUTE_NAMES.TOILET);
+        this.props.navigation.navigate(this.props.navigation.getParam('originRoute'));
         this.props.navigation.getParam('onFinishRating')(this.state.userRating);
     }
 
