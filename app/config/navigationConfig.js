@@ -278,7 +278,7 @@ const UserProfileTabWrapper = createStackNavigator({
                         onPress={() => {
                             navigation.openDrawer()
                         }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" size={20}/></View>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" color="white" size={20}/></View>
                     </TouchableNativeFeedback>
                 ),
                 title: "Votre profil",
