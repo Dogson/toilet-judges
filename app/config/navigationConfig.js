@@ -37,6 +37,7 @@ import UserSettingsView from "../components/views/profile/settings/UserSettingsV
 import EditEmailView from "../components/views/profile/settings/EditEmailView";
 import EditPasswordView from "../components/views/profile/settings/EditPaswordView";
 import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
+import {UserReviews} from "../components/views/profile/reviews/UserReviews";
 
 
 /**
@@ -238,6 +239,7 @@ const UserProfileTabRoutes = {
     Settings: {
         screen: UserSettingsView,
         navigationOptions: {
+            title: 'Paramètres',
             tabBarOptions: {
                 activeTintColor: 'white',
                 inactiveTintColor: "#FAFAFA",
@@ -250,8 +252,9 @@ const UserProfileTabRoutes = {
         }
     },
     Reviews: {
-        screen: UserSettingsView,
+        screen: UserReviews,
         navigationOptions: {
+            title: 'Avis',
             tabBarOptions: {
                 activeTintColor: 'white',
                 inactiveTintColor: "#FAFAFA",
@@ -293,7 +296,7 @@ const UserProfileTabWrapper = createStackNavigator({
     }
 });
 
-const UserSettingsRoutes = {
+const UserProfileRoutes = {
     TabWrapper: {
         screen: UserProfileTabWrapper,
         navigationOptions: {
@@ -350,7 +353,7 @@ const UserSettingsRoutes = {
     }
 };
 
-const UserSettingsStackNavigator = createStackNavigator(UserSettingsRoutes, {
+const UserSettingsStackNavigator = createStackNavigator(UserProfileRoutes, {
     transitionConfig: transitionConfig
 });
 
@@ -421,4 +424,4 @@ const TRANSITIONS = {
     FROM_BOTTOM: 'slideFromBottom',
 };
 
-export {MainRoutes, UserSettingsRoutes, LoginRoutes, DrawerRoutes, ROUTE_NAMES, TRANSITIONS, transitionConfig};
+export {MainRoutes, UserProfileRoutes, LoginRoutes, DrawerRoutes, ROUTE_NAMES, TRANSITIONS, transitionConfig};
