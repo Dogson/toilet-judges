@@ -1,4 +1,4 @@
-// THE TYPES ARE ORDERED BY PRIORITY
+// THE TYPES ARE ORDERED BY DESCENDING PRIORITY
 // IE : for an place that is both a bar and a night club, we will consider it like a night club
 export const PLACE_TYPES = [
     {
@@ -108,6 +108,13 @@ export const PLACE_TYPES = [
         },
     },
     {
+        id: 'night_club',
+        name: 'Boîte de nuit',
+        icon: {
+            name: 'local-bar',
+        }
+    },
+    {
         id: 'lodging',
         name: 'Hotel',
         icon: {
@@ -122,18 +129,11 @@ export const PLACE_TYPES = [
         }
     },
     {
-        id: 'night_club',
-        name: 'Boîte de nuit',
-        icon: {
-            name: 'local-bar',
-        }
-    },
-    {
         id: 'bar',
         name: 'Bar',
         icon: {
-            name: 'ios-beer',
-            type: 'ionicon'
+            name: 'local-bar',
+
         }
     },
     {
@@ -143,6 +143,13 @@ export const PLACE_TYPES = [
             name: 'local-cafe'
         },
     },
+    {
+        id: 'store',
+        name: 'Magasin',
+        icon: {
+            name: 'local-grocery-store'
+        }
+    }
 ];
 
 export const RATINGS = [

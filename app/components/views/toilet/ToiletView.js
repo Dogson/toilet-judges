@@ -143,12 +143,16 @@ class ToiletView extends React.Component {
         if (!placeDetails)
             return null;
         return (
-            <View style={GlobalStyles.iconWithTextBlock}>
-                <Icon reverse name={placeDetails.icon.name}
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: 5}}>
+                <Icon name={placeDetails.icon.name}
                       type={placeDetails.icon.type}
                       color={STYLE_VAR.backgroundDefault}
-                      size={20}/>
-                <Text style={[GlobalStyles.secondaryText]}>
+                      size={15}
+                      containerStyle={{paddingRight: 5}}/>
+                <Text style={[GlobalStyles.secondaryText, {
+                    fontFamily: 'roboto-regular',
+                    color: STYLE_VAR.text.color.primary
+                }]}>
                     {placeDetails.name}
                 </Text>
             </View>
@@ -165,7 +169,8 @@ class ToiletView extends React.Component {
         }
         accessible = {
             text: accessible ? 'Accès\nhandicappé' : 'Aucun accès\nhandicappé',
-            color: accessible ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+            color: accessible ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray,
+            textColor: accessible ? STYLE_VAR.text.color.primary : STYLE_VAR.text.color.secondary
         };
 
 
@@ -174,7 +179,7 @@ class ToiletView extends React.Component {
                   name="accessible"
                   color={accessible.color}
                   size={20}/>
-            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center'}]}>
+            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center', color: accessible.textColor}]}>
                 {accessible.text}
             </Text>
         </View>
@@ -190,7 +195,8 @@ class ToiletView extends React.Component {
         }
         mixed = {
             text: mixed ? 'Toilettes\nmixtes' : "Toilettes\nnon mixtes",
-            color: mixed ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
+            color: mixed ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray,
+            textColor: mixed ? STYLE_VAR.text.color.primary : STYLE_VAR.text.color.secondary
         };
 
 
@@ -200,7 +206,7 @@ class ToiletView extends React.Component {
                   type="material-community"
                   color={mixed.color}
                   size={20}/>
-            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center'}]}>
+            <Text style={[GlobalStyles.secondaryText, {textAlign: 'center', color: mixed.textColor}]}>
                 {mixed.text}
             </Text>
         </View>
@@ -208,31 +214,38 @@ class ToiletView extends React.Component {
 
     renderToiletDetails() {
         return (
-            <View style={{
-                flex: 1,
-                backgroundColor: 'white'
-            }}>
-                <ScrollView style={GlobalStyles.stackContainer}>
-                    <View style={GlobalStyles.sectionContainer}>
-                        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
-                            {this.renderPlaceType()}
-                            {this.renderAccessibleDetail()}
-                            {this.renderMixedDetail()}
-                        </View>
+            <View style={GlobalStyles.stackContainer}>
+                <View style={GlobalStyles.sectionContainer}>
+                    {this.renderRating()}
+                </View>
+                <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
+                    <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+                        {this.renderAccessibleDetail()}
+                        {this.renderMixedDetail()}
                     </View>
-                    <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
-                        {this.renderRating()}
-                    </View>
-                </ScrollView>
-                {this.renderFooter()}
+                </View>
             </View>
         );
     }
 
     renderLoading() {
         return (
-            <ActivityIndicator size="large"/>
+            <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator size="large"/>
+            </View>
         )
+    }
+
+    renderTitle() {
+        return <View style={GlobalStyles.stackContainer}>
+            <Text style={GlobalStyles.titleText}>
+                {this.props.navigation.getParam('place').name}
+            </Text>
+            <Text style={GlobalStyles.subtitleText}>
+                {this.props.navigation.getParam('place').address}
+            </Text>
+            {this.renderPlaceType()}
+        </View>
     }
 
     renderFooter() {
@@ -251,7 +264,9 @@ class ToiletView extends React.Component {
                     }]}>Détails</Text>
                 </View>
         }
-
+        if (!this.props.isReady) {
+            buttonLabel = "...";
+        }
         return <TouchableNativeFeedback onPress={this._handleYourReviewPress}>
             <View style={GlobalStyles.footerContainer}>
                 <Button title={buttonLabel}
@@ -260,6 +275,7 @@ class ToiletView extends React.Component {
                             // marginBottom: 15
                         }]}
                         titleStyle={GlobalStyles.defaultFont}
+                        disabled={!this.props.isReady}
                 ></Button>
                 {userRating}
             </View>
@@ -269,16 +285,22 @@ class ToiletView extends React.Component {
 
     render() {
         let body;
-        let containerStyle = {flex: 1};
         if (!this.props.isReady) {
             body = this.renderLoading();
-            containerStyle = GlobalStyles.loading;
         }
         else {
             body = this.renderToiletDetails();
         }
-        return <View style={containerStyle}>
-            {body}
+        return <View style={{flex: 1, backgroundColor: 'white'}}>
+            <ScrollView contentContainerStyle={{flexGrow: 1}}
+                        style={{
+                            marginBottom: 70,
+                            paddingTop: 15
+                        }}>
+                {this.renderTitle()}
+                {body}
+            </ScrollView>
+            {this.renderFooter()}
         </View>;
     }
 }

@@ -38,6 +38,7 @@ import EditEmailView from "../components/views/profile/settings/EditEmailView";
 import EditPasswordView from "../components/views/profile/settings/EditPaswordView";
 import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
 import {UserReviewsView} from "../components/views/profile/reviews/UserReviewsView";
+import ReviewStepFour from "../components/views/review/reviewForm/ReviewStepFour";
 
 
 /**
@@ -193,6 +194,19 @@ const MainRoutes = {
     },
     ReviewStepThree: {
         screen: ReviewStepThree,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
+    },
+    ReviewStepFour: {
+        screen: ReviewStepFour,
         navigationOptions: ({navigation}) => {
             return {
                 title: navigation.getParam('title'),
@@ -418,6 +432,19 @@ const UserProfileRoutes = {
                 }
             };
         }
+    },
+    ReviewStepFour: {
+        screen: ReviewStepFour,
+        navigationOptions: ({navigation}) => {
+            return {
+                title: navigation.getParam('title'),
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault
+                }
+            };
+        }
     }
 };
 
@@ -482,6 +509,7 @@ const ROUTE_NAMES = {
     REVIEW_STEP_ONE: 'ReviewStepOne',
     REVIEW_STEP_TWO: 'ReviewStepTwo',
     REVIEW_STEP_THREE: 'ReviewStepThree',
+    REVIEW_STEP_FOUR: 'ReviewStepFour',
     REVIEW_DETAILS: 'ReviewDetails',
     LOGIN: 'Login',
     REGISTER: 'Register',

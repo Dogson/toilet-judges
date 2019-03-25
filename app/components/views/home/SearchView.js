@@ -191,13 +191,13 @@ export default class SearchView extends React.Component {
                     let place = {
                         id: details.place_id,
                         name: details.name,
+                        address: details.formatted_address,
                         type: PLACE_TYPES.map((place_type) => {
                             return place_type.id
                         }).find((type) => {
                             return details.types.includes(type)
                         })
                     };
-
                     this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
                     return false;
                 }}
