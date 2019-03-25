@@ -1,6 +1,6 @@
 //LIBRAIRIES
 import React from 'react';
-import {StyleSheet, View, ActivityIndicator, TouchableNativeFeedback, Text} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, TouchableNativeFeedback, Text, Alert} from 'react-native';
 import {connect} from "react-redux";
 import {createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
 import {Icon} from "react-native-elements";
@@ -34,7 +34,7 @@ class AppRedux extends React.Component {
                     <View style={{flex: 1}}>
                         <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
                             <DrawerItems {...props} />
-                            <TouchableNativeFeedback onPress={() => AuthEndpoints.logout()}>
+                            <TouchableNativeFeedback onPress={this._handleLogoutPress}>
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'flex-start',
@@ -58,41 +58,50 @@ class AppRedux extends React.Component {
                 inactiveTintColor: STYLE_VAR.text.color.primary,
                 inactiveBackgroundColor: 'transparent',
             }
-    };
+        };
 
         this.LoginNavigator = createStackNavigator(LoginRoutes, {transitionConfig: transitionConfig});
         this.DrawerNavigator = createDrawerNavigator(DrawerRoutes, Logout);
     }
 
-        componentDidMount()
-        {
-            let _this = this;
-            AuthEndpoints.checkLoginStatus((exist, isLoggedIn) => {
-                _this.setState({loading: false, exist, isLoggedIn});
-            });
-        }
-
-        render()
-        {
-            const LoginNavigator = this.LoginNavigator;
-            const DrawerNavigator = this.DrawerNavigator;
-            let body;
-            if (this.state.loading) {
-                body = <ActivityIndicator></ActivityIndicator>
-            }
-            else if (!this.props.user) {
-                body = <LoginNavigator/>;
-            }
-            else body = <DrawerNavigator></DrawerNavigator>;
-            return (
-                <View style={styles.container}>
-                    {body}
-                </View>
-            );
-        }
+    _handleLogoutPress() {
+        Alert.alert(
+            "",
+            'Voulez-vous vraiment vous déconnecter ?',
+            [
+                {text: 'Non', style: 'cancel'},
+                {text: 'Oui', onPress: () => {AuthEndpoints.logout()}},
+            ]
+        )
     }
 
-    const
+    componentDidMount() {
+        let _this = this;
+        AuthEndpoints.checkLoginStatus((exist, isLoggedIn) => {
+            _this.setState({loading: false, exist, isLoggedIn});
+        });
+    }
+
+    render() {
+        const LoginNavigator = this.LoginNavigator;
+        const DrawerNavigator = this.DrawerNavigator;
+        let body;
+        if (this.state.loading) {
+            body = <ActivityIndicator></ActivityIndicator>
+        }
+        else if (!this.props.user) {
+            body = <LoginNavigator/>;
+        }
+        else body = <DrawerNavigator></DrawerNavigator>;
+        return (
+            <View style={styles.container}>
+                {body}
+            </View>
+        );
+    }
+}
+
+const
     styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -100,20 +109,17 @@ class AppRedux extends React.Component {
         }
     });
 
-    function
+function
 
-    mapStateToProps(state) {
-        return {
-            user: state.rootReducer.user
-        };
-    }
+mapStateToProps(state) {
+    return {
+        user: state.rootReducer.user
+    };
+}
 
-    export
-    default
-
-    connect(mapStateToProps)
+export default connect(mapStateToProps)
 
 (
     AppRedux
 )
-    ;
+;
