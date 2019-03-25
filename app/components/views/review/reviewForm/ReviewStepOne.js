@@ -115,7 +115,7 @@ class ReviewStepOne extends React.Component {
 
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingLeft: 15}}>
-                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 1/3</Text>
+                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 1/4</Text>
                 <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
                     Partagez quelques infos sur ces toilettes
                 </Text>

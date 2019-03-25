@@ -58,49 +58,10 @@ class ReviewDetails extends React.Component {
         this.props.navigation.getParam('onDeleteReview')(this.state.userRating);
     }
 
-    renderAccessibleDetail() {
-        let accessible = this.state.userRating.isAccessible;
-        if (accessible == null) {
-            return;
-        }
-        accessible = {
-            text: accessible ? 'Accès handicappé' : 'Aucun accès \n handicappé',
-            color: accessible ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
-        };
-
-
-        return <View style={GlobalStyles.iconWithTextBlock}>
-            <Icon reverse
-                  name="accessible"
-                  color={accessible.color}
-                  size={20}/>
-            <Text style={[GlobalStyles.secondaryText]}>
-                {accessible.text}
-            </Text>
-        </View>
-    }
-
-    renderMixedDetail() {
-        let mixed = this.state.userRating.isMixed;
-        if (mixed == null) {
-            return;
-        }
-        mixed = {
-            text: mixed ? 'Toilettes mixtes' : "Toilettes non mixtes",
-            color: mixed ? STYLE_VAR.backgroundDefault : STYLE_VAR.backgroundLightGray
-        };
-
-
-        return <View style={GlobalStyles.iconWithTextBlock}>
-            <Icon name="human-male-female"
-                  reverse
-                  type="material-community"
-                  color={mixed.color}
-                  size={20}/>
-            <Text style={[GlobalStyles.secondaryText]}>
-                {mixed.text}
-            </Text>
-        </View>
+    renderText() {
+        return <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
+            <Text style={GlobalStyles.reviewText}>« {this.state.userRating.text} »</Text>
+        </View>;
     }
 
     render() {
@@ -114,11 +75,10 @@ class ReviewDetails extends React.Component {
                 <View>
                     <Text style={GlobalStyles.primaryText}>{this.props.navigation.getParam('placeName')}</Text>
                 </View>
-                <GlobalRating rating={this.state.userRating.rating}/>
-                <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
-                    {this.renderAccessibleDetail()}
-                    {this.renderMixedDetail()}
+                <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: this.state.userRating.text && this.state.userRating.text.length > 0 ? StyleSheet.hairlineWidth : 0}]}>
+                    <GlobalRating rating={this.state.userRating.rating}/>
                 </View>
+                {this.state.userRating.text && this.state.userRating.text.length > 0 ? this.renderText() : null}
             </View>
         </View>
     }

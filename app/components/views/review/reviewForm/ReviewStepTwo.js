@@ -80,7 +80,7 @@ class ReviewStepTwo extends React.Component {
 
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingHorizontal: 15}}>
-                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 2/3</Text>
+                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 2/4</Text>
                 <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
                     Comment s'est déroulée votre expérience ?
                 </Text>

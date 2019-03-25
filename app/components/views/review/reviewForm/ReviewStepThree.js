@@ -40,10 +40,13 @@ class ReviewStepThree extends React.Component {
     }
 
     _handlePressSubmit() {
-        this.props.navigation.navigate(this.props.navigation.getParam('originRoute'));
-        this.props.navigation.getParam('onFinishRating')(this.state.userRating);
+        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_FOUR, {
+            userRating: this.state.userRating,
+            title: this.props.navigation.getParam('title'),
+            onFinishRating: this.props.navigation.getParam('onFinishRating'),
+            originRoute: this.props.navigation.getParam('originRoute')
+        });
     }
-
 
     _handleFinishRatingCleanliness(value) {
         this.setState(prevState => ({
@@ -105,7 +108,7 @@ class ReviewStepThree extends React.Component {
         return (
             <View style={GlobalStyles.footerContainer}>
                 <Button
-                    title="Valider"
+                    title="Suivant"
                     onPress={() => this._handlePressSubmit()}
                     buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
                         paddingHorizontal: 10
@@ -119,7 +122,7 @@ class ReviewStepThree extends React.Component {
     renderBody() {
         return <ScrollView style={{flex: .8, marginBottom: 70}}>
             <View style={{paddingHorizontal: 15}}>
-                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 3/3</Text>
+                <Text style={[GlobalStyles.secondaryText, styles.stepNumber]}>Étape 3/4</Text>
                 <Text style={[GlobalStyles.titleText, styles.titleContainer]}>
                     Détaillez votre expérience
                 </Text>

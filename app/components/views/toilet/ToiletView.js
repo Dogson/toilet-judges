@@ -215,10 +215,10 @@ class ToiletView extends React.Component {
     renderToiletDetails() {
         return (
             <View style={GlobalStyles.stackContainer}>
-                <View style={[GlobalStyles.sectionContainer]}>
+                <View style={GlobalStyles.sectionContainer}>
                     {this.renderRating()}
                 </View>
-                <View style={GlobalStyles.sectionContainer}>
+                <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
                     <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
                         {this.renderAccessibleDetail()}
                         {this.renderMixedDetail()}
@@ -264,7 +264,9 @@ class ToiletView extends React.Component {
                     }]}>Détails</Text>
                 </View>
         }
-
+        if (!this.props.isReady) {
+            buttonLabel = "...";
+        }
         return <TouchableNativeFeedback onPress={this._handleYourReviewPress}>
             <View style={GlobalStyles.footerContainer}>
                 <Button title={buttonLabel}
@@ -273,6 +275,7 @@ class ToiletView extends React.Component {
                             // marginBottom: 15
                         }]}
                         titleStyle={GlobalStyles.defaultFont}
+                        disabled={!this.props.isReady}
                 ></Button>
                 {userRating}
             </View>
