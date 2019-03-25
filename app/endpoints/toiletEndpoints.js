@@ -30,4 +30,11 @@ export class ToiletEndpoints {
                     })
             });
     }
+
+    static getToiletReviews(toiletId) {
+        return firebase.functions().httpsCallable('getToiletReviews')({toiletId})
+            .then((result) => {
+                return result && result.data;
+            });
+    }
 }

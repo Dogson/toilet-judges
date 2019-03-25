@@ -11,17 +11,18 @@ import {
 } from 'react-native';
 
 // CONST
-import {GlobalStyles} from "../../../../styles/styles";
-import {ROUTE_NAMES, TRANSITIONS} from "../../../../config/navigationConfig";
+import {GlobalStyles} from "../../../styles/styles";
+import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
 
 // API ENDPOINTS
-import {RatingEndpoints} from "../../../../endpoints/ratingEndpoints";
+import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
 
 //COMPONENTS
-import {ToiletRating} from "../../../widgets/rating/ToiletRating";
+import {ToiletRating} from "../../widgets/rating/ToiletRating";
+import {ToiletEndpoints} from "../../../endpoints/toiletEndpoints";
 
 
-export class UserReviewsView extends React.Component {
+export class ToiletReviewsView extends React.Component {
     // COMPONENT LIFE CYCLE
     constructor(props) {
         super(props);
@@ -32,7 +33,6 @@ export class UserReviewsView extends React.Component {
         };
 
         this.renderRow = this.renderRow.bind(this);
-        this._handlePressUserReview = this._handlePressUserReview.bind(this);
         this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
         this._handleDeleteReview = this._handleDeleteReview.bind(this);
         this._handleFinishReview = this._handleFinishReview.bind(this);
@@ -49,17 +49,6 @@ export class UserReviewsView extends React.Component {
     }
 
     // HANDLING EVENTS
-    _handlePressUserReview(userReview) {
-        this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
-            {
-                placeName: userReview.toilet.name,
-                userRating: userReview,
-                transition: TRANSITIONS.FROM_BOTTOM,
-                _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
-                onDeleteReview: this._handleDeleteReview
-            });
-    }
-
     _handleAddReviewButtonPress(userReview, callBackFn) {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             userRating : userReview,
@@ -72,7 +61,7 @@ export class UserReviewsView extends React.Component {
     }
 
     _handleDeleteReview(userReview) {
-       this.setState({isLoading: true});
+        this.setState({isLoading: true});
         RatingEndpoints.deleteUserReview(userReview.toiletId, userReview.uid)
             .then(() => {
                 ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
@@ -85,19 +74,19 @@ export class UserReviewsView extends React.Component {
     _handleFinishReview(userRating) {
         let toiletId = userRating.toiletId;
         this.setState({isLoading: true});
-            RatingEndpoints.updateUserReview(toiletId, userRating)
-                .then(() => {
-                    ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
-                    if (this.mounted) {
-                        this.refreshList();
-                    }
-                });
+        RatingEndpoints.updateUserReview(toiletId, userRating)
+            .then(() => {
+                ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
+                if (this.mounted) {
+                    this.refreshList();
+                }
+            });
     }
 
     // DISPATCH ACTIONS
     refreshList() {
         this.setState({isLoading: true});
-        RatingEndpoints.getCurrentUserReviews()
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
             .then((reviews) => {
                 if (this.mounted) {
                     this.setState({
@@ -120,23 +109,6 @@ export class UserReviewsView extends React.Component {
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 borderColor: "#c8c7cc"
             }]}>
-                <View style={[GlobalStyles.flexRowSpaceBetween, {flex: 1}]}>
-                    <Text
-                        style={[GlobalStyles.primaryText, {alignSelf: 'center', flex: 0.7}]}
-                        numberOfLines={1}>
-                        {item.toilet.name}
-                    </Text>
-                    <View style={{flex: 0.3}}>
-                        <ToiletRating readonly rating={item.rating.global}/>
-                    </View>
-                </View>
-                <View>
-                    <Text
-                        style={[GlobalStyles.secondaryText]}
-                        numberOfLines={1}>
-                        {item.toilet.address}
-                    </Text>
-                </View>
             </View>
         </TouchableNativeFeedback>
     }
@@ -149,6 +121,10 @@ export class UserReviewsView extends React.Component {
         />
     }
 
+    renderEmptyList() {
+        return <View><Text>SOIS LE PREMIER A AJOUTER UNE REVIEW AVEC TOILET JUDGES, L'APPLICATION QUI TE PERMET DE JUGER LES TOILETTES (C)</Text></View>
+    }
+
 
     renderLoading() {
         return <ActivityIndicator style={{alignSelf: 'center', flex: 1}} size="large"/>;
@@ -158,8 +134,11 @@ export class UserReviewsView extends React.Component {
         if (this.state.isLoading) {
             return this.renderLoading();
         }
-        else {
+        else if (this.state.reviews && this.state.reviews.length > 0) {
             return this.renderReviewList();
+        }
+        else {
+            return this.renderEmptyList();
         }
     }
 
