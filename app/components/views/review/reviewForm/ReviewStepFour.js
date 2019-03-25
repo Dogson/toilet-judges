@@ -43,6 +43,9 @@ class ReviewStepFour extends React.Component {
     }
 
     _handlePressSubmit() {
+        if (this.props.navigation.getParam('callBackFn')) {
+            this.props.navigation.getParam('callBackFn')(this.state.userRating);
+        }
         this.props.navigation.navigate(this.props.navigation.getParam('originRoute'));
         this.props.navigation.getParam('onFinishRating')(this.state.userRating);
     }

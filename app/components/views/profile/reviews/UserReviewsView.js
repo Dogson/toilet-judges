@@ -55,13 +55,14 @@ export class UserReviewsView extends React.Component {
             });
     }
 
-    _handleAddReviewButtonPress(userReview) {
+    _handleAddReviewButtonPress(userReview, callBackFn) {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             userRating : userReview,
             title: 'Modifier votre avis',
             placeName: userReview.toilet.name,
             onFinishRating: this._handleFinishReview,
-            originRoute: ROUTE_NAMES.USER_PROFILE
+            originRoute: ROUTE_NAMES.REVIEW_DETAILS,
+            callBackFn: callBackFn
         });
     }
 

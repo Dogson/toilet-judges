@@ -42,7 +42,8 @@ class ReviewStepTwo extends React.Component {
             userRating: this.state.userRating,
             title: this.props.navigation.getParam('title'),
             onFinishRating: this.props.navigation.getParam('onFinishRating'),
-            originRoute: this.props.navigation.getParam('originRoute')
+            originRoute: this.props.navigation.getParam('originRoute'),
+            callBackFn: this.props.navigation.getParam('callBackFn')
         });
     }
 

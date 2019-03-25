@@ -71,12 +71,14 @@ class ToiletView extends React.Component {
         if (userRating.uid) {
             RatingEndpoints.updateUserReview(id, userRating)
                 .then(() => {
+                    ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
                     this.refreshToilet();
                 });
         }
         else {
             RatingEndpoints.createUserReview(id, userRating)
                 .then(() => {
+                    ToastAndroid.show("Votre avis a été enregistré.", ToastAndroid.LONG);
                     this.refreshToilet();
                 });
         }

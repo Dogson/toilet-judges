@@ -4,7 +4,7 @@ import {
     Text,
     View,
     Alert,
-    StyleSheet,
+    StyleSheet, ScrollView,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 
@@ -29,6 +29,7 @@ class ReviewDetails extends React.Component {
         this._handleEditReviewPress = this._handleEditReviewPress.bind(this);
         this._handleDeleteReviewPress = this._handleDeleteReviewPress.bind(this);
         this._handleDeleteReviewConfirm = this._handleDeleteReviewConfirm.bind(this);
+        this._setUserRating = this._setUserRating.bind(this);
     }
 
     componentDidMount() {
@@ -39,7 +40,7 @@ class ReviewDetails extends React.Component {
     }
 
     _handleEditReviewPress() {
-        this.state._handleAddReviewButtonPress(this.state.userRating);
+        this.state._handleAddReviewButtonPress(this.state.userRating, this._setUserRating);
     }
 
     _handleDeleteReviewPress() {
@@ -58,6 +59,10 @@ class ReviewDetails extends React.Component {
         this.props.navigation.getParam('onDeleteReview')(this.state.userRating);
     }
 
+    _setUserRating(userRating) {
+        this.setState({userRating: userRating});
+    }
+
     renderText() {
         return <View style={[GlobalStyles.sectionContainer, {borderBottomWidth: 0}]}>
             <Text style={GlobalStyles.reviewText}>« {this.state.userRating.text} »</Text>
@@ -66,7 +71,7 @@ class ReviewDetails extends React.Component {
 
     render() {
         return <View style={styles.backgroundStyle}>
-            <View style={{paddingHorizontal: 15}}>
+            <ScrollView style={{paddingHorizontal: 15}}>
                 <View>
                     <Text style={GlobalStyles.titleText}>
                         Votre avis
@@ -79,7 +84,7 @@ class ReviewDetails extends React.Component {
                     <GlobalRating rating={this.state.userRating.rating}/>
                 </View>
                 {this.state.userRating.text && this.state.userRating.text.length > 0 ? this.renderText() : null}
-            </View>
+            </ScrollView>
         </View>
     }
 }
