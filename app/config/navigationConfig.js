@@ -486,15 +486,19 @@ const DrawerRoutes = {
         navigationOptions: {
             headerMode: 'screen',
             drawerLabel: 'Accueil',
-            drawerIcon: <Icon name="home"/>
-        }
+            drawerIcon: ({ tintColor }) => (
+                <Icon name="home" color={tintColor}/>
+            ),
+        },
     },
     UserProfile: {
         screen: UserSettingsStackNavigator,
         navigationOptions: {
             headerMode: 'screen',
             drawerLabel: 'Profil',
-            drawerIcon: <Icon name="account" type="material-community"/>
+            drawerIcon: ({ tintColor }) => (
+                <Icon name="account" type="material-community" color={tintColor}/>
+            ),
         }
     }
 };

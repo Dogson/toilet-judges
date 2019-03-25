@@ -53,58 +53,67 @@ class AppRedux extends React.Component {
                 )
             },
             contentOptions: {
-                itemsContainerStyle: {
-                    marginTop: 10,
-                    marginBottom: 30
-                },
-                labelStyle: GlobalStyles.drawerText,
-                inactiveLabelStyle: {
-                    color: STYLE_VAR.text.color.primary
-                }
-
+                activeTintColor: 'white',
+                activeBackgroundColor: STYLE_VAR.backgroundDefault,
+                inactiveTintColor: STYLE_VAR.text.color.primary,
+                inactiveBackgroundColor: 'transparent',
             }
-        };
+    };
 
         this.LoginNavigator = createStackNavigator(LoginRoutes, {transitionConfig: transitionConfig});
         this.DrawerNavigator = createDrawerNavigator(DrawerRoutes, Logout);
     }
 
-    componentDidMount() {
-        let _this = this;AuthEndpoints.checkLoginStatus((exist, isLoggedIn) => {
-            _this.setState({loading: false, exist, isLoggedIn});
-        });
-    }
-
-    render() {
-        const LoginNavigator = this.LoginNavigator;
-        const DrawerNavigator = this.DrawerNavigator;
-        let body;
-        if (this.state.loading) {
-            body = <ActivityIndicator></ActivityIndicator>
+        componentDidMount()
+        {
+            let _this = this;
+            AuthEndpoints.checkLoginStatus((exist, isLoggedIn) => {
+                _this.setState({loading: false, exist, isLoggedIn});
+            });
         }
-        else if (!this.props.user) {
-            body = <LoginNavigator/>;
+
+        render()
+        {
+            const LoginNavigator = this.LoginNavigator;
+            const DrawerNavigator = this.DrawerNavigator;
+            let body;
+            if (this.state.loading) {
+                body = <ActivityIndicator></ActivityIndicator>
+            }
+            else if (!this.props.user) {
+                body = <LoginNavigator/>;
+            }
+            else body = <DrawerNavigator></DrawerNavigator>;
+            return (
+                <View style={styles.container}>
+                    {body}
+                </View>
+            );
         }
-        else body = <DrawerNavigator></DrawerNavigator>;
-        return (
-            <View style={styles.container}>
-                {body}
-            </View>
-        );
     }
-}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center'
+    const
+    styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            justifyContent: 'center'
+        }
+    });
+
+    function
+
+    mapStateToProps(state) {
+        return {
+            user: state.rootReducer.user
+        };
     }
-});
 
-function mapStateToProps(state) {
-    return {
-        user: state.rootReducer.user
-    };
-}
+    export
+    default
 
-export default connect(mapStateToProps)(AppRedux);
+    connect(mapStateToProps)
+
+(
+    AppRedux
+)
+    ;
