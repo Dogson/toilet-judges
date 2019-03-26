@@ -39,7 +39,7 @@ import EditPasswordView from "../components/views/profile/settings/EditPaswordVi
 import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
 import {UserReviewsView} from "../components/views/profile/reviews/UserReviewsView";
 import ReviewStepFour from "../components/views/review/reviewForm/ReviewStepFour";
-import {ToiletReviewsView} from "../components/views/toilet/ToiletReviewsView";
+import ToiletReviewsView from "../components/views/toilet/ToiletReviewsView";
 
 
 /**
@@ -221,9 +221,9 @@ const ToiletTabWrapper = createStackNavigator({
                 headerLeft: (
                     <TouchableNativeFeedback
                         onPress={() => {
-                            navigation.openDrawer()
+                            navigation.goBack(null)
                         }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" color="white" size={20}/></View>
+                        <View style={{padding: 15}}><Icon name="arrow-back" color="white"/></View>
                     </TouchableNativeFeedback>
                 ),
                 title: navigation.getParam('place').name,

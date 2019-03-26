@@ -2,7 +2,14 @@
 import React from 'react';
 import {StyleSheet, View, ActivityIndicator, TouchableNativeFeedback, Text, Alert} from 'react-native';
 import {connect} from "react-redux";
-import {createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView} from "react-navigation";
+import {
+    createDrawerNavigator,
+    createStackNavigator,
+    DrawerItems,
+    SafeAreaView,
+    StackActions,
+    NavigationActions
+} from "react-navigation";
 import {Icon} from "react-native-elements";
 
 //CONST
@@ -33,7 +40,8 @@ class AppRedux extends React.Component {
                 return (
                     <View style={{flex: 1}}>
                         <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
-                            <DrawerItems {...props} />
+                            <DrawerItems {...props}
+                            />
                             <TouchableNativeFeedback onPress={this._handleLogoutPress}>
                                 <View style={{
                                     flexDirection: 'row',
@@ -70,7 +78,11 @@ class AppRedux extends React.Component {
             'Voulez-vous vraiment vous déconnecter ?',
             [
                 {text: 'Non', style: 'cancel'},
-                {text: 'Oui', onPress: () => {AuthEndpoints.logout()}},
+                {
+                    text: 'Oui', onPress: () => {
+                        AuthEndpoints.logout()
+                    }
+                },
             ]
         )
     }
