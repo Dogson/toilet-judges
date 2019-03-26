@@ -45,11 +45,13 @@ class ToiletView extends React.Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         this.refreshToilet();
     }
 
     componentWillUnmount() {
+        this.mounted = false;
         BackHandler.removeEventListener('hardwareBackPress', this._handleBackButtonClick);
     }
 
@@ -60,26 +62,35 @@ class ToiletView extends React.Component {
         RatingEndpoints.deleteUserReview(this.props.toilet.uid, this.props.toilet.userRating.uid)
             .then(() => {
                 ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
-                this.refreshToilet();
+                if (this.mounted) {
+                    this.refreshToilet();
+                    this.refreshList();
+                }
             });
     }
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
-        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.navigation.getParam('place').id;
+        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.navigation.dangerouslyGetParent().getParam('place').id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         if (userRating.uid) {
             RatingEndpoints.updateUserReview(id, userRating)
                 .then(() => {
                     ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
-                    this.refreshToilet();
+                    if (this.mounted) {
+                        this.refreshToilet();
+                        this.refreshList();
+                    }
                 });
         }
         else {
             RatingEndpoints.createUserReview(id, userRating)
                 .then(() => {
                     ToastAndroid.show("Votre avis a été enregistré.", ToastAndroid.LONG);
-                    this.refreshToilet();
+                    if (this.mounted) {
+                        this.refreshToilet();
+                        this.refreshList();
+                    }
                 });
         }
     }
@@ -94,7 +105,7 @@ class ToiletView extends React.Component {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             userRating: this.props.toilet ? this.props.toilet.userRating : null,
             title: this.props.toilet && this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
-            placeName: this.props.navigation.getParam('place').name,
+            placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
             onFinishRating: this._handleFinishReview,
             originRoute: ROUTE_NAMES.TOILET
         });
@@ -106,7 +117,7 @@ class ToiletView extends React.Component {
         }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
             {
-                placeName: this.props.navigation.getParam('place').name,
+                placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
                 userRating: this.props.toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
                 _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
@@ -116,12 +127,26 @@ class ToiletView extends React.Component {
 
     // DISPATCH ACTIONS
     refreshToilet() {
-        let place = this.props.navigation.getParam('place');
+        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
         ToiletEndpoints.getToilet(place.id)
             .then((toilet) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
                 this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
             });
+    }
+
+    refreshList() {
+        this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
+            .then((reviews) => {
+                if (this.mounted) {
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                    reviews = reviews.map((review) => {
+                        return {...review, expanded: false}
+                    });
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_REVIEWS, value: reviews});
+                }
+            })
     }
 
     // RENDERING COMPONENTS
@@ -138,7 +163,7 @@ class ToiletView extends React.Component {
     }
 
     renderPlaceType() {
-        let place = this.props.navigation.getParam('place');
+        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
         let placeDetails = PLACE_TYPES.find((placeType) => {
             return placeType.id === place.type;
         });
@@ -241,10 +266,10 @@ class ToiletView extends React.Component {
     renderTitle() {
         return <View style={GlobalStyles.stackContainer}>
             <Text style={GlobalStyles.titleText}>
-                {this.props.navigation.getParam('place').name}
+                {this.props.navigation.dangerouslyGetParent().getParam('place').name}
             </Text>
             <Text style={GlobalStyles.subtitleText}>
-                {this.props.navigation.getParam('place').address}
+                {this.props.navigation.dangerouslyGetParent().getParam('place').address}
             </Text>
             {this.renderPlaceType()}
         </View>

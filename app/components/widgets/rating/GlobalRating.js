@@ -9,6 +9,9 @@ import {STYLE_VAR} from "../../../styles/stylingVar";
 export class GlobalRating extends React.Component {
 
     renderGlobalRating() {
+        if (this.props.noGlobalScore) {
+            return;
+        }
         let ratingCountText = "";
         if (this.props.ratingCount) {
             ratingCountText = this.props.ratingCount + " avis";
@@ -37,22 +40,24 @@ export class GlobalRating extends React.Component {
 
     renderDetailedRating() {
         if (this.props.rating.global) {
+            const ratingSize = this.props.noGlobalScore ? 15 : 20;
+            const textStyle = this.props.noGlobalScore ? GlobalStyles.secondaryText : GlobalStyles.primaryText;
             return <View style={styles.block}>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Propreté</Text>
-                    <ToiletRating rating={this.props.rating.cleanliness} size={20} readonly={true}></ToiletRating>
+                    <Text style={[textStyle, {marginTop: 5}]}>Propreté</Text>
+                    <ToiletRating rating={this.props.rating.cleanliness} size={ratingSize} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Équipements</Text>
-                    <ToiletRating rating={this.props.rating.functionality} size={20} readonly={true}></ToiletRating>
+                    <Text style={[textStyle, {marginTop: 5}]}>Équipements</Text>
+                    <ToiletRating rating={this.props.rating.functionality} size={ratingSize} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Ambiance</Text>
-                    <ToiletRating rating={this.props.rating.decoration} size={20} readonly={true}></ToiletRating>
+                    <Text style={[textStyle, {marginTop: 5}]}>Ambiance</Text>
+                    <ToiletRating rating={this.props.rating.decoration} size={ratingSize} readonly={true}></ToiletRating>
                 </View>
                 <View style={GlobalStyles.flexRowSpaceBetween}>
-                    <Text style={[GlobalStyles.primaryText, {marginTop: 5}]}>Qualité/Prix</Text>
-                    <ToiletRating rating={this.props.rating.value} size={20} readonly={true}></ToiletRating>
+                    <Text style={[textStyle, {marginTop: 5}]}>Qualité/Prix</Text>
+                    <ToiletRating rating={this.props.rating.value} size={ratingSize} readonly={true}></ToiletRating>
                 </View>
             </View>;
         }

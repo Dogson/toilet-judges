@@ -39,6 +39,7 @@ import EditPasswordView from "../components/views/profile/settings/EditPaswordVi
 import EditUsernameView from "../components/views/profile/settings/EditUsernameView";
 import {UserReviewsView} from "../components/views/profile/reviews/UserReviewsView";
 import ReviewStepFour from "../components/views/review/reviewForm/ReviewStepFour";
+import ToiletReviewsView from "../components/views/toilet/ToiletReviewsView";
 
 
 /**
@@ -116,6 +117,126 @@ function forHorizontal(props) {
     };
 }
 
+const UserProfileTabRoutes = {
+    Settings: {
+        screen: UserSettingsView,
+        navigationOptions: {
+            title: 'Paramètres',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+    Reviews: {
+        screen: UserReviewsView,
+        navigationOptions: {
+            title: 'Avis',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+
+            }
+        }
+    }
+};
+
+const ToiletTabRoutes = {
+    Description: {
+        screen: ToiletView,
+        navigationOptions: {
+            title: 'Informations',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+    Reviews: {
+        screen: ToiletReviewsView,
+        navigationOptions: {
+            title: 'Avis',
+            tabBarOptions: {
+                activeTintColor: 'white',
+                inactiveTintColor: "#FAFAFA",
+                style: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                },
+                labelStyle: GlobalStyles.tabText
+            }
+        }
+    },
+}
+
+const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
+
+const ToiletTabNavigator = createMaterialTopTabNavigator(ToiletTabRoutes);
+
+const UserProfileTabWrapper = createStackNavigator({
+    Tab: {
+        screen: UserProfileTabNavigator,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}>
+                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" color="white" size={20}/></View>
+                    </TouchableNativeFeedback>
+                ),
+                title: "Votre profil",
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                }
+            }
+        }
+    }
+});
+
+const ToiletTabWrapper = createStackNavigator({
+    Tab: {
+        screen: ToiletTabNavigator,
+        navigationOptions: ({navigation}) => {
+            return {
+                headerLeft: (
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            navigation.goBack(null)
+                        }}>
+                        <View style={{padding: 15}}><Icon name="arrow-back" color="white"/></View>
+                    </TouchableNativeFeedback>
+                ),
+                title: navigation.getParam('place').name,
+                headerTitleStyle: GlobalStyles.headerText,
+                headerTintColor: 'white',
+                headerStyle: {
+                    backgroundColor: STYLE_VAR.backgroundDefault,
+                    elevation: 0
+                }
+            }
+        }
+    }
+});
 
 const MainRoutes = {
     Home: {
@@ -154,16 +275,9 @@ const MainRoutes = {
         }
     },
     Toilet: {
-        screen: ToiletView,
-        navigationOptions: ({navigation}) => {
-            return {
-                title: navigation.getParam('place').name,
-                headerTitleStyle: GlobalStyles.headerText,
-                headerTintColor: 'white',
-                headerStyle: {
-                    backgroundColor: STYLE_VAR.backgroundDefault
-                }
-            };
+        screen: ToiletTabWrapper,
+        navigationOptions: {
+            header: null
         }
     },
     ReviewStepOne: {
@@ -248,67 +362,6 @@ const MainRoutes = {
         }
     }
 };
-
-const UserProfileTabRoutes = {
-    Settings: {
-        screen: UserSettingsView,
-        navigationOptions: {
-            title: 'Paramètres',
-            tabBarOptions: {
-                activeTintColor: 'white',
-                inactiveTintColor: "#FAFAFA",
-                style: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                },
-                labelStyle: GlobalStyles.tabText
-            }
-        }
-    },
-    Reviews: {
-        screen: UserReviewsView,
-        navigationOptions: {
-            title: 'Avis',
-            tabBarOptions: {
-                activeTintColor: 'white',
-                inactiveTintColor: "#FAFAFA",
-                style: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                },
-                labelStyle: GlobalStyles.tabText
-
-            }
-        }
-    }
-}
-
-const UserProfileTabNavigator = createMaterialTopTabNavigator(UserProfileTabRoutes);
-
-const UserProfileTabWrapper = createStackNavigator({
-    Tab: {
-        screen: UserProfileTabNavigator,
-        navigationOptions: ({navigation}) => {
-            return {
-                headerLeft: (
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            navigation.openDrawer()
-                        }}>
-                        <View style={{padding: 15}}><Icon name="bars" type="font-awesome" color="white" size={20}/></View>
-                    </TouchableNativeFeedback>
-                ),
-                title: "Votre profil",
-                headerTitleStyle: GlobalStyles.headerText,
-                headerTintColor: 'white',
-                headerStyle: {
-                    backgroundColor: STYLE_VAR.backgroundDefault,
-                    elevation: 0
-                }
-            }
-        }
-    }
-});
 
 const UserProfileRoutes = {
     TabWrapper: {
@@ -452,6 +505,18 @@ const UserSettingsStackNavigator = createStackNavigator(UserProfileRoutes, {
     transitionConfig: transitionConfig
 });
 
+UserSettingsStackNavigator.navigationOptions = ({ navigation }) => {
+    let drawerLockMode = 'unlocked';
+    if (navigation.state.index > 0) {
+        drawerLockMode = 'locked-closed';
+    }
+
+    return {
+        drawerLockMode,
+    };
+};
+
+
 const LoginRoutes = {
     Login: {
         screen: LoginView,
@@ -477,6 +542,16 @@ const MainStackNavigator = createStackNavigator(MainRoutes, {
     transitionConfig: transitionConfig
 });
 
+MainStackNavigator.navigationOptions = ({ navigation }) => {
+    let drawerLockMode = 'unlocked';
+    if (navigation.state.index > 1) {
+        drawerLockMode = 'locked-closed';
+    }
+
+    return {
+        drawerLockMode,
+    };
+};
 
 
 
@@ -488,7 +563,7 @@ const DrawerRoutes = {
             drawerLabel: 'Accueil',
             drawerIcon: ({ tintColor }) => (
                 <Icon name="home" color={tintColor}/>
-            ),
+            )
         },
     },
     UserProfile: {
@@ -498,7 +573,7 @@ const DrawerRoutes = {
             drawerLabel: 'Profil',
             drawerIcon: ({ tintColor }) => (
                 <Icon name="account" type="material-community" color={tintColor}/>
-            ),
+            )
         }
     }
 };

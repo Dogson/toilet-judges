@@ -40,7 +40,12 @@ export class UserReviewsView extends React.Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         this.refreshList();
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     // HANDLING EVENTS
@@ -70,8 +75,10 @@ export class UserReviewsView extends React.Component {
        this.setState({isLoading: true});
         RatingEndpoints.deleteUserReview(userReview.toiletId, userReview.uid)
             .then(() => {
-                this.refreshList();
                 ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
+                if (this.mounted) {
+                    this.refreshList();
+                }
             });
     }
 
@@ -80,8 +87,10 @@ export class UserReviewsView extends React.Component {
         this.setState({isLoading: true});
             RatingEndpoints.updateUserReview(toiletId, userRating)
                 .then(() => {
-                    this.refreshList();
                     ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
+                    if (this.mounted) {
+                        this.refreshList();
+                    }
                 });
     }
 
@@ -90,10 +99,12 @@ export class UserReviewsView extends React.Component {
         this.setState({isLoading: true});
         RatingEndpoints.getCurrentUserReviews()
             .then((reviews) => {
-                this.setState({
-                    reviews: reviews,
-                    isLoading: false
-                });
+                if (this.mounted) {
+                    this.setState({
+                        reviews: reviews,
+                        isLoading: false
+                    });
+                }
             })
     }
 
