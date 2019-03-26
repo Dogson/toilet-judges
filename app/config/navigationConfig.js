@@ -505,6 +505,18 @@ const UserSettingsStackNavigator = createStackNavigator(UserProfileRoutes, {
     transitionConfig: transitionConfig
 });
 
+UserSettingsStackNavigator.navigationOptions = ({ navigation }) => {
+    let drawerLockMode = 'unlocked';
+    if (navigation.state.index > 0) {
+        drawerLockMode = 'locked-closed';
+    }
+
+    return {
+        drawerLockMode,
+    };
+};
+
+
 const LoginRoutes = {
     Login: {
         screen: LoginView,
@@ -530,6 +542,16 @@ const MainStackNavigator = createStackNavigator(MainRoutes, {
     transitionConfig: transitionConfig
 });
 
+MainStackNavigator.navigationOptions = ({ navigation }) => {
+    let drawerLockMode = 'unlocked';
+    if (navigation.state.index > 1) {
+        drawerLockMode = 'locked-closed';
+    }
+
+    return {
+        drawerLockMode,
+    };
+};
 
 
 
@@ -541,7 +563,7 @@ const DrawerRoutes = {
             drawerLabel: 'Accueil',
             drawerIcon: ({ tintColor }) => (
                 <Icon name="home" color={tintColor}/>
-            ),
+            )
         },
     },
     UserProfile: {
@@ -551,7 +573,7 @@ const DrawerRoutes = {
             drawerLabel: 'Profil',
             drawerIcon: ({ tintColor }) => (
                 <Icon name="account" type="material-community" color={tintColor}/>
-            ),
+            )
         }
     }
 };

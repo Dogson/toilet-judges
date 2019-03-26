@@ -64,6 +64,7 @@ class ToiletView extends React.Component {
                 ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
                 if (this.mounted) {
                     this.refreshToilet();
+                    this.refreshList();
                 }
             });
     }
@@ -78,6 +79,7 @@ class ToiletView extends React.Component {
                     ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
                     if (this.mounted) {
                         this.refreshToilet();
+                        this.refreshList();
                     }
                 });
         }
@@ -87,6 +89,7 @@ class ToiletView extends React.Component {
                     ToastAndroid.show("Votre avis a été enregistré.", ToastAndroid.LONG);
                     if (this.mounted) {
                         this.refreshToilet();
+                        this.refreshList();
                     }
                 });
         }
@@ -130,6 +133,20 @@ class ToiletView extends React.Component {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
                 this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
             });
+    }
+
+    refreshList() {
+        this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
+            .then((reviews) => {
+                if (this.mounted) {
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                    reviews = reviews.map((review) => {
+                        return {...review, expanded: false}
+                    });
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_REVIEWS, value: reviews});
+                }
+            })
     }
 
     // RENDERING COMPONENTS

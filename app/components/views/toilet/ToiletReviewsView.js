@@ -64,6 +64,7 @@ class ToiletReviewsView extends React.Component {
                 ToastAndroid.show("Votre avis a été supprimé.", ToastAndroid.LONG);
                 if (this.mounted) {
                     this.refreshList();
+                    this.refreshToilet();
                 }
             });
     }
@@ -78,6 +79,7 @@ class ToiletReviewsView extends React.Component {
                     ToastAndroid.show("Votre avis a été modifié.", ToastAndroid.LONG);
                     if (this.mounted) {
                         this.refreshList();
+                        this.refreshToilet();
                     }
                 });
         }
@@ -87,6 +89,7 @@ class ToiletReviewsView extends React.Component {
                     ToastAndroid.show("Votre avis a été enregistré.", ToastAndroid.LONG);
                     if (this.mounted) {
                         this.refreshList();
+                        this.refreshToilet();
                     }
                 });
         }
@@ -143,6 +146,16 @@ class ToiletReviewsView extends React.Component {
             })
     }
 
+    // DISPATCH ACTIONS
+    refreshToilet() {
+        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
+        ToiletEndpoints.getToilet(place.id)
+            .then((toilet) => {
+                this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
+                this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+            });
+    }
+
     // RENDERING COMPONENTS
     renderRow({item, index}) {
         const btnTitle = item.expanded ? "VOIR MOINS" : "VOIR PLUS";
@@ -191,12 +204,14 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderReviewList() {
-        return <View style = {{flexGrow: 1}}>
+        return <View style={{flexGrow: 1}}>
             <View style={{flexGrow: 1, marginBottom: 70}}>
                 <FlatList
                     data={this.props.reviews}
                     renderItem={this.renderRow}
                     keyExtractor={(item) => item.uid}
+                    ListEmptyComponent={this.renderEmptyList()}
+                    contentContainerStyle={[ { flexGrow: 1 } , this.props.reviews && this.props.reviews.length ? null : { justifyContent: 'center'} ]}
                 />
             </View>
             {this.renderFooter()}
@@ -205,8 +220,15 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderEmptyList() {
-        return <View><Text>SOIS LE PREMIER A AJOUTER UNE REVIEW AVEC TOILET JUDGES, L'APPLICATION QUI TE PERMET DE JUGER
-            LES TOILETTES (C)</Text></View>
+        return <View style={{flexGrow: 1, paddingHorizontal: 20, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{paddingVertical: 15}}>
+                <Text style={GlobalStyles.primaryText}>Soyez le premier a donner votre avis !</Text>
+            </View>
+            <Button title="Donner votre avis"
+                    buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {paddingHorizontal: 10}]}
+                    titleStyle={GlobalStyles.defaultFont}
+                    onPress={this._handleAddReviewButtonPress}/>
+        </View>
     }
 
 
@@ -215,6 +237,8 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderFooter() {
+        if (!this.props.reviews || this.props.reviews.length === 0)
+            return;
         let buttonLabel = "Donner votre avis";
         let userRating;
         if (this.props.toilet && this.props.toilet.userRating) {
@@ -223,7 +247,7 @@ class ToiletReviewsView extends React.Component {
                 <View styles={[GlobalStyles.flexColumnCenter]}>
                     <Text style={GlobalStyles.secondaryText}>Votre avis</Text>
                     <ToiletRating size={15} rating={this.props.toilet.userRating.rating.global} readonly={true}
-                                  containerStyle={{paddingTop: 0, paddingBottom: 2}}></ToiletRating>
+                                  containerStyle={{paddingTop: 0, paddingBottom: 2}}/>
                     <Text style={[GlobalStyles.secondaryText, {
                         fontFamily: STYLE_VAR.text.bold,
                         fontSize: STYLE_VAR.text.size.smaller
@@ -237,12 +261,10 @@ class ToiletReviewsView extends React.Component {
             <View style={GlobalStyles.footerContainer}>
                 <Button title={buttonLabel}
                         onPress={() => this._handleAddReviewButtonPress()}
-                        buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton, {
-                            // marginBottom: 15
-                        }]}
+                        buttonStyle={[GlobalStyles.primaryButton, GlobalStyles.tallButton]}
                         titleStyle={GlobalStyles.defaultFont}
                         disabled={!this.props.isReady}
-                ></Button>
+                />
                 {userRating}
             </View>
         </TouchableNativeFeedback>
@@ -252,12 +274,7 @@ class ToiletReviewsView extends React.Component {
         if (!this.props.isReady) {
             return this.renderLoading();
         }
-        else if (this.props.reviews && this.props.reviews.length > 0) {
-            return this.renderReviewList();
-        }
-        else {
-            return this.renderEmptyList();
-        }
+        return this.renderReviewList();
     }
 
     render() {
