@@ -1,5 +1,7 @@
 // LIBRAIRIES
 import cloneDeep from 'lodash/cloneDeep';
+import moment from "moment";
+import 'moment/locale/fr';
 import React from 'react';
 import {
     Text,
@@ -38,6 +40,8 @@ class ToiletReviewsView extends React.Component {
         this._handleDeleteReview = this._handleDeleteReview.bind(this);
         this._handleFinishReview = this._handleFinishReview.bind(this);
         this._handleYourReviewPress = this._handleYourReviewPress.bind(this);
+
+        moment.locale('fr');
     }
 
     componentWillMount() {
@@ -148,6 +152,7 @@ class ToiletReviewsView extends React.Component {
 
     // RENDERING COMPONENTS
     renderRow({item}) {
+        console.log(item);
         return <View style={{paddingHorizontal: 15}}>
             <View style={[GlobalStyles.flexColumn, {
                 justifyContent: 'center',
@@ -160,7 +165,7 @@ class ToiletReviewsView extends React.Component {
                         <View>
                             <Text
                                 style={[GlobalStyles.primaryText]}>{item.user.username}</Text>
-                            <Text style={GlobalStyles.secondaryText}>10/11/2018</Text>
+                            <Text style={GlobalStyles.secondaryText}>{item.date < 999999999999999999999 ? moment(item.date).calendar().split(" à")[0] : 'Il y a très longtemps'}</Text>
                         </View>
                         <ToiletRating readonly rating={item.rating.global}/>
                     </View>
