@@ -23,7 +23,6 @@ import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
 import {ToiletRating} from "../../widgets/rating/ToiletRating";
 import {ToiletEndpoints} from "../../../endpoints/toiletEndpoints";
 import {STYLE_VAR} from "../../../styles/stylingVar";
-import {GlobalRating} from "../../widgets/rating/GlobalRating";
 import connect from "react-redux/es/connect/connect";
 import {ACTIONS_TOILET} from "./ToiletActions";
 
@@ -158,48 +157,44 @@ class ToiletReviewsView extends React.Component {
 
     // RENDERING COMPONENTS
     renderRow({item, index}) {
-        const btnTitle = item.expanded ? "VOIR MOINS" : "VOIR PLUS";
-        return <View style={[GlobalStyles.flexColumn, {
-            justifyContent: 'center',
-            marginHorizontal: 15,
-            paddingVertical: 15,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderColor: "#c8c7cc"
-        }]}>
-            <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
-                <View>
-                    <Text
-                        style={[GlobalStyles.secondaryText, {color: STYLE_VAR.backgroundDefault}]}>{item.user.username}</Text>
-                    <Text style={GlobalStyles.secondaryText}>10/11/2018</Text>
+        return <TouchableNativeFeedback onPress={() => {
+            this._handlePressSeeMore(index)
+        }}>
+            <View style={{ paddingHorizontal: 15}}>
+                <View style={[GlobalStyles.flexColumn, {
+                    justifyContent: 'center',
+                   paddingVertical: 25,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderColor: "#c8c7cc"
+                }]}>
+                    <View style={{
+
+                    }}>
+                        <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
+                            <View>
+                                <Text
+                                    style={[GlobalStyles.primaryText]}>{item.user.username}</Text>
+                                <Text style={GlobalStyles.secondaryText}>10/11/2018</Text>
+                            </View>
+                            <ToiletRating readonly rating={item.rating.global}/>
+                        </View>
+                        {item.expanded ? this.renderExpandedInfos(item) : this.renderCollapsedInfos(item)}
+                    </View>
                 </View>
-                <ToiletRating readonly rating={item.rating.global}/>
             </View>
-            {item.expanded ? this.renderExpandedInfos(item) : this.renderCollapsedInfos(item)}
-            <View style={{alignSelf: 'center'}}>
-                <Button title={btnTitle}
-                        onPress={() => {
-                            this._handlePressSeeMore(index)
-                        }}
-                        buttonStyle={GlobalStyles.noBorderButton}
-                        titleStyle={GlobalStyles.secondaryButtonTitle}/>
-            </View>
-        </View>
+        </TouchableNativeFeedback>
     }
 
     renderCollapsedInfos(item) {
         return <View style={{marginTop: 10}}>
-            <Text style={GlobalStyles.reviewText}
+            <Text style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}
                   numberOfLines={3}>{item.text}</Text>
         </View>
     }
 
     renderExpandedInfos(item) {
         return <View style={{marginTop: 10}}>
-            <Text style={GlobalStyles.reviewText}>{item.text}</Text>
-            <View style={{paddingHorizontal: 40}}>
-                <GlobalRating rating={item.rating}
-                              noGlobalScore/>
-            </View>
+            <Text style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}>{item.text}</Text>
         </View>
     }
 
@@ -211,7 +206,7 @@ class ToiletReviewsView extends React.Component {
                     renderItem={this.renderRow}
                     keyExtractor={(item) => item.uid}
                     ListEmptyComponent={this.renderEmptyList()}
-                    contentContainerStyle={[ { flexGrow: 1 } , this.props.reviews && this.props.reviews.length ? null : { justifyContent: 'center'} ]}
+                    contentContainerStyle={[{flexGrow: 1}, this.props.reviews && this.props.reviews.length ? null : {justifyContent: 'center'}]}
                 />
             </View>
             {this.renderFooter()}
@@ -220,7 +215,13 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderEmptyList() {
-        return <View style={{flexGrow: 1, paddingHorizontal: 20, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        return <View style={{
+            flexGrow: 1,
+            paddingHorizontal: 20,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
             <View style={{paddingVertical: 15}}>
                 <Text style={GlobalStyles.primaryText}>Soyez le premier a donner votre avis !</Text>
             </View>
