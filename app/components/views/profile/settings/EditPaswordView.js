@@ -3,7 +3,7 @@ import React from 'react';
 import {
     Text,
     View,
-    Alert,
+    Alert, ToastAndroid,
 } from 'react-native';
 import {Button} from 'react-native-elements';
 import firebase from "@firebase/app";
@@ -62,6 +62,7 @@ export default class EditPaswordView extends React.Component {
                 .then(() => {
                     _this.setState({hasSubmitted: false});
                     _this.props.navigation.goBack(null);
+                    ToastAndroid.show("Votre mot de passe a été modifié.", ToastAndroid.LONG);
                 })
                 .catch((error) => {
                     if (ERROR_TYPES.USER_NOT_FOUND.indexOf(error.code) > -1) {

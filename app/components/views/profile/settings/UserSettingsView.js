@@ -4,7 +4,7 @@ import {
     Text,
     ScrollView,
     View,
-    TouchableNativeFeedback,
+    TouchableNativeFeedback, ToastAndroid,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import firebase from "@firebase/app";
@@ -47,6 +47,7 @@ export default class UserSettingsView extends React.Component {
 
     _handleFinishEditingEmail(email) {
         this.setState({email: email});
+        ToastAndroid.show("Votre adresse e-mail a été modifiée.", ToastAndroid.LONG);
     }
 
     _handlePressEditUsername() {
@@ -57,6 +58,7 @@ export default class UserSettingsView extends React.Component {
     }
 
     _handleFinishEditingUsername(username) {
+        ToastAndroid.show("Votre nom d'utilisateur a été modifié.", ToastAndroid.LONG);
         this.setState({username: username});
     }
 
