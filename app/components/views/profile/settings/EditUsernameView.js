@@ -13,6 +13,7 @@ import {FormInput} from "../../../widgets/form/FormInput";
 
 // CONST
 import {GlobalStyles} from "../../../../styles/styles";
+import {UserEndpoints} from "../../../../endpoints/userEndpoints";
 
 // API ENDPOINTS
 
@@ -48,7 +49,7 @@ export default class EditUsernameView extends React.Component {
         this.setState({hasSubmitted: true});
         if (this.validateForm()) {
             this.setState({isReady: false});
-            firebase.auth().currentUser.updateProfile({displayName: this.state.username})
+            UserEndpoints.setUserName(this.state.username)
                 .then(() => {
                     _this.props.navigation.getParam('onFinishEditing')(this.state.username);
                     _this.setState({hasSubmitted: false});
