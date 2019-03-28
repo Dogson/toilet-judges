@@ -22,6 +22,12 @@ export default toiletReducer = (state = {}, action) => {
                 ...state,
                 reviews: action.value
             };
+        case ACTIONS_TOILET.SET_SORT_OPTION : {
+            return {
+                ...state,
+                sortOption: action.value
+            }
+        }
         default:
             return state;
     }
