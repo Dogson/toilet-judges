@@ -158,7 +158,7 @@ class ToiletView extends React.Component {
             ratingCount = this.props.toilet.ratingCount;
         }
         return <GlobalRating rating={rating}
-                             ratingCount={ratingCount}></GlobalRating>
+                             ratingCount={ratingCount}/>
 
     }
 
@@ -303,8 +303,8 @@ class ToiletView extends React.Component {
                         }]}
                         titleStyle={GlobalStyles.defaultFont}
                         disabled={!this.props.isReady}
-                ></Button>
-                {userRating}
+                />
+                {this.props.isReady && userRating}
             </View>
         </TouchableNativeFeedback>
     }

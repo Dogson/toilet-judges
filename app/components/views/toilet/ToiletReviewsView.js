@@ -43,8 +43,13 @@ class ToiletReviewsView extends React.Component {
         this._handleFinishReview = this._handleFinishReview.bind(this);
         this._handleYourReviewPress = this._handleYourReviewPress.bind(this);
         this._handleSelectSortOption = this._handleSelectSortOption.bind(this);
+        this._handleEndReached = this._handleEndReached.bind(this);
 
         moment.locale('fr');
+
+        this.state = {
+            loadingMore: false
+        }
     }
 
     componentWillMount() {
@@ -53,6 +58,10 @@ class ToiletReviewsView extends React.Component {
 
     componentDidMount() {
         this.props.dispatch({type: ACTIONS_TOILET.SET_SORT_OPTION, value: 0});
+        this.setState({
+            loadingMore: false,
+            noMoreData: false
+        });
         this.mounted = true;
         this.refreshList();
     }
@@ -136,12 +145,21 @@ class ToiletReviewsView extends React.Component {
         this.props.dispatch({type: ACTIONS_TOILET.SET_SORT_OPTION, value: selectedOption});
     }
 
+    _handleEndReached() {
+        if (!this.state.loadingMore) {
+            this.loadMoreItems();
+        }
+    }
+
     // DISPATCH ACTIONS
     refreshList() {
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
             .then((reviews) => {
                 if (this.mounted) {
+                    if (reviews.length < 10) {
+                        this.setState({noMoreData: true})
+                    }
                     this.props.dispatch({
                         type: ACTIONS_TOILET.SET_REVIEWS,
                         value: reviews
@@ -151,7 +169,31 @@ class ToiletReviewsView extends React.Component {
             })
     }
 
-    // DISPATCH ACTIONS
+    loadMoreItems() {
+        if (this.state.noMoreData || this.state.loadingMore) {
+            return;
+        }
+        this.setState({loadingMore: true});
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, this.props.reviews[this.props.reviews.length - 1].uid)
+            .then((reviews) => {
+                if (this.mounted) {
+
+                    this.props.dispatch({
+                        type: ACTIONS_TOILET.SET_REVIEWS,
+                        value: this.props.reviews.concat(reviews)
+                    });
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
+                if (reviews.length < 10) {
+                    this.setState({noMoreData: true})
+                }
+                const _this = this;
+                setTimeout(() => {
+                    _this.setState({loadingMore: false});
+                }, 100);
+            })
+    }
+
     refreshToilet() {
         let place = this.props.navigation.dangerouslyGetParent().getParam('place');
         ToiletEndpoints.getToilet(place.id)
@@ -161,7 +203,7 @@ class ToiletReviewsView extends React.Component {
             });
     }
 
-    // RENDERING COMPONENTS
+// RENDERING COMPONENTS
     renderRow({item, index}) {
         return <View style={{paddingHorizontal: 15}}>
             <View style={[GlobalStyles.flexColumn, {
@@ -170,7 +212,6 @@ class ToiletReviewsView extends React.Component {
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 borderColor: "#c8c7cc"
             }]}>
-                {index === 0 && this.renderFilter()}
                 <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
                     <View>
                         <Text
@@ -193,10 +234,14 @@ class ToiletReviewsView extends React.Component {
             <View style={{flexGrow: 1, marginBottom: 70}}>
                 <FlatList
                     data={this.props.reviews}
-                    renderItem={this.renderRow}
+                    renderItem={({item}) => <ReviewRow item={item}/>}
                     keyExtractor={(item) => item.uid}
                     ListEmptyComponent={this.renderEmptyList()}
+                    ListHeaderComponent={this.props.reviews.length && this.renderFilter()}
+                    ListFooterComponent={!this.state.noMoreData && this.renderLoadMoreItems()}
                     contentContainerStyle={[{flexGrow: 1}, this.props.reviews && this.props.reviews.length ? null : {justifyContent: 'center'}]}
+                    onEndReachedThreshold={0.3}
+                    onEndReached={this._handleEndReached}
                 />
             </View>
             {this.renderFooter()}
@@ -204,8 +249,16 @@ class ToiletReviewsView extends React.Component {
 
     }
 
+    renderLoadMoreItems() {
+        return <View style={[GlobalStyles.flexRow, {alignItems: 'center', padding: 15}]}>
+            <View style={{marginRight: 10}}><ActivityIndicator size="small"/></View>
+            <Text style={GlobalStyles.secondaryText}>Chargement d'avis...</Text>
+        </View>
+
+    }
+
     renderFilter() {
-        return <View style={{alignSelf: 'flex-end', paddingBottom: 15}}>
+        return <View style={{alignSelf: 'flex-end', padding: 5}}>
             <SortDropdown options={TOILET_REVIEWS_SORT_OPTIONS} selected={this.props.sortOption}
                           onSelect={this._handleSelectSortOption}/>
         </View>;
@@ -270,7 +323,7 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderBody() {
-        if (!this.props.isReady) {
+        if (!this.props.isReady || !this.props.reviews) {
             return this.renderLoading();
         }
         return this.renderReviewList();
@@ -282,6 +335,37 @@ class ToiletReviewsView extends React.Component {
             backgroundColor: 'white',
         }}>
             {this.renderBody()}
+        </View>
+    }
+}
+
+class ReviewRow extends React.PureComponent {
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return <View style={{paddingHorizontal: 15}}>
+            <View style={[GlobalStyles.flexColumn, {
+                justifyContent: 'center',
+                paddingVertical: 25,
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderColor: "#c8c7cc"
+            }]}>
+                <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
+                    <View>
+                        <Text
+                            style={[GlobalStyles.primaryText]}>{this.props.item.user.username}</Text>
+                        <Text
+                            style={GlobalStyles.secondaryText}>{this.props.item.date < 999999999999999999999 ? moment(this.props.item.date).calendar().split(" à")[0] : 'Il y a très longtemps'}</Text>
+                    </View>
+                    <ToiletRating readonly rating={this.props.item.rating.global}/>
+                </View>
+                <View style={{marginTop: 10}}>
+                    <Text
+                        style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}>{this.props.item.text}</Text>
+                </View>
+            </View>
         </View>
     }
 }

@@ -22,16 +22,16 @@ export class RatingEndpoints {
     }
 
     static getUserReviews(userId) {
-       return firebase.functions().httpsCallable('getUserReviews')({userId})
-           .then((result) => {
-               const userRatings = result.data;
-               return Promise.all(userRatings.map((userRating) => {
-                   return ToiletEndpoints.getPlaceById(userRating.toiletId)
-                       .then((result) => {
-                           userRating.toilet = result;
-                           return userRating;
-                       })
-               }))
-           });
+        return firebase.functions().httpsCallable('getUserReviews')({userId})
+            .then((result) => {
+                const userRatings = result.data;
+                return Promise.all(userRatings.map((userRating) => {
+                    return ToiletEndpoints.getPlaceById(userRating.toiletId)
+                        .then((result) => {
+                            userRating.toilet = result;
+                            return userRating;
+                        })
+                }))
+            });
     }
 }

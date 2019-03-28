@@ -21,7 +21,9 @@ export class SortDropdown extends React.Component {
     render() {
         return <Menu>
             <MenuTrigger>
+                <View style={{padding: 15}}>
                     <Icon color={STYLE_VAR.backgroundDefault} name="sort" size={25}/>
+                </View>
             </MenuTrigger>
             <MenuOptions customStyles={{
                 optionsContainer: {right: 0, paddingVertical: 15, width: 'auto'}

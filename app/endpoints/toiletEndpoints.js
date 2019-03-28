@@ -31,8 +31,8 @@ export class ToiletEndpoints {
             });
     }
 
-    static getToiletReviews(toiletId) {
-        return firebase.functions().httpsCallable('getToiletReviews')({toiletId})
+    static getToiletReviews(toiletId, lastLoadedReview) {
+        return firebase.functions().httpsCallable('getToiletReviews')({toiletId, lastLoadedReview})
             .then((result) => {
                 return result && result.data;
             });
