@@ -36,7 +36,6 @@ class ToiletReviewsView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.renderRow = this.renderRow.bind(this);
         this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handleDeleteReview = this._handleDeleteReview.bind(this);
@@ -64,6 +63,12 @@ class ToiletReviewsView extends React.Component {
         });
         this.mounted = true;
         this.refreshList();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.sortOption !== this.props.sortOption) {
+            this.refreshList();
+        }
     }
 
     componentWillUnmount() {
@@ -153,8 +158,9 @@ class ToiletReviewsView extends React.Component {
 
     // DISPATCH ACTIONS
     refreshList() {
+        this.setState({noMoreData: false});
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, null, this.props.sortOption)
             .then((reviews) => {
                 if (this.mounted) {
                     if (reviews.length < 10) {
@@ -174,7 +180,7 @@ class ToiletReviewsView extends React.Component {
             return;
         }
         this.setState({loadingMore: true});
-        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, this.props.reviews[this.props.reviews.length - 1].uid)
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, this.props.reviews[this.props.reviews.length - 1].uid, this.props.sortOption)
             .then((reviews) => {
                 if (this.mounted) {
 
@@ -204,31 +210,6 @@ class ToiletReviewsView extends React.Component {
     }
 
 // RENDERING COMPONENTS
-    renderRow({item, index}) {
-        return <View style={{paddingHorizontal: 15}}>
-            <View style={[GlobalStyles.flexColumn, {
-                justifyContent: 'center',
-                paddingVertical: 25,
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderColor: "#c8c7cc"
-            }]}>
-                <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
-                    <View>
-                        <Text
-                            style={[GlobalStyles.primaryText]}>{item.user.username}</Text>
-                        <Text
-                            style={GlobalStyles.secondaryText}>{item.date < 999999999999999999999 ? moment(item.date).calendar().split(" à")[0] : 'Il y a très longtemps'}</Text>
-                    </View>
-                    <ToiletRating readonly rating={item.rating.global}/>
-                </View>
-                <View style={{marginTop: 10}}>
-                    <Text
-                        style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}>{item.text}</Text>
-                </View>
-            </View>
-        </View>
-    }
-
     renderReviewList() {
         return <View style={{flexGrow: 1}}>
             <View style={{flexGrow: 1, marginBottom: 70}}>

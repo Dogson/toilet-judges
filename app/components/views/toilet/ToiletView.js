@@ -130,14 +130,16 @@ class ToiletView extends React.Component {
         let place = this.props.navigation.dangerouslyGetParent().getParam('place');
         ToiletEndpoints.getToilet(place.id)
             .then((toilet) => {
-                this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
-                this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                if (this.mounted) {
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
             });
     }
 
     refreshList() {
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
+        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, null, this.props.sortOption)
             .then((reviews) => {
                 if (this.mounted) {
                     this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
@@ -335,7 +337,9 @@ class ToiletView extends React.Component {
 function mapStateToProps(state) {
     return {
         toilet: state.toiletReducer.toilet,
-        isReady: state.toiletReducer.isReady
+        isReady: state.toiletReducer.isReady,
+        reviews: state.toiletReducer.reviews,
+        sortOption: state.toiletReducer.sortOption
     };
 }
 
