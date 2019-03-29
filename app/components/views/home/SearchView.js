@@ -19,9 +19,11 @@ import {GlobalStyles} from "../../../styles/styles";
 import {STYLE_VAR} from "../../../styles/stylingVar";
 import {PLACE_TYPES} from "../../../config/const";
 import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+import {ACTIONS_TOILET} from "../toilet/ToiletActions";
 import {APP_CONFIG} from "../../../config/appConfig";
+import connect from "react-redux/es/connect/connect";
 
-export default class SearchView extends React.Component {
+class SearchView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -198,7 +200,8 @@ export default class SearchView extends React.Component {
                             return details.types.includes(type)
                         })
                     };
-                    this.props.navigation.navigate(ROUTE_NAMES.TOILET, {place: place});
+                    this.props.dispatch({type: ACTIONS_TOILET.SET_PLACE, value: place});
+                    this.props.navigation.navigate(ROUTE_NAMES.TOILET, {placeName: place.name});
                     return false;
                 }}
                 getDefaultValue={() => ''}
@@ -247,3 +250,11 @@ export default class SearchView extends React.Component {
         return result;
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        place: state.toiletReducer.place,
+    };
+}
+
+export default connect(mapStateToProps)(SearchView);

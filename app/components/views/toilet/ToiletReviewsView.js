@@ -1,5 +1,4 @@
 // LIBRAIRIES
-import cloneDeep from 'lodash/cloneDeep';
 import moment from "moment";
 import 'moment/locale/fr';
 import React from 'react';
@@ -13,20 +12,22 @@ import {
     ToastAndroid, BackHandler
 } from 'react-native';
 import {Button} from 'react-native-elements';
+import connect from "react-redux/es/connect/connect";
 
 // CONST
 import {GlobalStyles} from "../../../styles/styles";
 import {ROUTE_NAMES, TRANSITIONS} from "../../../config/navigationConfig";
+import {TOILET_REVIEWS_SORT_OPTIONS} from "../../../config/const";
+import {STYLE_VAR} from "../../../styles/stylingVar";
+import {ACTIONS_TOILET} from "./ToiletActions";
 
 // API ENDPOINTS
 import {RatingEndpoints} from "../../../endpoints/ratingEndpoints";
+import {ToiletEndpoints} from "../../../endpoints/toiletEndpoints";
 
 //COMPONENTS
 import {ToiletRating} from "../../widgets/rating/ToiletRating";
-import {ToiletEndpoints} from "../../../endpoints/toiletEndpoints";
-import {STYLE_VAR} from "../../../styles/stylingVar";
-import connect from "react-redux/es/connect/connect";
-import {ACTIONS_TOILET} from "./ToiletActions";
+import {SortDropdown} from "../../widgets/dropdown/SortDropdown";
 
 
 class ToiletReviewsView extends React.Component {
@@ -34,14 +35,19 @@ class ToiletReviewsView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.renderRow = this.renderRow.bind(this);
         this._handleAddReviewButtonPress = this._handleAddReviewButtonPress.bind(this);
         this._handleBackButtonClick = this._handleBackButtonClick.bind(this);
         this._handleDeleteReview = this._handleDeleteReview.bind(this);
         this._handleFinishReview = this._handleFinishReview.bind(this);
         this._handleYourReviewPress = this._handleYourReviewPress.bind(this);
+        this._handleSelectSortOption = this._handleSelectSortOption.bind(this);
+        this._handleEndReached = this._handleEndReached.bind(this);
 
         moment.locale('fr');
+
+        this.state = {
+            loadingMore: false
+        }
     }
 
     componentWillMount() {
@@ -49,8 +55,20 @@ class ToiletReviewsView extends React.Component {
     }
 
     componentDidMount() {
+        this.props.dispatch({type: ACTIONS_TOILET.SET_SORT_OPTION, value: 0});
+        this.setState({
+            loadingMore: false,
+            noMoreData: false
+        });
         this.mounted = true;
+
         this.refreshList();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.sortOption !== this.props.sortOption) {
+            this.refreshList();
+        }
     }
 
     componentWillUnmount() {
@@ -74,7 +92,7 @@ class ToiletReviewsView extends React.Component {
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
-        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.navigation.dangerouslyGetParent().getParam('place').id;
+        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.place.id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         if (userRating.uid) {
             RatingEndpoints.updateUserReview(id, userRating)
@@ -108,7 +126,7 @@ class ToiletReviewsView extends React.Component {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             userRating: this.props.toilet ? this.props.toilet.userRating : null,
             title: this.props.toilet && this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
-            placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
+            placeName: this.props.place.name,
             onFinishRating: this._handleFinishReview,
             originRoute: ROUTE_NAMES.TOILET
         });
@@ -120,7 +138,7 @@ class ToiletReviewsView extends React.Component {
         }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
             {
-                placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
+                placeName: this.props.place.name,
                 userRating: this.props.toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
                 _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
@@ -128,21 +146,62 @@ class ToiletReviewsView extends React.Component {
             });
     }
 
+    _handleSelectSortOption(selectedOption) {
+        this.props.dispatch({type: ACTIONS_TOILET.SET_SORT_OPTION, value: selectedOption});
+    }
+
+    _handleEndReached() {
+        if (!this.state.loadingMore) {
+            this.loadMoreItems();
+        }
+    }
+
     // DISPATCH ACTIONS
     refreshList() {
+        this.setState({noMoreData: false});
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id)
+        ToiletEndpoints.getToiletReviews(this.props.place.id, null, this.props.sortOption)
             .then((reviews) => {
                 if (this.mounted) {
+                    if (reviews.length < 10) {
+                        this.setState({noMoreData: true})
+                    }
+                    this.props.dispatch({
+                        type: ACTIONS_TOILET.SET_REVIEWS,
+                        value: reviews
+                    });
                     this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
-                    this.props.dispatch({type: ACTIONS_TOILET.SET_REVIEWS, value: reviews});
                 }
             })
     }
 
-    // DISPATCH ACTIONS
+    loadMoreItems() {
+        if (this.state.noMoreData || this.state.loadingMore) {
+            return;
+        }
+        this.setState({loadingMore: true});
+        ToiletEndpoints.getToiletReviews(this.props.place.id, this.props.reviews[this.props.reviews.length - 1].uid, this.props.sortOption)
+            .then((reviews) => {
+                if (this.mounted) {
+
+                    this.props.dispatch({
+                        type: ACTIONS_TOILET.SET_REVIEWS,
+                        value: this.props.reviews.concat(reviews)
+                    });
+                    this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
+                }
+                if (reviews.length < 10) {
+                    this.setState({noMoreData: true})
+                }
+                const _this = this;
+                setTimeout(() => {
+                    _this.setState({loadingMore: false});
+                }, 100);
+            })
+    }
+
     refreshToilet() {
-        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
+        let place = this.props.place;
         ToiletEndpoints.getToilet(place.id)
             .then((toilet) => {
                 this.props.dispatch({type: ACTIONS_TOILET.SET_TOILET, value: toilet});
@@ -150,47 +209,40 @@ class ToiletReviewsView extends React.Component {
             });
     }
 
-    // RENDERING COMPONENTS
-    renderRow({item}) {
-        console.log(item);
-        return <View style={{paddingHorizontal: 15}}>
-            <View style={[GlobalStyles.flexColumn, {
-                justifyContent: 'center',
-                paddingVertical: 25,
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderColor: "#c8c7cc"
-            }]}>
-                <View style={{}}>
-                    <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
-                        <View>
-                            <Text
-                                style={[GlobalStyles.primaryText]}>{item.user.username}</Text>
-                            <Text style={GlobalStyles.secondaryText}>{item.date < 999999999999999999999 ? moment(item.date).calendar().split(" à")[0] : 'Il y a très longtemps'}</Text>
-                        </View>
-                        <ToiletRating readonly rating={item.rating.global}/>
-                    </View>
-                    <View style={{marginTop: 10}}>
-                        <Text
-                            style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}>{item.text}</Text>
-                    </View>
-                </View>
-            </View>
-        </View>
-    }
-
+// RENDERING COMPONENTS
     renderReviewList() {
         return <View style={{flexGrow: 1}}>
             <View style={{flexGrow: 1, marginBottom: 70}}>
                 <FlatList
                     data={this.props.reviews}
-                    renderItem={this.renderRow}
+                    renderItem={({item}) => <ReviewRow item={item}/>}
                     keyExtractor={(item) => item.uid}
                     ListEmptyComponent={this.renderEmptyList()}
+                    ListHeaderComponent={this.props.reviews.length && this.renderFilter()}
+                    ListFooterComponent={!this.state.noMoreData && this.renderLoadMoreItems()}
                     contentContainerStyle={[{flexGrow: 1}, this.props.reviews && this.props.reviews.length ? null : {justifyContent: 'center'}]}
+                    onEndReachedThreshold={0.3}
+                    onEndReached={this._handleEndReached}
                 />
             </View>
             {this.renderFooter()}
         </View>
+
+    }
+
+    renderLoadMoreItems() {
+        return <View style={[GlobalStyles.flexRow, {alignItems: 'center', padding: 15}]}>
+            <View style={{marginRight: 10}}><ActivityIndicator size="small"/></View>
+            <Text style={GlobalStyles.secondaryText}>Chargement d'avis...</Text>
+        </View>
+
+    }
+
+    renderFilter() {
+        return <View style={{alignSelf: 'flex-end', padding: 5}}>
+            <SortDropdown options={TOILET_REVIEWS_SORT_OPTIONS} selected={this.props.sortOption}
+                          onSelect={this._handleSelectSortOption}/>
+        </View>;
 
     }
 
@@ -252,7 +304,7 @@ class ToiletReviewsView extends React.Component {
     }
 
     renderBody() {
-        if (!this.props.isReady) {
+        if (!this.props.isReady || !this.props.reviews) {
             return this.renderLoading();
         }
         return this.renderReviewList();
@@ -268,11 +320,44 @@ class ToiletReviewsView extends React.Component {
     }
 }
 
+class ReviewRow extends React.PureComponent {
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return <View style={{paddingHorizontal: 15}}>
+            <View style={[GlobalStyles.flexColumn, {
+                justifyContent: 'center',
+                paddingVertical: 25,
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderColor: "#c8c7cc"
+            }]}>
+                <View style={[GlobalStyles.flexRowSpaceBetween, {alignItems: 'center'}]}>
+                    <View>
+                        <Text
+                            style={[GlobalStyles.primaryText]}>{this.props.item.user.username}</Text>
+                        <Text
+                            style={GlobalStyles.secondaryText}>{this.props.item.date < 999999999999999999999 ? moment(this.props.item.date).calendar().split(" à")[0] : 'Il y a très longtemps'}</Text>
+                    </View>
+                    <ToiletRating readonly rating={this.props.item.rating.global}/>
+                </View>
+                <View style={{marginTop: 10}}>
+                    <Text
+                        style={[GlobalStyles.reviewText, {fontSize: STYLE_VAR.text.size.small}]}>{this.props.item.text}</Text>
+                </View>
+            </View>
+        </View>
+    }
+}
+
 function mapStateToProps(state) {
     return {
         toilet: state.toiletReducer.toilet,
         isReady: state.toiletReducer.isReady,
-        reviews: state.toiletReducer.reviews
+        reviews: state.toiletReducer.reviews,
+        sortOption: state.toiletReducer.sortOption,
+        place: state.toiletReducer.place
     };
 }
 

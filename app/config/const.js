@@ -160,3 +160,9 @@ export const RATINGS = [
     'Bien',
     'Excellent'
 ];
+
+export const TOILET_REVIEWS_SORT_OPTIONS = [
+  'Avis les plus récents',
+  'Avis les plus favorables',
+  'Avis les moins favorables'
+];
