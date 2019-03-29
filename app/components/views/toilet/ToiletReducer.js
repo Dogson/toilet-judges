@@ -12,6 +12,11 @@ export default toiletReducer = (state = {}, action) => {
                 ...state,
                 isReady: true
             };
+        case ACTIONS_TOILET.SET_PLACE:
+            return {
+                ...state,
+                place: action.value
+            };
         case ACTIONS_TOILET.SET_TOILET :
             return {
                 ...state,

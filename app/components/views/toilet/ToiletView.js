@@ -71,7 +71,7 @@ class ToiletView extends React.Component {
 
     // function called by child when getting back
     _handleFinishReview(userRating) {
-        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.navigation.dangerouslyGetParent().getParam('place').id;
+        let id = this.props.toilet && this.props.toilet.uid ? this.props.toilet.uid : this.props.place.id;
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
         if (userRating.uid) {
             RatingEndpoints.updateUserReview(id, userRating)
@@ -105,7 +105,7 @@ class ToiletView extends React.Component {
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_STEP_ONE, {
             userRating: this.props.toilet ? this.props.toilet.userRating : null,
             title: this.props.toilet && this.props.toilet.userRating ? 'Modifier votre avis' : 'Donner votre avis',
-            placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
+            placeName: this.props.place.name,
             onFinishRating: this._handleFinishReview,
             originRoute: ROUTE_NAMES.TOILET
         });
@@ -117,7 +117,7 @@ class ToiletView extends React.Component {
         }
         this.props.navigation.navigate(ROUTE_NAMES.REVIEW_DETAILS,
             {
-                placeName: this.props.navigation.dangerouslyGetParent().getParam('place').name,
+                placeName: this.props.place.name,
                 userRating: this.props.toilet.userRating,
                 transition: TRANSITIONS.FROM_BOTTOM,
                 _handleAddReviewButtonPress: this._handleAddReviewButtonPress,
@@ -127,7 +127,7 @@ class ToiletView extends React.Component {
 
     // DISPATCH ACTIONS
     refreshToilet() {
-        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
+        let place = this.props.place;
         ToiletEndpoints.getToilet(place.id)
             .then((toilet) => {
                 if (this.mounted) {
@@ -139,7 +139,7 @@ class ToiletView extends React.Component {
 
     refreshList() {
         this.props.dispatch({type: ACTIONS_TOILET.START_LOADING});
-        ToiletEndpoints.getToiletReviews(this.props.navigation.dangerouslyGetParent().getParam('place').id, null, this.props.sortOption)
+        ToiletEndpoints.getToiletReviews(this.props.place.id, null, this.props.sortOption)
             .then((reviews) => {
                 if (this.mounted) {
                     this.props.dispatch({type: ACTIONS_TOILET.STOP_LOADING});
@@ -165,7 +165,7 @@ class ToiletView extends React.Component {
     }
 
     renderPlaceType() {
-        let place = this.props.navigation.dangerouslyGetParent().getParam('place');
+        let place = this.props.place;
         let placeDetails = PLACE_TYPES.find((placeType) => {
             return placeType.id === place.type;
         });
@@ -268,10 +268,10 @@ class ToiletView extends React.Component {
     renderTitle() {
         return <View style={GlobalStyles.stackContainer}>
             <Text style={GlobalStyles.titleText}>
-                {this.props.navigation.dangerouslyGetParent().getParam('place').name}
+                {this.props.place.name}
             </Text>
             <Text style={GlobalStyles.subtitleText}>
-                {this.props.navigation.dangerouslyGetParent().getParam('place').address}
+                {this.props.place.address}
             </Text>
             {this.renderPlaceType()}
         </View>
@@ -339,7 +339,8 @@ function mapStateToProps(state) {
         toilet: state.toiletReducer.toilet,
         isReady: state.toiletReducer.isReady,
         reviews: state.toiletReducer.reviews,
-        sortOption: state.toiletReducer.sortOption
+        sortOption: state.toiletReducer.sortOption,
+        place: state.toiletReducer.place
     };
 }
 

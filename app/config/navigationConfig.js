@@ -226,7 +226,7 @@ const ToiletTabWrapper = createStackNavigator({
                         <View style={{padding: 15}}><Icon name="arrow-back" color="white"/></View>
                     </TouchableNativeFeedback>
                 ),
-                title: navigation.getParam('place').name,
+                title: navigation.getParam('placeName'),
                 headerTitleStyle: GlobalStyles.headerText,
                 headerTintColor: 'white',
                 headerStyle: {
